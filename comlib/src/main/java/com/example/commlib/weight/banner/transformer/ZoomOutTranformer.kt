@@ -13,24 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.commlib.weight.banner.transformer
 
-package com.example.commlib.weight.banner.transformer;
+import android.view.View
 
-import android.view.View;
-
-public class ZoomOutTranformer extends ABaseTransformer {
-
-	@Override
-	protected void onTransform(View view, float position) {
-		final float scale = 1f + Math.abs(position);
-		view.setScaleX(scale);
-		view.setScaleY(scale);
-		view.setPivotX(view.getWidth() * 0.5f);
-		view.setPivotY(view.getHeight() * 0.5f);
-		view.setAlpha(position < -1f || position > 1f ? 0f : 1f - (scale - 1f));
-		if(position == -1){
-			view.setTranslationX(view.getWidth() * -1);
-		}
-	}
-
+class ZoomOutTranformer : ABaseTransformer() {
+    override fun onTransform(view: View, position: Float) {
+        val scale = 1f + Math.abs(position)
+        view.scaleX = scale
+        view.scaleY = scale
+        view.pivotX = view.width * 0.5f
+        view.pivotY = view.height * 0.5f
+        view.alpha = if (position < -1f || position > 1f) 0f else 1f - (scale - 1f)
+        if (position == -1f) {
+            view.translationX = view.width * -1.toFloat()
+        }
+    }
 }

@@ -13,24 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.commlib.weight.banner.transformer
 
-package com.example.commlib.weight.banner.transformer;
+import android.view.View
 
-import android.view.View;
+class CubeInTransformer : ABaseTransformer() {
+    override fun onTransform(view: View, position: Float) {
+        // Rotate the fragment on the left or right edge
+        view.pivotX = if (position > 0) 0f else view.width.toFloat()
+        view.pivotY = 0f
+        view.rotationY = -90f * position
+    }
 
-public class CubeInTransformer extends ABaseTransformer {
-
-	@Override
-	protected void onTransform(View view, float position) {
-		// Rotate the fragment on the left or right edge
-		view.setPivotX(position > 0 ? 0 : view.getWidth());
-		view.setPivotY(0);
-		view.setRotationY(-90f * position);
-	}
-
-	@Override
-	public boolean isPagingEnabled() {
-		return true;
-	}
-
+    override val isPagingEnabled: Boolean
+        get() = true
 }

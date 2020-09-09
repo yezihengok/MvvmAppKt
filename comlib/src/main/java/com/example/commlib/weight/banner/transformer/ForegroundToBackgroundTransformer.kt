@@ -13,24 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.commlib.weight.banner.transformer
 
-package com.example.commlib.weight.banner.transformer;
+import android.view.View
 
-import android.view.View;
-
-public class ForegroundToBackgroundTransformer extends ABaseTransformer {
-
-	@Override
-	protected void onTransform(View view, float position) {
-		final float height = view.getHeight();
-		final float width = view.getWidth();
-		final float scale = min(position > 0 ? 1f : Math.abs(1f + position), 0.5f);
-
-		view.setScaleX(scale);
-		view.setScaleY(scale);
-		view.setPivotX(width * 0.5f);
-		view.setPivotY(height * 0.5f);
-		view.setTranslationX(position > 0 ? width * position : -width * position * 0.25f);
-	}
-
+class ForegroundToBackgroundTransformer : ABaseTransformer() {
+    override fun onTransform(view: View, position: Float) {
+        val height = view.height.toFloat()
+        val width = view.width.toFloat()
+        val scale: Float =
+            ABaseTransformer.min(if (position > 0) 1f else Math.abs(1f + position), 0.5f)
+        view.scaleX = scale
+        view.scaleY = scale
+        view.pivotX = width * 0.5f
+        view.pivotY = height * 0.5f
+        view.translationX = if (position > 0) width * position else -width * position * 0.25f
+    }
 }

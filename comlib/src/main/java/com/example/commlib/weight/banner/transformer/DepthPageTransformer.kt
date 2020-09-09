@@ -13,34 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.commlib.weight.banner.transformer
 
-package com.example.commlib.weight.banner.transformer;
+import android.view.View
 
-import android.view.View;
+ class DepthPageTransformer : ABaseTransformer() {
+    override fun onTransform(view: View, position: Float) {
+        if (position <= 0f) {
+            view.translationX = 0f
+            view.scaleX = 1f
+            view.scaleY = 1f
+        } else if (position <= 1f) {
+            val scaleFactor = MIN_SCALE + (1 - MIN_SCALE) * (1 - Math.abs(position))
+            view.alpha = 1 - position
+            view.pivotY = 0.5f * view.height
+            view.translationX = view.width * -position
+            view.scaleX = scaleFactor
+            view.scaleY = scaleFactor
+        }
+    }
 
-public class DepthPageTransformer extends ABaseTransformer {
+     override val isPagingEnabled: Boolean
+        get() = true
 
-	private static final float MIN_SCALE = 0.75f;
-
-	@Override
-	protected void onTransform(View view, float position) {
-		if (position <= 0f) {
-			view.setTranslationX(0f);
-			view.setScaleX(1f);
-			view.setScaleY(1f);
-		} else if (position <= 1f) {
-			final float scaleFactor = MIN_SCALE + (1 - MIN_SCALE) * (1 - Math.abs(position));
-			view.setAlpha(1 - position);
-			view.setPivotY(0.5f * view.getHeight());
-			view.setTranslationX(view.getWidth() * -position);
-			view.setScaleX(scaleFactor);
-			view.setScaleY(scaleFactor);
-		}
-	}
-
-	@Override
-	protected boolean isPagingEnabled() {
-		return true;
-	}
-
+    companion object {
+        private const val MIN_SCALE = 0.75f
+    }
 }

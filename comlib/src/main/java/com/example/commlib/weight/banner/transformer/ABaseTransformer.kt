@@ -13,119 +13,113 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.commlib.weight.banner.transformer
 
-package com.example.commlib.weight.banner.transformer;
+import android.view.View
+import androidx.viewpager.widget.ViewPager.PageTransformer
 
-import android.view.View;
+abstract class ABaseTransformer : PageTransformer {
+    /**
+     * Called each [.transformPage].
+     *
+     * @param page
+     * Apply the transformation to this page
+     * @param position
+     * Position of page relative to the current front-and-center position of the pager. 0 is front and
+     * center. 1 is one full page position to the right, and -1 is one page position to the left.
+     */
+    protected abstract fun onTransform(page: View, position: Float)
 
-import androidx.viewpager.widget.ViewPager;
+    /**
+     * Apply a property transformation to the given page. For most use cases, this method should not be overridden.
+     * Instead use [.transformPage] to perform typical transformations.
+     *
+     * @param page
+     * Apply the transformation to this page
+     * @param position
+     * Position of page relative to the current front-and-center position of the pager. 0 is front and
+     * center. 1 is one full page position to the right, and -1 is one page position to the left.
+     */
+    override fun transformPage(page: View, position: Float) {
+        onPreTransform(page, position)
+        onTransform(page, position)
+        onPostTransform(page, position)
+    }
 
-public abstract class ABaseTransformer implements ViewPager.PageTransformer {
+    /**
+     * If the position offset of a fragment is less than negative one or greater than one, returning true will set the
+     * fragment alpha to 0f. Otherwise fragment alpha is always defaulted to 1f.
+     *
+     * @return
+     */
+    protected fun hideOffscreenPages(): Boolean {
+        return true
+    }
 
-	/**
-	 * Called each {@link #transformPage(View, float)}.
-	 *
-	 * @param page
-	 *            Apply the transformation to this page
-	 * @param position
-	 *            Position of page relative to the current front-and-center position of the pager. 0 is front and
-	 *            center. 1 is one full page position to the right, and -1 is one page position to the left.
-	 */
-	protected abstract void onTransform(View page, float position);
+    /**
+     * Indicates if the default animations of the view pager should be used.
+     *
+     * @return
+     */
+    protected open val isPagingEnabled: Boolean
+        protected get() = false
 
-	/**
-	 * Apply a property transformation to the given page. For most use cases, this method should not be overridden.
-	 * Instead use {@link #transformPage(View, float)} to perform typical transformations.
-	 *
-	 * @param page
-	 *            Apply the transformation to this page
-	 * @param position
-	 *            Position of page relative to the current front-and-center position of the pager. 0 is front and
-	 *            center. 1 is one full page position to the right, and -1 is one page position to the left.
-	 */
-	@Override
-	public void transformPage(View page, float position) {
-		onPreTransform(page, position);
-		onTransform(page, position);
-		onPostTransform(page, position);
-	}
-
-	/**
-	 * If the position offset of a fragment is less than negative one or greater than one, returning true will set the
-	 * fragment alpha to 0f. Otherwise fragment alpha is always defaulted to 1f.
-	 *
-	 * @return
-	 */
-	protected boolean hideOffscreenPages() {
-		return true;
-	}
-
-	/**
-	 * Indicates if the default animations of the view pager should be used.
-	 *
-	 * @return
-	 */
-	protected boolean isPagingEnabled() {
-		return false;
-	}
-
-	/**
-	 * Called each {@link #transformPage(View, float)} before {{@link #onTransform(View, float)}.
-	 * <p>
-	 * The default implementation attempts to reset all view properties. This is useful when toggling transforms that do
-	 * not modify the same page properties. For instance changing from a transformation that applies rotation to a
-	 * transformation that fades can inadvertently leave a fragment stuck with a rotation or with some degree of applied
-	 * alpha.
-	 *
-	 * @param page
-	 *            Apply the transformation to this page
-	 * @param position
-	 *            Position of page relative to the current front-and-center position of the pager. 0 is front and
-	 *            center. 1 is one full page position to the right, and -1 is one page position to the left.
-	 */
-	protected void onPreTransform(View page, float position) {
-		final float width = page.getWidth();
-
-		page.setRotationX(0);
-		page.setRotationY(0);
-		page.setRotation(0);
-		page.setScaleX(1);
-		page.setScaleY(1);
-		page.setPivotX(0);
-		page.setPivotY(0);
-		page.setTranslationY(0);
-		page.setTranslationX(isPagingEnabled() ? 0f : -width * position);
-
-		if (hideOffscreenPages()) {
-			page.setAlpha(position <= -1f || position >= 1f ? 0f : 1f);
-//			page.setEnabled(false);
-		} else {
+    /**
+     * Called each [.transformPage] before {[.onTransform].
+     *
+     *
+     * The default implementation attempts to reset all view properties. This is useful when toggling transforms that do
+     * not modify the same page properties. For instance changing from a transformation that applies rotation to a
+     * transformation that fades can inadvertently leave a fragment stuck with a rotation or with some degree of applied
+     * alpha.
+     *
+     * @param page
+     * Apply the transformation to this page
+     * @param position
+     * Position of page relative to the current front-and-center position of the pager. 0 is front and
+     * center. 1 is one full page position to the right, and -1 is one page position to the left.
+     */
+    protected fun onPreTransform(page: View, position: Float) {
+        val width = page.width.toFloat()
+        page.rotationX = 0f
+        page.rotationY = 0f
+        page.rotation = 0f
+        page.scaleX = 1f
+        page.scaleY = 1f
+        page.pivotX = 0f
+        page.pivotY = 0f
+        page.translationY = 0f
+        page.translationX = if (isPagingEnabled) 0f else -width * position
+        if (hideOffscreenPages()) {
+            page.alpha = if (position <= -1f || position >= 1f) 0f else 1f
+            //			page.setEnabled(false);
+        } else {
 //			page.setEnabled(true);
-			page.setAlpha(1f);
-		}
-	}
+            page.alpha = 1f
+        }
+    }
 
-	/**
-	 * Called each {@link #transformPage(View, float)} after {@link #onTransform(View, float)}.
-	 *
-	 * @param page
-	 *            Apply the transformation to this page
-	 * @param position
-	 *            Position of page relative to the current front-and-center position of the pager. 0 is front and
-	 *            center. 1 is one full page position to the right, and -1 is one page position to the left.
-	 */
-	protected void onPostTransform(View page, float position) {
-	}
+    /**
+     * Called each [.transformPage] after [.onTransform].
+     *
+     * @param page
+     * Apply the transformation to this page
+     * @param position
+     * Position of page relative to the current front-and-center position of the pager. 0 is front and
+     * center. 1 is one full page position to the right, and -1 is one page position to the left.
+     */
+    protected open fun onPostTransform(page: View, position: Float) {}
 
-	/**
-	 * Same as {@link Math#min(double, double)} without double casting, zero closest to infinity handling, or NaN support.
-	 *
-	 * @param val
-	 * @param min
-	 * @return
-	 */
-	protected static final float min(float val, float min) {
-		return val < min ? min : val;
-	}
-
+    companion object {
+        /**
+         * Same as [Math.min] without double casting, zero closest to infinity handling, or NaN support.
+         *
+         * @param val
+         * @param min
+         * @return
+         */
+         fun min(`val`: Float, min: Float): Float {
+            return if (`val` < min) min else `val`
+        }
+    }
 }

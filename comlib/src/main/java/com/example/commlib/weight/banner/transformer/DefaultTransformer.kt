@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.commlib.weight.banner.transformer
 
-package com.example.commlib.weight.banner.transformer;
+import android.view.View
 
-import android.view.View;
-
-public class DefaultTransformer extends ABaseTransformer {
-
-	@Override
-	protected void onTransform(View view, float position) {
-	}
-
-	@Override
-	public boolean isPagingEnabled() {
-		return true;
-	}
-
+class DefaultTransformer : ABaseTransformer() {
+    override fun onTransform(view: View, position: Float) {}
+    override val isPagingEnabled: Boolean
+        get() = true
 }

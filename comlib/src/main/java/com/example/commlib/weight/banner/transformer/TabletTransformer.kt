@@ -13,42 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.commlib.weight.banner.transformer
 
-package com.example.commlib.weight.banner.transformer;
+import android.graphics.Camera
+import android.graphics.Matrix
+import android.view.View
 
-import android.graphics.Camera;
-import android.graphics.Matrix;
-import android.view.View;
+class TabletTransformer : ABaseTransformer() {
+    override fun onTransform(view: View, position: Float) {
+        val rotation = (if (position < 0) 30f else -30f) * Math.abs(position)
+        view.translationX =
+            getOffsetXForRotation(rotation, view.width, view.height)
+        view.pivotX = view.width * 0.5f
+        view.pivotY = 0f
+        view.rotationY = rotation
+    }
 
-public class TabletTransformer extends ABaseTransformer {
-
-	private static final Matrix OFFSET_MATRIX = new Matrix();
-	private static final Camera OFFSET_CAMERA = new Camera();
-	private static final float[] OFFSET_TEMP_FLOAT = new float[2];
-
-	@Override
-	protected void onTransform(View view, float position) {
-		final float rotation = (position < 0 ? 30f : -30f) * Math.abs(position);
-
-		view.setTranslationX(getOffsetXForRotation(rotation, view.getWidth(), view.getHeight()));
-		view.setPivotX(view.getWidth() * 0.5f);
-		view.setPivotY(0);
-		view.setRotationY(rotation);
-	}
-
-	protected static final float getOffsetXForRotation(float degrees, int width, int height) {
-		OFFSET_MATRIX.reset();
-		OFFSET_CAMERA.save();
-		OFFSET_CAMERA.rotateY(Math.abs(degrees));
-		OFFSET_CAMERA.getMatrix(OFFSET_MATRIX);
-		OFFSET_CAMERA.restore();
-
-		OFFSET_MATRIX.preTranslate(-width * 0.5f, -height * 0.5f);
-		OFFSET_MATRIX.postTranslate(width * 0.5f, height * 0.5f);
-		OFFSET_TEMP_FLOAT[0] = width;
-		OFFSET_TEMP_FLOAT[1] = height;
-		OFFSET_MATRIX.mapPoints(OFFSET_TEMP_FLOAT);
-		return (width - OFFSET_TEMP_FLOAT[0]) * (degrees > 0.0f ? 1.0f : -1.0f);
-	}
-
+    companion object {
+        private val OFFSET_MATRIX = Matrix()
+        private val OFFSET_CAMERA = Camera()
+        private val OFFSET_TEMP_FLOAT = FloatArray(2)
+        protected fun getOffsetXForRotation(degrees: Float, width: Int, height: Int): Float {
+            OFFSET_MATRIX.reset()
+            OFFSET_CAMERA.save()
+            OFFSET_CAMERA.rotateY(Math.abs(degrees))
+            OFFSET_CAMERA.getMatrix(OFFSET_MATRIX)
+            OFFSET_CAMERA.restore()
+            OFFSET_MATRIX.preTranslate(-width * 0.5f, -height * 0.5f)
+            OFFSET_MATRIX.postTranslate(width * 0.5f, height * 0.5f)
+            OFFSET_TEMP_FLOAT[0] = width.toFloat()
+            OFFSET_TEMP_FLOAT[1] = height.toFloat()
+            OFFSET_MATRIX.mapPoints(OFFSET_TEMP_FLOAT)
+            return (width - OFFSET_TEMP_FLOAT[0]) * if (degrees > 0.0f) 1.0f else -1.0f
+        }
+    }
 }

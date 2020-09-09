@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.commlib.weight.banner.transformer
 
-package com.example.commlib.weight.banner.transformer;
+import android.view.View
 
-import android.view.View;
-
-public class StackTransformer extends ABaseTransformer {
-
-	@Override
-	protected void onTransform(View view, float position) {
-		view.setTranslationX(position < 0 ? 0f : -view.getWidth() * position);
-	}
-
+class StackTransformer : ABaseTransformer() {
+    override fun onTransform(view: View, position: Float) {
+        view.translationX = if (position < 0) 0f else -view.width * position
+    }
 }

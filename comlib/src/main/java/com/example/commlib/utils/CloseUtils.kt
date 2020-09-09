@@ -1,33 +1,28 @@
-package com.example.commlib.utils;
+package com.example.commlib.utils
 
-import com.blankj.ALog;
-
-import java.io.Closeable;
+import com.blankj.ALog
+import java.io.Closeable
 
 /**
  * detail: 关闭 (IO 流 ) 工具类
  * @author Ttt
  */
-public final class CloseUtils {
-
-    private CloseUtils() {
-    }
-
+object CloseUtils {
     // 日志 TAG
-    private static final String TAG = CloseUtils.class.getSimpleName();
+    private val TAG = CloseUtils::class.java.simpleName
 
     /**
      * 关闭 IO
      * @param closeables Closeable[]
      */
-    public static void closeIO(final Closeable... closeables) {
-        if (closeables == null) return;
-        for (Closeable closeable : closeables) {
+    fun closeIO(vararg closeables: Closeable?) {
+        if (closeables == null) return
+        for (closeable in closeables) {
             if (closeable != null) {
                 try {
-                    closeable.close();
-                } catch (Exception e) {
-                    ALog.eTag(TAG, e, "closeIO");
+                    closeable.close()
+                } catch (e: Exception) {
+                    ALog.eTag(TAG, e, "closeIO")
                 }
             }
         }
@@ -37,13 +32,14 @@ public final class CloseUtils {
      * 安静关闭 IO
      * @param closeables Closeable[]
      */
-    public static void closeIOQuietly(final Closeable... closeables) {
-        if (closeables == null) return;
-        for (Closeable closeable : closeables) {
+    @JvmStatic
+    fun closeIOQuietly(vararg closeables: Closeable?) {
+        if (closeables == null) return
+        for (closeable in closeables) {
             if (closeable != null) {
                 try {
-                    closeable.close();
-                } catch (Exception ignore) {
+                    closeable.close()
+                } catch (ignore: Exception) {
                 }
             }
         }

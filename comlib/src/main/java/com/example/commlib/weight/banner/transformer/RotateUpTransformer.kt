@@ -13,29 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.commlib.weight.banner.transformer
 
-package com.example.commlib.weight.banner.transformer;
+import android.view.View
 
-import android.view.View;
+class RotateUpTransformer : ABaseTransformer() {
+    override fun onTransform(view: View, position: Float) {
+        val width = view.width.toFloat()
+        val rotation = ROT_MOD * position
+        view.pivotX = width * 0.5f
+        view.pivotY = 0f
+        view.translationX = 0f
+        view.rotation = rotation
+    }
 
-public class RotateUpTransformer extends ABaseTransformer {
+    protected override val isPagingEnabled: Boolean
+         get() = true
 
-	private static final float ROT_MOD = -15f;
-
-	@Override
-	protected void onTransform(View view, float position) {
-		final float width = view.getWidth();
-		final float rotation = ROT_MOD * position;
-
-		view.setPivotX(width * 0.5f);
-		view.setPivotY(0f);
-		view.setTranslationX(0f);
-		view.setRotation(rotation);
-	}
-	
-	@Override
-	protected boolean isPagingEnabled() {
-		return true;
-	}
-
+    companion object {
+        private const val ROT_MOD = -15f
+    }
 }

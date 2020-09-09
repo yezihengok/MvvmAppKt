@@ -13,31 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.commlib.weight.banner.transformer
 
-package com.example.commlib.weight.banner.transformer;
+import android.view.View
 
-import android.view.View;
+class FlipVerticalTransformer : ABaseTransformer() {
+    override fun onTransform(view: View, position: Float) {
+        val rotation = -180f * position
+        view.alpha = if (rotation > 90f || rotation < -90f) 0f else 1f
+        view.pivotX = view.width * 0.5f
+        view.pivotY = view.height * 0.5f
+        view.rotationX = rotation
+    }
 
-public class FlipVerticalTransformer extends ABaseTransformer {
-
-	@Override
-	protected void onTransform(View view, float position) {
-		final float rotation = -180f * position;
-
-		view.setAlpha(rotation > 90f || rotation < -90f ? 0f : 1f);
-		view.setPivotX(view.getWidth() * 0.5f);
-		view.setPivotY(view.getHeight() * 0.5f);
-		view.setRotationX(rotation);
-	}
-
-	@Override
-	protected void onPostTransform(View page, float position) {
-		super.onPostTransform(page, position);
-
-		if (position > -0.5f && position < 0.5f) {
-			page.setVisibility(View.VISIBLE);
-		} else {
-			page.setVisibility(View.INVISIBLE);
-		}
-	}
+    override fun onPostTransform(page: View, position: Float) {
+        super.onPostTransform(page, position)
+        if (position > -0.5f && position < 0.5f) {
+            page.visibility = View.VISIBLE
+        } else {
+            page.visibility = View.INVISIBLE
+        }
+    }
 }

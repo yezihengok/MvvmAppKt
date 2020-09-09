@@ -13,43 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.commlib.weight.banner.transformer
 
-package com.example.commlib.weight.banner.transformer;
+import android.view.View
 
-import android.view.View;
+class ZoomOutSlideTransformer : ABaseTransformer() {
+    override fun onTransform(view: View, position: Float) {
+        if (position >= -1 || position <= 1) {
+            // Modify the default slide transition to shrink the page as well
+            val height = view.height.toFloat()
+            val width = view.width.toFloat()
+            val scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position))
+            val vertMargin = height * (1 - scaleFactor) / 2
+            val horzMargin = width * (1 - scaleFactor) / 2
 
-public class ZoomOutSlideTransformer extends ABaseTransformer {
+            // Center vertically
+            view.pivotY = 0.5f * height
+            view.pivotX = 0.5f * width
+            if (position < 0) {
+                view.translationX = horzMargin - vertMargin / 2
+            } else {
+                view.translationX = -horzMargin + vertMargin / 2
+            }
 
-	private static final float MIN_SCALE = 0.85f;
-	private static final float MIN_ALPHA = 0.5f;
+            // Scale the page down (between MIN_SCALE and 1)
+            view.scaleX = scaleFactor
+            view.scaleY = scaleFactor
 
-	@Override
-	protected void onTransform(View view, float position) {
-		if (position >= -1 || position <= 1) {
-			// Modify the default slide transition to shrink the page as well
-			final float height = view.getHeight();
-			final float width = view.getWidth();
-			final float scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position));
-			final float vertMargin = height * (1 - scaleFactor) / 2;
-			final float horzMargin = width * (1 - scaleFactor) / 2;
+            // Fade the page relative to its size.
+            view.alpha =
+                MIN_ALPHA + (scaleFactor - MIN_SCALE) / (1 - MIN_SCALE) * (1 - MIN_ALPHA)
+        }
+    }
 
-			// Center vertically
-			view.setPivotY(0.5f * height);
-			view.setPivotX(0.5f * width);
-
-			if (position < 0) {
-				view.setTranslationX(horzMargin - vertMargin / 2);
-			} else {
-				view.setTranslationX(-horzMargin + vertMargin / 2);
-			}
-
-			// Scale the page down (between MIN_SCALE and 1)
-			view.setScaleX(scaleFactor);
-			view.setScaleY(scaleFactor);
-
-			// Fade the page relative to its size.
-			view.setAlpha(MIN_ALPHA + (scaleFactor - MIN_SCALE) / (1 - MIN_SCALE) * (1 - MIN_ALPHA));
-		}
-	}
-
+    companion object {
+        private const val MIN_SCALE = 0.85f
+        private const val MIN_ALPHA = 0.5f
+    }
 }

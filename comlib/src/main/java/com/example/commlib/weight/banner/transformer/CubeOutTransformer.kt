@@ -13,23 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.example.commlib.weight.banner.transformer
 
-package com.example.commlib.weight.banner.transformer;
+import android.view.View
 
-import android.view.View;
+class CubeOutTransformer : ABaseTransformer() {
+    override fun onTransform(view: View, position: Float) {
+        view.pivotX = if (position < 0f) view.width.toFloat() else 0f
+        view.pivotY = view.height * 0.5f
+        view.rotationY = 90f * position
+    }
 
-public class CubeOutTransformer extends ABaseTransformer {
-
-	@Override
-	protected void onTransform(View view, float position) {
-		view.setPivotX(position < 0f ? view.getWidth() : 0f);
-		view.setPivotY(view.getHeight() * 0.5f);
-		view.setRotationY(90f * position);
-	}
-
-	@Override
-	public boolean isPagingEnabled() {
-		return true;
-	}
-
+    override val isPagingEnabled: Boolean
+        get() = true
 }
