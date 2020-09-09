@@ -1,269 +1,240 @@
-package com.example.commlib.utils;
+package com.example.commlib.utils
 
-import android.content.res.ColorStateList;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.text.Html;
-import android.text.InputFilter;
-import android.text.TextPaint;
-import android.text.TextUtils;
-import android.text.method.HideReturnsTransformationMethod;
-import android.text.method.PasswordTransformationMethod;
-import android.text.method.TransformationMethod;
-import android.util.TypedValue;
-import android.view.View;
-import android.widget.TextView;
-
-import androidx.annotation.ColorInt;
-import androidx.annotation.RequiresApi;
-
-import com.blankj.ALog;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.content.res.ColorStateList
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
+import android.graphics.drawable.Drawable
+import android.os.Build
+import android.text.Html
+import android.text.InputFilter
+import android.text.InputFilter.LengthFilter
+import android.text.TextPaint
+import android.text.TextUtils.TruncateAt
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
+import android.text.method.TransformationMethod
+import android.util.TypedValue
+import android.view.View
+import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.RequiresApi
+import com.blankj.ALog
+import org.apache.commons.lang.StringUtils
+import java.util.*
 
 /**
  * detail: TextView 工具类
  * @author Ttt
  * <pre>
- *     获取字体信息 Paint.FontMetrics
- *     @see <a href="https://blog.csdn.net/superbigcupid/article/details/47153139"/>
- *     @see <a href="http://www.cnblogs.com/tianzhijiexian/p/4297664.html"/>
- *     <p></p>
- *     TextView 设置行间距、行高, 以及字间距
- *     @see <a href="https://blog.csdn.net/shanshan_1117/article/details/79564271"/>
- *     <p></p>
- *     android:includeFontPadding
- *     @see <a href="https://blog.csdn.net/bdmh/article/details/78110557"/>
- *     <p></p>
- *     设置文字水平间距: {@link TextViewUtils#setLetterSpacing(View, float)}
- *     android:letterSpacing
- *     设置文字行间距 ( 行高 ): {@link TextViewUtils#setLineSpacing(View, float)}、{@link TextViewUtils#setLineSpacingAndMultiplier(View, float, float)}
- *     android:lineSpacingExtra
- *     android:lineSpacingMultiplier
- *     <p></p>
- *     setPaintFlags:
- *     Paint.ANTI_ALIAS_FLAG 抗锯齿标志
- *     Paint.FILTER_BITMAP_FLAG 使位图过滤的位掩码标志
- *     Paint.DITHER_FLAG 使位图进行有利的抖动的位掩码标志
- *     Paint.UNDERLINE_TEXT_FLAG 下划线
- *     Paint.STRIKE_THRU_TEXT_FLAG 中划线
- *     Paint.FAKE_BOLD_TEXT_FLAG 加粗
- *     Paint.LINEAR_TEXT_FLAG 使文本平滑线性扩展的油漆标志
- *     Paint.SUBPIXEL_TEXT_FLAG 使文本的亚像素定位的绘图标志
- *     Paint.EMBEDDED_BITMAP_TEXT_FLAG 绘制文本时允许使用位图字体的绘图标志
- * </pre>
- */
-public final class TextViewUtils {
-
-    private TextViewUtils() {
-    }
-
+ * 获取字体信息 Paint.FontMetrics
+ * @see [](https://blog.csdn.net/superbigcupid/article/details/47153139)
+ *
+ * @see [](http://www.cnblogs.com/tianzhijiexian/p/4297664.html)
+ *
+ *
+ * TextView 设置行间距、行高, 以及字间距
+ *
+ * @see [](https://blog.csdn.net/shanshan_1117/article/details/79564271)
+ *
+ *
+ * android:includeFontPadding
+ *
+ * @see [](https://blog.csdn.net/bdmh/article/details/78110557)
+ *
+ *
+ * 设置文字水平间距: {@link TextViewUtils.setLetterSpacing
+</pre> */
+object TextViewUtils {
     // 日志 TAG
-    private static final String TAG = TextViewUtils.class.getSimpleName();
-
+    private val TAG = TextViewUtils::class.java.simpleName
     // =================
     // = 获取 TextView =
     // =================
-
     /**
      * 获取 TextView
-     * @param view {@link View}
+     * @param view [View]
      * @param <T>  泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T getTextView(final View view) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> getTextView(view: View?): T? {
         if (view != null) {
             try {
-                return (T) view;
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "getTextView");
+                return view as T
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getTextView")
             }
         }
-        return null;
+        return null
     }
-
     // ========
     // = Hint =
     // ========
-
     /**
      * 获取 Hint 文本
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
-     * @return {@link TextView#getHint()}
-     */
-    public static <T extends TextView> String getHint(final T textView) {
+     * @return [TextView.getHint]
+    </T> */
+    fun <T : TextView?> getHint(textView: T?): String? {
         if (textView != null) {
-            if (textView.getHint() != null) {
-                return textView.getHint().toString();
+            if (textView.hint != null) {
+                return textView.hint.toString()
             }
         }
-        return null;
+        return null
     }
 
     /**
      * 获取 Hint 文本
-     * @param view {@link TextView}
-     * @return {@link TextView#getHint()}
+     * @param view [TextView]
+     * @return [TextView.getHint]
      */
-    public static String getHint(final View view) {
-        return getHint(getTextView(view));
+    fun getHint(view: View?): String? {
+        return getHint(getTextView<TextView>(view))
     }
 
     /**
      * 获取多个 TextView Hint 文本
      * @param views View(TextView)[]
-     * @return {@link List<String>} 多个 TextView Hint 文本
+     * @return [<] 多个 TextView Hint 文本
      */
-    public static List<String> getHints(final View... views) {
-        List<String> lists = new ArrayList<>();
+    fun getHints(vararg views: View?): List<String> {
+        val lists: MutableList<String> = ArrayList()
         if (views != null) {
-            for (View view : views) {
-                String text = getHint(view);
+            for (view in views) {
+                val text = getHint(view)
                 if (text != null) {
-                    lists.add(text);
+                    lists.add(text)
                 }
             }
         }
-        return lists;
+        return lists
     }
 
     /**
      * 获取多个 TextView Hint 文本
      * @param views TextView[]
      * @param <T>   泛型
-     * @return {@link List<String>} 多个 TextView Hint 文本
-     */
-    public static <T extends TextView> List<String> getHints(final T... views) {
-        List<String> lists = new ArrayList<>();
+     * @return [<] 多个 TextView Hint 文本
+    </T> */
+    fun <T : TextView?> getHints(vararg views: T): List<String> {
+        val lists: MutableList<String> = ArrayList()
         if (views != null) {
-            for (T view : views) {
-                String text = getHint(view);
+            for (view in views) {
+                val text = getHint(view)
                 if (text != null) {
-                    lists.add(text);
+                    lists.add(text)
                 }
             }
         }
-        return lists;
+        return lists
     }
 
     /**
      * 设置 Hint 文本
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param text     Hint text
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setHint(final T textView, final CharSequence text) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setHint(textView: T?, text: CharSequence?): T? {
         if (textView != null) {
-            textView.setHint(text);
+            textView.hint = text
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置 Hint 文本
-     * @param view {@link TextView}
+     * @param view [TextView]
      * @param text Hint text
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setHint(final View view, final CharSequence text) {
-        setHint(getTextView(view), text);
-        return view;
+    fun setHint(view: View?, text: CharSequence?): View? {
+        setHint(getTextView<TextView>(view), text)
+        return view
     }
 
     /**
      * 获取 Hint 字体颜色
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
-     * @return {@link ColorStateList}
-     */
-    public static <T extends TextView> ColorStateList getHintTextColors(final T textView) {
-        if (textView != null) {
-            return textView.getHintTextColors();
-        }
-        return null;
+     * @return [ColorStateList]
+    </T> */
+    fun <T : TextView?> getHintTextColors(textView: T?): ColorStateList? {
+        return textView?.hintTextColors
     }
 
     /**
      * 获取 Hint 字体颜色
-     * @param view {@link TextView}
-     * @return {@link ColorStateList}
+     * @param view [TextView]
+     * @return [ColorStateList]
      */
-    public static ColorStateList getHintTextColors(final View view) {
-        return getHintTextColors(getTextView(view));
+    fun getHintTextColors(view: View?): ColorStateList? {
+        return getHintTextColors(getTextView<TextView>(view))
     }
 
     /**
      * 设置 Hint 字体颜色
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param color    R.color.id
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setHintTextColor(final T textView, @ColorInt final int color) {
-        if (textView != null) {
-            textView.setHintTextColor(color);
-        }
-        return textView;
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setHintTextColor(textView: T?, @ColorInt color: Int): T? {
+        textView?.setHintTextColor(color)
+        return textView
     }
 
     /**
      * 设置 Hint 字体颜色
-     * @param view  {@link TextView}
+     * @param view  [TextView]
      * @param color R.color.id
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setHintTextColor(final View view, @ColorInt final int color) {
-        setHintTextColor(getTextView(view), color);
-        return view;
+    fun setHintTextColor(view: View?, @ColorInt color: Int): View? {
+        setHintTextColor(getTextView<TextView>(view), color)
+        return view
     }
 
     /**
      * 设置 Hint 字体颜色
-     * @param textView {@link TextView}
-     * @param colors   {@link ColorStateList}
+     * @param textView [TextView]
+     * @param colors   [ColorStateList]
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setHintTextColor(final T textView, final ColorStateList colors) {
-        if (textView != null) {
-            textView.setHintTextColor(colors);
-        }
-        return textView;
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setHintTextColor(textView: T?, colors: ColorStateList?): T? {
+        textView?.setHintTextColor(colors)
+        return textView
     }
 
     /**
      * 设置 Hint 字体颜色
-     * @param view   {@link TextView}
-     * @param colors {@link ColorStateList}
-     * @return {@link View}
+     * @param view   [TextView]
+     * @param colors [ColorStateList]
+     * @return [View]
      */
-    public static View setHintTextColor(final View view, final ColorStateList colors) {
-        setHintTextColor(getTextView(view), colors);
-        return view;
+    fun setHintTextColor(view: View?, colors: ColorStateList?): View? {
+        setHintTextColor(getTextView<TextView>(view), colors)
+        return view
     }
 
     /**
      * 设置多个 TextView Hint 字体颜色
      * @param color R.color.id
      * @param views View(TextView)[]
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean setHintTextColors(@ColorInt final int color, final View... views) {
+    fun setHintTextColors(@ColorInt color: Int, vararg views: View?): Boolean {
         if (views != null) {
-            for (View view : views) {
-                setHintTextColor(view, color);
+            for (view in views) {
+                setHintTextColor(view, color)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     /**
@@ -271,153 +242,148 @@ public final class TextViewUtils {
      * @param color R.color.id
      * @param views TextView[]
      * @param <T>   泛型
-     * @return {@code true} success, {@code false} fail
-     */
-    public static <T extends TextView> boolean setHintTextColors(@ColorInt final int color, final T... views) {
+     * @return `true` success, `false` fail
+    </T> */
+    fun <T : TextView?> setHintTextColors(@ColorInt color: Int, vararg views: T): Boolean {
         if (views != null) {
-            for (T view : views) {
-                setHintTextColor(view, color);
+            for (view in views) {
+                setHintTextColor(view, color)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     /**
      * 设置多个 TextView Hint 字体颜色
-     * @param colors {@link ColorStateList}
+     * @param colors [ColorStateList]
      * @param views  View(TextView)[]
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean setHintTextColors(final ColorStateList colors, final View... views) {
+    fun setHintTextColors(colors: ColorStateList?, vararg views: View?): Boolean {
         if (views != null) {
-            for (View view : views) {
-                setHintTextColor(view, colors);
+            for (view in views) {
+                setHintTextColor(view, colors)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     /**
      * 设置多个 TextView Hint 字体颜色
-     * @param colors {@link ColorStateList}
+     * @param colors [ColorStateList]
      * @param views  TextView[]
      * @param <T>    泛型
-     * @return {@code true} success, {@code false} fail
-     */
-    public static <T extends TextView> boolean setHintTextColors(final ColorStateList colors, final T... views) {
+     * @return `true` success, `false` fail
+    </T> */
+    fun <T : TextView?> setHintTextColors(colors: ColorStateList?, vararg views: T): Boolean {
         if (views != null) {
-            for (T view : views) {
-                setHintTextColor(view, colors);
+            for (view in views) {
+                setHintTextColor(view, colors)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
-
     // ========
     // = Text =
     // ========
-
     /**
      * 获取文本
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
-     * @return {@link TextView#getText()}
-     */
-    public static <T extends TextView> String getText(final T textView) {
-        if (textView != null) {
-            return textView.getText().toString();
-        }
-        return null;
+     * @return [TextView.getText]
+    </T> */
+    fun <T : TextView?> getText(textView: T?): String? {
+        return textView?.text?.toString()
     }
 
     /**
      * 获取文本
-     * @param view {@link TextView}
-     * @return {@link TextView#getText()}
+     * @param view [TextView]
+     * @return [TextView.getText]
      */
-    public static String getText(final View view) {
-        return getText(getTextView(view));
+    fun getText(view: View?): String? {
+        return getText(getTextView<TextView>(view))
     }
 
     /**
      * 获取多个 TextView 文本
      * @param views View(TextView)[]
-     * @return {@link List<String>} 多个 TextView 文本
+     * @return [<] 多个 TextView 文本
      */
-    public static List<String> getTexts(final View... views) {
-        List<String> lists = new ArrayList<>();
+    fun getTexts(vararg views: View?): List<String> {
+        val lists: MutableList<String> = ArrayList()
         if (views != null) {
-            for (View view : views) {
-                String text = getText(view);
+            for (view in views) {
+                val text = getText(view)
                 if (text != null) {
-                    lists.add(text);
+                    lists.add(text)
                 }
             }
         }
-        return lists;
+        return lists
     }
 
     /**
      * 获取多个 TextView 文本
      * @param views TextView[]
      * @param <T>   泛型
-     * @return {@link List<String>} 多个 TextView 文本
-     */
-    public static <T extends TextView> List<String> getTexts(final T... views) {
-        List<String> lists = new ArrayList<>();
+     * @return [<] 多个 TextView 文本
+    </T> */
+    fun <T : TextView?> getTexts(vararg views: T): List<String> {
+        val lists: MutableList<String> = ArrayList()
         if (views != null) {
-            for (T view : views) {
-                String text = getText(view);
+            for (view in views) {
+                val text = getText(view)
                 if (text != null) {
-                    lists.add(text);
+                    lists.add(text)
                 }
             }
         }
-        return lists;
+        return lists
     }
 
     /**
      * 设置文本
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param text     TextView text
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setText(final T textView, final CharSequence text) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setText(textView: T?, text: CharSequence?): T? {
         if (textView != null) {
-            textView.setText(text);
+            textView.text = text
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置文本
-     * @param view {@link TextView}
+     * @param view [TextView]
      * @param text TextView text
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setText(final View view, final CharSequence text) {
-        setText(getTextView(view), text);
-        return view;
+    fun setText(view: View?, text: CharSequence?): View? {
+        setText(getTextView<TextView>(view), text)
+        return view
     }
 
     /**
      * 设置多个 TextView 文本
      * @param text  TextView text
      * @param views View(TextView)[]
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean setTexts(final CharSequence text, final View... views) {
+    fun setTexts(text: CharSequence?, vararg views: View?): Boolean {
         if (views != null) {
-            for (View view : views) {
-                setText(view, text);
+            for (view in views) {
+                setText(view, text)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     /**
@@ -425,104 +391,97 @@ public final class TextViewUtils {
      * @param text  TextView text
      * @param views TextView[]
      * @param <T>   泛型
-     * @return {@code true} success, {@code false} fail
-     */
-    public static <T extends TextView> boolean setTexts(final CharSequence text, final T... views) {
+     * @return `true` success, `false` fail
+    </T> */
+    fun <T : TextView?> setTexts(text: CharSequence?, vararg views: T): Boolean {
         if (views != null) {
-            for (T view : views) {
-                setText(view, text);
+            for (view in views) {
+                setText(view, text)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     /**
      * 获取字体颜色
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
-     * @return {@link ColorStateList}
-     */
-    public static <T extends TextView> ColorStateList getTextColors(final T textView) {
-        if (textView != null) {
-            return textView.getTextColors();
-        }
-        return null;
+     * @return [ColorStateList]
+    </T> */
+    fun <T : TextView?> getTextColors(textView: T?): ColorStateList? {
+        return textView?.textColors
     }
 
     /**
      * 获取字体颜色
-     * @param view {@link TextView}
-     * @return {@link ColorStateList}
+     * @param view [TextView]
+     * @return [ColorStateList]
      */
-    public static ColorStateList getTextColors(final View view) {
-        return getTextColors(getTextView(view));
+    fun getTextColors(view: View?): ColorStateList? {
+        return getTextColors(getTextView<TextView>(view))
     }
 
     /**
      * 设置字体颜色
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param color    R.color.id
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setTextColor(final T textView, @ColorInt final int color) {
-        if (textView != null) {
-            textView.setTextColor(color);
-        }
-        return textView;
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setTextColor(textView: T?, @ColorInt color: Int): T? {
+        textView?.setTextColor(color)
+        return textView
     }
 
     /**
      * 设置字体颜色
-     * @param view  {@link TextView}
+     * @param view  [TextView]
      * @param color R.color.id
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setTextColor(final View view, @ColorInt final int color) {
-        setTextColor(getTextView(view), color);
-        return view;
+    fun setTextColor(view: View?, @ColorInt color: Int): View? {
+        setTextColor(getTextView<TextView>(view), color)
+        return view
     }
 
     /**
      * 设置字体颜色
-     * @param textView {@link TextView}
-     * @param colors   {@link ColorStateList}
+     * @param textView [TextView]
+     * @param colors   [ColorStateList]
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setTextColor(final T textView, final ColorStateList colors) {
-        if (textView != null) {
-            textView.setTextColor(colors);
-        }
-        return textView;
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setTextColor(textView: T?, colors: ColorStateList?): T? {
+        textView?.setTextColor(colors)
+        return textView
     }
 
     /**
      * 设置字体颜色
-     * @param view   {@link TextView}
-     * @param colors {@link ColorStateList}
-     * @return {@link View}
+     * @param view   [TextView]
+     * @param colors [ColorStateList]
+     * @return [View]
      */
-    public static View setTextColor(final View view, final ColorStateList colors) {
-        setTextColor(getTextView(view), colors);
-        return view;
+    fun setTextColor(view: View?, colors: ColorStateList?): View? {
+        setTextColor(getTextView<TextView>(view), colors)
+        return view
     }
 
     /**
      * 设置多个 TextView 字体颜色
      * @param color R.color.id
      * @param views View(TextView)[]
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean setTextColors(@ColorInt final int color, final View... views) {
+    fun setTextColors(@ColorInt color: Int, vararg views: View?): Boolean {
         if (views != null) {
-            for (View view : views) {
-                setTextColor(view, color);
+            for (view in views) {
+                setTextColor(view, color)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     /**
@@ -530,98 +489,96 @@ public final class TextViewUtils {
      * @param color R.color.id
      * @param views TextView[]
      * @param <T>   泛型
-     * @return {@code true} success, {@code false} fail
-     */
-    public static <T extends TextView> boolean setTextColors(@ColorInt final int color, final T... views) {
+     * @return `true` success, `false` fail
+    </T> */
+    fun <T : TextView?> setTextColors(@ColorInt color: Int, vararg views: T): Boolean {
         if (views != null) {
-            for (T view : views) {
-                setTextColor(view, color);
+            for (view in views) {
+                setTextColor(view, color)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     /**
      * 设置多个 TextView 字体颜色
-     * @param colors {@link ColorStateList}
+     * @param colors [ColorStateList]
      * @param views  View(TextView)[]
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean setTextColors(final ColorStateList colors, final View... views) {
+    fun setTextColors(colors: ColorStateList?, vararg views: View?): Boolean {
         if (views != null) {
-            for (View view : views) {
-                setTextColor(view, colors);
+            for (view in views) {
+                setTextColor(view, colors)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     /**
      * 设置多个 TextView 字体颜色
-     * @param colors {@link ColorStateList}
+     * @param colors [ColorStateList]
      * @param views  TextView[]
      * @param <T>    泛型
-     * @return {@code true} success, {@code false} fail
-     */
-    public static <T extends TextView> boolean setTextColors(final ColorStateList colors, final T... views) {
+     * @return `true` success, `false` fail
+    </T> */
+    fun <T : TextView?> setTextColors(colors: ColorStateList?, vararg views: T): Boolean {
         if (views != null) {
-            for (T view : views) {
-                setTextColor(view, colors);
+            for (view in views) {
+                setTextColor(view, colors)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
-
     // ========
     // = Html =
     // ========
-
     /**
      * 设置 Html 内容
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param content  Html content
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setHtmlText(final T textView, final String content) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setHtmlText(textView: T?, content: String?): T? {
         if (textView != null && content != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                textView.setText(Html.fromHtml(content, Html.FROM_HTML_MODE_LEGACY));
+                textView.text = Html.fromHtml(content, Html.FROM_HTML_MODE_LEGACY)
             } else {
-                textView.setText(Html.fromHtml(content));
+                textView.text = Html.fromHtml(content)
             }
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置 Html 内容
-     * @param view    {@link TextView}
+     * @param view    [TextView]
      * @param content Html content
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setHtmlText(final View view, final String content) {
-        setHtmlText(getTextView(view), content);
-        return view;
+    fun setHtmlText(view: View?, content: String?): View? {
+        setHtmlText(getTextView<TextView>(view), content)
+        return view
     }
 
     /**
      * 设置多个 TextView Html 内容
      * @param content Html content
      * @param views   View(TextView)[]
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean setHtmlTexts(final String content, final View... views) {
+    fun setHtmlTexts(content: String?, vararg views: View?): Boolean {
         if (content != null && views != null) {
-            for (View view : views) {
-                setHtmlText(view, content);
+            for (view in views) {
+                setHtmlText(view, content)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     /**
@@ -629,225 +586,210 @@ public final class TextViewUtils {
      * @param content Html content
      * @param views   TextView[]
      * @param <T>     泛型
-     * @return {@code true} success, {@code false} fail
-     */
-    public static <T extends TextView> boolean setHtmlTexts(final String content, final T... views) {
+     * @return `true` success, `false` fail
+    </T> */
+    fun <T : TextView?> setHtmlTexts(content: String?, vararg views: T): Boolean {
         if (content != null && views != null) {
-            for (T view : views) {
-                setHtmlText(view, content);
+            for (view in views) {
+                setHtmlText(view, content)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
-
     // ============
     // = 字体相关 =
     // ============
-
     /**
      * 获取字体
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
-     * @return {@link Typeface}
-     */
-    public static <T extends TextView> Typeface getTypeface(final T textView) {
-        if (textView != null) {
-            return textView.getTypeface();
-        }
-        return null;
+     * @return [Typeface]
+    </T> */
+    fun <T : TextView?> getTypeface(textView: T?): Typeface? {
+        return textView?.typeface
     }
 
     /**
      * 设置字体
-     * @param textView {@link TextView}
-     * @param typeface {@link Typeface} 字体样式
+     * @param textView [TextView]
+     * @param typeface [Typeface] 字体样式
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setTypeface(final T textView, final Typeface typeface) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setTypeface(textView: T?, typeface: Typeface?): T? {
         if (textView != null && typeface != null) {
-            textView.setTypeface(typeface);
+            textView.typeface = typeface
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置字体
-     * @param textView {@link TextView}
-     * @param typeface {@link Typeface} 字体样式
+     * @param textView [TextView]
+     * @param typeface [Typeface] 字体样式
      * @param style    样式
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setTypeface(final T textView, final Typeface typeface, final int style) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setTypeface(textView: T?, typeface: Typeface?, style: Int): T? {
         if (textView != null && typeface != null) {
-            textView.setTypeface(typeface, style);
+            textView.setTypeface(typeface, style)
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置字体
-     * @param view     {@link TextView}
-     * @param typeface {@link Typeface} 字体样式
-     * @return {@link View}
+     * @param view     [TextView]
+     * @param typeface [Typeface] 字体样式
+     * @return [View]
      */
-    public static View setTypeface(final View view, final Typeface typeface) {
-        setTypeface(getTextView(view), typeface);
-        return view;
+    fun setTypeface(view: View?, typeface: Typeface?): View? {
+        setTypeface(getTextView<TextView>(view), typeface)
+        return view
     }
 
     /**
      * 设置字体
-     * @param view     {@link TextView}
-     * @param typeface {@link Typeface} 字体样式
+     * @param view     [TextView]
+     * @param typeface [Typeface] 字体样式
      * @param style    样式
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setTypeface(final View view, final Typeface typeface, final int style) {
-        setTypeface(getTextView(view), typeface, style);
-        return view;
+    fun setTypeface(view: View?, typeface: Typeface?, style: Int): View? {
+        setTypeface(getTextView<TextView>(view), typeface, style)
+        return view
     }
-
     // =
-
     /**
      * 设置字体大小 - px 像素
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param size     字体大小
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setTextSizeByPx(final T textView, final float size) {
-        return setTextSize(textView, TypedValue.COMPLEX_UNIT_PX, size);
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setTextSizeByPx(textView: T, size: Float): T? {
+        return setTextSize(textView, TypedValue.COMPLEX_UNIT_PX, size)
     }
 
     /**
      * 设置字体大小 - sp 缩放像素
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param size     字体大小
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setTextSizeBySp(final T textView, final float size) {
-        return setTextSize(textView, TypedValue.COMPLEX_UNIT_SP, size);
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setTextSizeBySp(textView: T, size: Float): T? {
+        return setTextSize(textView, TypedValue.COMPLEX_UNIT_SP, size)
     }
 
     /**
      * 设置字体大小 - dp 与设备无关的像素
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param size     字体大小
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setTextSizeByDp(final T textView, final float size) {
-        return setTextSize(textView, TypedValue.COMPLEX_UNIT_DIP, size);
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setTextSizeByDp(textView: T, size: Float): T? {
+        return setTextSize(textView, TypedValue.COMPLEX_UNIT_DIP, size)
     }
 
     /**
      * 设置字体大小 - inches 英寸
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param size     字体大小
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setTextSizeByIn(final T textView, final float size) {
-        return setTextSize(textView, TypedValue.COMPLEX_UNIT_IN, size);
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setTextSizeByIn(textView: T, size: Float): T? {
+        return setTextSize(textView, TypedValue.COMPLEX_UNIT_IN, size)
     }
-
     // =
-
     /**
      * 设置字体大小 - px 像素
-     * @param view {@link TextView}
+     * @param view [TextView]
      * @param size 字体大小
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setTextSizeByPx(final View view, final float size) {
-        setTextSize(getTextView(view), TypedValue.COMPLEX_UNIT_PX, size);
-        return view;
+    fun setTextSizeByPx(view: View?, size: Float): View? {
+        setTextSize(getTextView<TextView>(view), TypedValue.COMPLEX_UNIT_PX, size)
+        return view
     }
 
     /**
      * 设置字体大小 - sp 缩放像素
-     * @param view {@link TextView}
+     * @param view [TextView]
      * @param size 字体大小
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setTextSizeBySp(final View view, final float size) {
-        setTextSize(getTextView(view), TypedValue.COMPLEX_UNIT_SP, size);
-        return view;
+    fun setTextSizeBySp(view: View?, size: Float): View? {
+        setTextSize(getTextView<TextView>(view), TypedValue.COMPLEX_UNIT_SP, size)
+        return view
     }
 
     /**
      * 设置字体大小 - dp 与设备无关的像素
-     * @param view {@link TextView}
+     * @param view [TextView]
      * @param size 字体大小
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setTextSizeByDp(final View view, final float size) {
-        setTextSize(getTextView(view), TypedValue.COMPLEX_UNIT_DIP, size);
-        return view;
+    fun setTextSizeByDp(view: View?, size: Float): View? {
+        setTextSize(getTextView<TextView>(view), TypedValue.COMPLEX_UNIT_DIP, size)
+        return view
     }
 
     /**
      * 设置字体大小 - inches 英寸
-     * @param view {@link TextView}
+     * @param view [TextView]
      * @param size 字体大小
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setTextSizeByIn(final View view, final float size) {
-        setTextSize(getTextView(view), TypedValue.COMPLEX_UNIT_IN, size);
-        return view;
+    fun setTextSizeByIn(view: View?, size: Float): View? {
+        setTextSize(getTextView<TextView>(view), TypedValue.COMPLEX_UNIT_IN, size)
+        return view
     }
-
     // =
-
     /**
      * 设置字体大小
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param unit     字体参数类型
      * @param size     字体大小
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setTextSize(final T textView, final int unit, final float size) {
-        if (textView != null) {
-            textView.setTextSize(unit, size);
-        }
-        return textView;
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setTextSize(textView: T?, unit: Int, size: Float): T? {
+        textView?.setTextSize(unit, size)
+        return textView
     }
 
     /**
      * 设置字体大小
-     * @param view {@link TextView}
+     * @param view [TextView]
      * @param unit 字体参数类型
      * @param size 字体大小
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setTextSize(final View view, final int unit, final float size) {
-        setTextSize(getTextView(view), unit, size);
-        return view;
+    fun setTextSize(view: View?, unit: Int, size: Float): View? {
+        setTextSize(getTextView<TextView>(view), unit, size)
+        return view
     }
-
     // =
-
     /**
      * 设置多个 TextView 字体大小
      * @param views View(TextView)[]
      * @param unit  参数类型
      * @param size  字体大小
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean setTextSizes(final View[] views, final int unit, final float size) {
+    fun setTextSizes(views: Array<View?>?, unit: Int, size: Float): Boolean {
         if (views != null) {
-            for (View view : views) {
-                setTextSize(view, unit, size);
+            for (view in views) {
+                setTextSize(view, unit, size)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     /**
@@ -856,1336 +798,1220 @@ public final class TextViewUtils {
      * @param unit  参数类型
      * @param size  字体大小
      * @param <T>   泛型
-     * @return {@code true} success, {@code false} fail
-     */
-    public static <T extends TextView> boolean setTextSizes(final T[] views, final int unit, final float size) {
+     * @return `true` success, `false` fail
+    </T> */
+    fun <T : TextView?> setTextSizes(views: Array<T>?, unit: Int, size: Float): Boolean {
         if (views != null) {
-            for (T view : views) {
-                setTextSize(view, unit, size);
+            for (view in views) {
+                setTextSize(view, unit, size)
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
-
     // =
-
     /**
      * 获取 TextView 字体大小 - px
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 字体大小 (px)
-     */
-    public static <T extends TextView> float getTextSize(final T textView) {
-        if (textView != null) {
-            return textView.getTextSize();
-        }
-        return -1f;
+    </T> */
+    fun <T : TextView?> getTextSize(textView: T?): Float {
+        return textView?.textSize ?: -1f
     }
 
     /**
      * 获取 TextView 字体大小 - px
-     * @param view {@link TextView}
+     * @param view [TextView]
      * @return 字体大小 (px)
      */
-    public static float getTextSize(final View view) {
-        return getTextSize(getTextView(view));
+    fun getTextSize(view: View?): Float {
+        return getTextSize(getTextView<TextView>(view))
     }
-
     // =
-
     /**
      * 清空 flags
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T clearFlags(final T textView) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> clearFlags(textView: T?): T? {
         if (textView != null) {
-            textView.setPaintFlags(0);
+            textView.paintFlags = 0
         }
-        return textView;
+        return textView
     }
 
     /**
      * 清空 flags
-     * @param view {@link TextView}
-     * @return {@link View}
+     * @param view [TextView]
+     * @return [View]
      */
-    public static View clearFlags(final View view) {
-        clearFlags(getTextView(view));
-        return view;
+    fun clearFlags(view: View?): View? {
+        clearFlags(getTextView<TextView>(view))
+        return view
     }
-
     // =
-
     /**
      * 设置 TextView 是否加粗
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setBold(final T textView) {
-        return setBold(textView, true);
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setBold(textView: T): T? {
+        return setBold(textView, true)
     }
 
     /**
      * 设置 TextView 是否加粗
-     * @param textView {@link TextView}
-     * @param isBold   {@code true} yes, {@code false} no
+     * @param textView [TextView]
+     * @param isBold   `true` yes, `false` no
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setBold(final T textView, final boolean isBold) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setBold(textView: T?, isBold: Boolean): T? {
         if (textView != null) {
-            textView.setTypeface(Typeface.defaultFromStyle(isBold ? Typeface.BOLD : Typeface.NORMAL));
+            textView.typeface =
+                Typeface.defaultFromStyle(if (isBold) Typeface.BOLD else Typeface.NORMAL)
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置 TextView 是否加粗
-     * @param textView {@link TextView}
-     * @param typeface {@link Typeface} 字体样式
-     * @param isBold   {@code true} yes, {@code false} no
+     * @param textView [TextView]
+     * @param typeface [Typeface] 字体样式
+     * @param isBold   `true` yes, `false` no
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setBold(final T textView, final Typeface typeface, final boolean isBold) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setBold(textView: T?, typeface: Typeface?, isBold: Boolean): T? {
         if (textView != null && typeface != null) {
-            textView.setTypeface(typeface, isBold ? Typeface.BOLD : Typeface.NORMAL);
+            textView.setTypeface(typeface, if (isBold) Typeface.BOLD else Typeface.NORMAL)
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置 TextView 是否加粗
-     * @param view {@link TextView}
-     * @return {@link View}
+     * @param view [TextView]
+     * @return [View]
      */
-    public static View setBold(final View view) {
-        setBold(getTextView(view), true);
-        return view;
+    fun setBold(view: View?): View? {
+        setBold(getTextView<TextView>(view), true)
+        return view
     }
 
     /**
      * 设置 TextView 是否加粗
-     * @param view   {@link TextView}
-     * @param isBold {@code true} yes, {@code false} no
-     * @return {@link View}
+     * @param view   [TextView]
+     * @param isBold `true` yes, `false` no
+     * @return [View]
      */
-    public static View setBold(final View view, final boolean isBold) {
-        setBold(getTextView(view), isBold);
-        return view;
+    fun setBold(view: View?, isBold: Boolean): View? {
+        setBold(getTextView<TextView>(view), isBold)
+        return view
     }
 
     /**
      * 设置 TextView 是否加粗
-     * @param view     {@link TextView}
-     * @param typeface {@link Typeface} 字体样式
-     * @param isBold   {@code true} yes, {@code false} no
-     * @return {@link View}
+     * @param view     [TextView]
+     * @param typeface [Typeface] 字体样式
+     * @param isBold   `true` yes, `false` no
+     * @return [View]
      */
-    public static View setBold(final View view, final Typeface typeface, final boolean isBold) {
-        setBold(getTextView(view), typeface, isBold);
-        return view;
+    fun setBold(view: View?, typeface: Typeface?, isBold: Boolean): View? {
+        setBold(getTextView<TextView>(view), typeface, isBold)
+        return view
     }
-
     // =
-
     /**
      * 设置下划线
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setUnderlineText(final T textView) {
-        return setUnderlineText(textView, true);
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setUnderlineText(textView: T): T? {
+        return setUnderlineText(textView, true)
     }
 
     /**
      * 设置下划线并加清晰
-     * @param textView    {@link TextView}
+     * @param textView    [TextView]
      * @param isAntiAlias 是否消除锯齿
      * @param <T>         泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setUnderlineText(final T textView, final boolean isAntiAlias) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setUnderlineText(textView: T?, isAntiAlias: Boolean): T? {
         if (textView != null) {
-            textView.setPaintFlags(textView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+            textView.paintFlags = textView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
             if (isAntiAlias) {
-                textView.setPaintFlags(textView.getPaintFlags() | Paint.ANTI_ALIAS_FLAG);
+                textView.paintFlags = textView.paintFlags or Paint.ANTI_ALIAS_FLAG
             }
         }
-        return textView;
+        return textView
     }
-
     // =
-
     /**
      * 设置下划线
-     * @param view {@link TextView}
-     * @return {@link View}
+     * @param view [TextView]
+     * @return [View]
      */
-    public static View setUnderlineText(final View view) {
-        setUnderlineText(getTextView(view), true);
-        return view;
+    fun setUnderlineText(view: View?): View? {
+        setUnderlineText(getTextView<TextView>(view), true)
+        return view
     }
 
     /**
      * 设置下划线并加清晰
-     * @param view        {@link TextView}
+     * @param view        [TextView]
      * @param isAntiAlias 是否消除锯齿
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setUnderlineText(final View view, final boolean isAntiAlias) {
-        setUnderlineText(getTextView(view), isAntiAlias);
-        return view;
+    fun setUnderlineText(view: View?, isAntiAlias: Boolean): View? {
+        setUnderlineText(getTextView<TextView>(view), isAntiAlias)
+        return view
     }
-
     // =
-
     /**
      * 设置中划线
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setStrikeThruText(final T textView) {
-        return setStrikeThruText(textView, true);
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setStrikeThruText(textView: T): T? {
+        return setStrikeThruText(textView, true)
     }
 
     /**
      * 设置中划线并加清晰
-     * @param textView    {@link TextView}
+     * @param textView    [TextView]
      * @param isAntiAlias 是否消除锯齿
      * @param <T>         泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setStrikeThruText(final T textView, final boolean isAntiAlias) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setStrikeThruText(textView: T?, isAntiAlias: Boolean): T? {
         if (textView != null) {
-            textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            textView.paintFlags = textView.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             if (isAntiAlias) {
-                textView.setPaintFlags(textView.getPaintFlags() | Paint.ANTI_ALIAS_FLAG);
+                textView.paintFlags = textView.paintFlags or Paint.ANTI_ALIAS_FLAG
             }
         }
-        return textView;
+        return textView
     }
-
     // =
-
     /**
      * 设置中划线
-     * @param view {@link TextView}
-     * @return {@link View}
+     * @param view [TextView]
+     * @return [View]
      */
-    public static View setStrikeThruText(final View view) {
-        setStrikeThruText(getTextView(view), true);
-        return view;
+    fun setStrikeThruText(view: View?): View? {
+        setStrikeThruText(getTextView<TextView>(view), true)
+        return view
     }
 
     /**
      * 设置中划线并加清晰
-     * @param view        {@link TextView}
+     * @param view        [TextView]
      * @param isAntiAlias 是否消除锯齿
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setStrikeThruText(final View view, final boolean isAntiAlias) {
-        setStrikeThruText(getTextView(view), isAntiAlias);
-        return view;
+    fun setStrikeThruText(view: View?, isAntiAlias: Boolean): View? {
+        setStrikeThruText(getTextView<TextView>(view), isAntiAlias)
+        return view
     }
-
     // =
-
     /**
      * 获取文字水平间距
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 文字水平间距
-     */
+    </T> */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public static <T extends TextView> float getLetterSpacing(final T textView) {
-        if (textView != null) {
-            return textView.getLetterSpacing();
-        }
-        return 0f;
+    fun <T : TextView?> getLetterSpacing(textView: T?): Float {
+        return textView?.letterSpacing ?: 0f
     }
 
     /**
      * 设置文字水平间距
      * <pre>
-     *     android:letterSpacing
-     * </pre>
-     * @param textView      {@link TextView}
+     * android:letterSpacing
+    </pre> *
+     * @param textView      [TextView]
      * @param letterSpacing 文字水平间距
      * @param <T>           泛型
-     * @return {@link TextView}
-     */
+     * @return [TextView]
+    </T> */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public static <T extends TextView> T setLetterSpacing(final T textView, final float letterSpacing) {
+    fun <T : TextView?> setLetterSpacing(textView: T?, letterSpacing: Float): T? {
         if (textView != null) {
-            textView.setLetterSpacing(letterSpacing);
+            textView.letterSpacing = letterSpacing
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置文字水平间距
-     * @param view          {@link TextView}
+     * @param view          [TextView]
      * @param letterSpacing 文字水平间距
-     * @return {@link View}
+     * @return [View]
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public static View setLetterSpacing(final View view, final float letterSpacing) {
-        setLetterSpacing(getTextView(view), letterSpacing);
-        return view;
+    fun setLetterSpacing(view: View?, letterSpacing: Float): View? {
+        setLetterSpacing(getTextView<TextView>(view), letterSpacing)
+        return view
     }
-
     // =
-
     /**
      * 获取文字行间距 ( 行高 )
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 文字行间距 ( 行高 )
-     */
+    </T> */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public static <T extends TextView> float getLineSpacingExtra(final T textView) {
-        if (textView != null) {
-            return textView.getLineSpacingExtra();
-        }
-        return 0f;
+    fun <T : TextView?> getLineSpacingExtra(textView: T?): Float {
+        return textView?.lineSpacingExtra ?: 0f
     }
 
     /**
      * 获取文字行间距倍数
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 文字行间距倍数
-     */
+    </T> */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public static <T extends TextView> float getLineSpacingMultiplier(final T textView) {
-        if (textView != null) {
-            return textView.getLineSpacingMultiplier();
-        }
-        return 0f;
+    fun <T : TextView?> getLineSpacingMultiplier(textView: T?): Float {
+        return textView?.lineSpacingMultiplier ?: 0f
     }
 
     /**
      * 设置文字行间距 ( 行高 )
-     * @param textView    {@link TextView}
+     * @param textView    [TextView]
      * @param lineSpacing 文字行间距 ( 行高 ), android:lineSpacingExtra
      * @param <T>         泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setLineSpacing(final T textView, final float lineSpacing) {
-        return setLineSpacingAndMultiplier(textView, lineSpacing, 1.0f);
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setLineSpacing(textView: T, lineSpacing: Float): T? {
+        return setLineSpacingAndMultiplier(textView, lineSpacing, 1.0f)
     }
 
     /**
      * 设置文字行间距 ( 行高 )、行间距倍数
-     * @param textView    {@link TextView}
+     * @param textView    [TextView]
      * @param lineSpacing 文字行间距 ( 行高 ), android:lineSpacingExtra
      * @param multiplier  行间距倍数, android:lineSpacingMultiplier
      * @param <T>         泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setLineSpacingAndMultiplier(final T textView, final float lineSpacing, final float multiplier) {
-        if (textView != null) {
-            textView.setLineSpacing(lineSpacing, multiplier);
-        }
-        return textView;
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setLineSpacingAndMultiplier(
+        textView: T?,
+        lineSpacing: Float,
+        multiplier: Float
+    ): T? {
+        textView?.setLineSpacing(lineSpacing, multiplier)
+        return textView
     }
-
     // =
-
     /**
      * 设置文字行间距 ( 行高 )
-     * @param view        {@link TextView}
+     * @param view        [TextView]
      * @param lineSpacing 文字行间距 ( 行高 ), android:lineSpacingExtra
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setLineSpacing(final View view, final float lineSpacing) {
-        setLineSpacingAndMultiplier(getTextView(view), lineSpacing, 1.0f);
-        return view;
+    fun setLineSpacing(view: View?, lineSpacing: Float): View? {
+        setLineSpacingAndMultiplier(getTextView<TextView>(view), lineSpacing, 1.0f)
+        return view
     }
 
     /**
      * 设置文字行间距 ( 行高 )、行间距倍数
-     * @param view        {@link TextView}
+     * @param view        [TextView]
      * @param lineSpacing 文字行间距 ( 行高 ), android:lineSpacingExtra
      * @param multiplier  行间距倍数, android:lineSpacingMultiplier
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setLineSpacingAndMultiplier(final View view, final float lineSpacing, final float multiplier) {
-        setLineSpacingAndMultiplier(getTextView(view), lineSpacing, multiplier);
-        return view;
+    fun setLineSpacingAndMultiplier(view: View?, lineSpacing: Float, multiplier: Float): View? {
+        setLineSpacingAndMultiplier(getTextView<TextView>(view), lineSpacing, multiplier)
+        return view
     }
-
     // =
-
     /**
      * 获取字体水平方向的缩放
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 字体水平方向的缩放
-     */
-    public static <T extends TextView> float getTextScaleX(final T textView) {
-        if (textView != null) {
-            return textView.getTextScaleX();
-        }
-        return 0f;
+    </T> */
+    fun <T : TextView?> getTextScaleX(textView: T?): Float {
+        return textView?.textScaleX ?: 0f
     }
 
     /**
      * 设置字体水平方向的缩放
      * <pre>
-     *     android:textScaleX
-     * </pre>
-     * @param textView {@link TextView}
+     * android:textScaleX
+    </pre> *
+     * @param textView [TextView]
      * @param size     缩放比例
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setTextScaleX(final T textView, final float size) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setTextScaleX(textView: T?, size: Float): T? {
         if (textView != null) {
-            textView.setTextScaleX(size);
+            textView.textScaleX = size
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置字体水平方向的缩放
-     * @param view {@link TextView}
+     * @param view [TextView]
      * @param size 缩放比例
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setTextScaleX(final View view, final float size) {
-        setTextScaleX(getTextView(view), size);
-        return view;
+    fun setTextScaleX(view: View?, size: Float): View? {
+        setTextScaleX(getTextView<TextView>(view), size)
+        return view
     }
-
     // =
-
     /**
      * 是否保留字体留白间隙区域
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
-     * @return {@code true} yes, {@code false} no
-     */
+     * @return `true` yes, `false` no
+    </T> */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public static <T extends TextView> boolean getIncludeFontPadding(final T textView) {
-        if (textView != null) {
-            return textView.getIncludeFontPadding();
-        }
-        return false;
+    fun <T : TextView?> getIncludeFontPadding(textView: T?): Boolean {
+        return textView?.includeFontPadding ?: false
     }
 
     /**
      * 设置是否保留字体留白间隙区域
      * <pre>
-     *     android:includeFontPadding
-     * </pre>
-     * @param textView   {@link TextView}
+     * android:includeFontPadding
+    </pre> *
+     * @param textView   [TextView]
      * @param includepad 是否保留字体留白间隙区域
      * @param <T>        泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setIncludeFontPadding(final T textView, final boolean includepad) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setIncludeFontPadding(textView: T?, includepad: Boolean): T? {
         if (textView != null) {
-            textView.setIncludeFontPadding(includepad);
+            textView.includeFontPadding = includepad
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置是否保留字体留白间隙区域
-     * @param view       {@link TextView}
+     * @param view       [TextView]
      * @param includepad 是否保留字体留白间隙区域
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setIncludeFontPadding(final View view, final boolean includepad) {
-        setIncludeFontPadding(getTextView(view), includepad);
-        return view;
+    fun setIncludeFontPadding(view: View?, includepad: Boolean): View? {
+        setIncludeFontPadding(getTextView<TextView>(view), includepad)
+        return view
     }
-
     // =
-
     /**
      * 获取输入类型
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 输入类型
-     */
-    public static <T extends TextView> int getInputType(final T textView) {
-        if (textView != null) {
-            return textView.getInputType();
-        }
-        return 0;
+    </T> */
+    fun <T : TextView?> getInputType(textView: T?): Int {
+        return textView?.inputType ?: 0
     }
 
     /**
      * 设置输入类型
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param type     类型
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setInputType(final T textView, final int type) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setInputType(textView: T?, type: Int): T? {
         if (textView != null) {
-            textView.setInputType(type);
+            textView.inputType = type
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置输入类型
-     * @param view {@link TextView}
+     * @param view [TextView]
      * @param type 类型
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setInputType(final View view, final int type) {
-        setInputType(getTextView(view), type);
-        return view;
+    fun setInputType(view: View?, type: Int): View? {
+        setInputType(getTextView<TextView>(view), type)
+        return view
     }
-
     // =
-
     /**
      * 获取软键盘右下角按钮类型
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 软键盘右下角按钮类型
-     */
-    public static <T extends TextView> int getImeOptions(final T textView) {
-        if (textView != null) {
-            return textView.getImeOptions();
-        }
-        return 0;
+    </T> */
+    fun <T : TextView?> getImeOptions(textView: T?): Int {
+        return textView?.imeOptions ?: 0
     }
 
     /**
      * 设置软键盘右下角按钮类型
-     * @param textView   {@link TextView}
+     * @param textView   [TextView]
      * @param imeOptions 软键盘按钮类型
      * @param <T>        泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setImeOptions(final T textView, final int imeOptions) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setImeOptions(textView: T?, imeOptions: Int): T? {
         if (textView != null) {
-            textView.setImeOptions(imeOptions);
+            textView.imeOptions = imeOptions
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置软键盘右下角按钮类型
-     * @param view       {@link TextView}
+     * @param view       [TextView]
      * @param imeOptions 软键盘按钮类型
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setImeOptions(final View view, final int imeOptions) {
-        setImeOptions(getTextView(view), imeOptions);
-        return view;
+    fun setImeOptions(view: View?, imeOptions: Int): View? {
+        setImeOptions(getTextView<TextView>(view), imeOptions)
+        return view
     }
-
     // =
-
     /**
      * 设置行数
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param lines    行数
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setLines(final T textView, final int lines) {
-        if (textView != null) {
-            textView.setLines(lines);
-        }
-        return textView;
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setLines(textView: T?, lines: Int): T? {
+        textView?.setLines(lines)
+        return textView
     }
 
     /**
      * 设置行数
-     * @param view  {@link TextView}
+     * @param view  [TextView]
      * @param lines 行数
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setLines(final View view, final int lines) {
-        setLines(getTextView(view), lines);
-        return view;
+    fun setLines(view: View?, lines: Int): View? {
+        setLines(getTextView<TextView>(view), lines)
+        return view
     }
-
     // =
-
     /**
      * 获取最大行数
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 最大行数
-     */
+    </T> */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public static <T extends TextView> int getMaxLines(final T textView) {
-        if (textView != null) {
-            return textView.getMaxLines();
-        }
-        return 0;
+    fun <T : TextView?> getMaxLines(textView: T?): Int {
+        return textView?.maxLines ?: 0
     }
 
     /**
      * 设置最大行数
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param maxLines 最大行数
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setMaxLines(final T textView, final int maxLines) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setMaxLines(textView: T?, maxLines: Int): T? {
         if (textView != null) {
-            textView.setMaxLines(maxLines);
+            textView.maxLines = maxLines
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置最大行数
-     * @param view     {@link TextView}
+     * @param view     [TextView]
      * @param maxLines 最大行数
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setMaxLines(final View view, final int maxLines) {
-        setMaxLines(getTextView(view), maxLines);
-        return view;
+    fun setMaxLines(view: View?, maxLines: Int): View? {
+        setMaxLines(getTextView<TextView>(view), maxLines)
+        return view
     }
-
     // =
-
     /**
      * 获取最小行数
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 最小行数
-     */
+    </T> */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public static <T extends TextView> int getMinLines(final T textView) {
-        if (textView != null) {
-            return textView.getMinLines();
-        }
-        return 0;
+    fun <T : TextView?> getMinLines(textView: T?): Int {
+        return textView?.minLines ?: 0
     }
 
     /**
      * 设置最小行数
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param minLines 最小行数
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setMinLines(final T textView, final int minLines) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setMinLines(textView: T?, minLines: Int): T? {
         if (textView != null && minLines > 0) {
-            textView.setMinLines(minLines);
+            textView.minLines = minLines
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置最小行数
-     * @param view     {@link TextView}
+     * @param view     [TextView]
      * @param minLines 最小行数
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setMinLines(final View view, final int minLines) {
-        setMinLines(getTextView(view), minLines);
-        return view;
+    fun setMinLines(view: View?, minLines: Int): View? {
+        setMinLines(getTextView<TextView>(view), minLines)
+        return view
     }
-
     // =
-
     /**
      * 获取最大字符宽度限制
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 最大字符宽度限制
-     */
+    </T> */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public static <T extends TextView> int getMaxEms(final T textView) {
-        if (textView != null) {
-            return textView.getMaxEms();
-        }
-        return 0;
+    fun <T : TextView?> getMaxEms(textView: T?): Int {
+        return textView?.maxEms ?: 0
     }
 
     /**
      * 设置最大字符宽度限制
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param maxEms   最大字符
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setMaxEms(final T textView, final int maxEms) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setMaxEms(textView: T?, maxEms: Int): T? {
         if (textView != null && maxEms > 0) {
-            textView.setMaxEms(maxEms);
+            textView.maxEms = maxEms
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置最大字符宽度限制
-     * @param view   {@link TextView}
+     * @param view   [TextView]
      * @param maxEms 最大字符
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setMaxEms(final View view, final int maxEms) {
-        setMaxEms(getTextView(view), maxEms);
-        return view;
+    fun setMaxEms(view: View?, maxEms: Int): View? {
+        setMaxEms(getTextView<TextView>(view), maxEms)
+        return view
     }
-
     // =
-
     /**
      * 获取最小字符宽度限制
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 最小字符宽度限制
-     */
+    </T> */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public static <T extends TextView> int getMinEms(final T textView) {
-        if (textView != null) {
-            return textView.getMinEms();
-        }
-        return 0;
+    fun <T : TextView?> getMinEms(textView: T?): Int {
+        return textView?.minEms ?: 0
     }
 
     /**
      * 设置最小字符宽度限制
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param minEms   最小字符
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setMinEms(final T textView, final int minEms) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setMinEms(textView: T?, minEms: Int): T? {
         if (textView != null && minEms > 0) {
-            textView.setMinEms(minEms);
+            textView.minEms = minEms
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置最小字符宽度限制
-     * @param view   {@link TextView}
+     * @param view   [TextView]
      * @param minEms 最小字符
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setMinEms(final View view, final int minEms) {
-        setMinEms(getTextView(view), minEms);
-        return view;
+    fun setMinEms(view: View?, minEms: Int): View? {
+        setMinEms(getTextView<TextView>(view), minEms)
+        return view
     }
-
     // =
-
     /**
      * 设置指定字符宽度
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param ems      字符
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setEms(final T textView, final int ems) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setEms(textView: T?, ems: Int): T? {
         if (textView != null && ems > 0) {
-            textView.setEms(ems);
+            textView.setEms(ems)
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置指定字符宽度
-     * @param view {@link TextView}
+     * @param view [TextView]
      * @param ems  字符
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setEms(final View view, final int ems) {
-        setEms(getTextView(view), ems);
-        return view;
+    fun setEms(view: View?, ems: Int): View? {
+        setEms(getTextView<TextView>(view), ems)
+        return view
     }
-
     // =
-
     /**
      * 设置长度限制
-     * @param textView  {@link TextView}
+     * @param textView  [TextView]
      * @param maxLength 长度限制
      * @param <T>       泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setMaxLength(final T textView, final int maxLength) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setMaxLength(textView: T?, maxLength: Int): T? {
         if (textView != null && maxLength > 0) {
             // 设置最大长度限制
-            InputFilter[] filters = {new InputFilter.LengthFilter(maxLength)};
-            textView.setFilters(filters);
+            val filters = arrayOf<InputFilter>(LengthFilter(maxLength))
+            textView.filters = filters
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置长度限制
-     * @param view      {@link TextView}
+     * @param view      [TextView]
      * @param maxLength 长度限制
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setMaxLength(final View view, final int maxLength) {
-        setMaxLength(getTextView(view), maxLength);
-        return view;
+    fun setMaxLength(view: View?, maxLength: Int): View? {
+        setMaxLength(getTextView<TextView>(view), maxLength)
+        return view
     }
-
     // =
-
     /**
      * 设置长度限制, 并且设置内容
-     * @param textView  {@link TextView}
+     * @param textView  [TextView]
      * @param content   文本内容
      * @param maxLength 长度限制
      * @param <T>       泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setMaxLengthAndText(final T textView, final CharSequence content, final int maxLength) {
-        setText(setMaxLength(textView, maxLength), content);
-        return textView;
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setMaxLengthAndText(
+        textView: T,
+        content: CharSequence?,
+        maxLength: Int
+    ): T {
+        setText(setMaxLength(textView, maxLength), content)
+        return textView
     }
 
     /**
      * 设置长度限制, 并且设置内容
-     * @param view      {@link TextView}
+     * @param view      [TextView]
      * @param content   文本内容
      * @param maxLength 长度限制
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setMaxLengthAndText(final View view, final CharSequence content, final int maxLength) {
-        return setText(setMaxLength(view, maxLength), content);
+    fun setMaxLengthAndText(view: View?, content: CharSequence?, maxLength: Int): View? {
+        return setText(setMaxLength(view, maxLength), content)
     }
-
     // =
-
     /**
      * 获取 Ellipsize 效果
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return Ellipsize 效果
-     */
-    public static <T extends TextView> TextUtils.TruncateAt getEllipsize(final T textView) {
-        if (textView != null) {
-            return textView.getEllipsize();
-        }
-        return null;
+    </T> */
+    fun <T : TextView?> getEllipsize(textView: T?): TruncateAt? {
+        return textView?.ellipsize
     }
 
     /**
      * 设置 Ellipsize 效果
-     * @param textView {@link TextView}
-     * @param where    {@link TextUtils.TruncateAt}
+     * @param textView [TextView]
+     * @param where    [TextUtils.TruncateAt]
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setEllipsize(final T textView, final TextUtils.TruncateAt where) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setEllipsize(textView: T?, where: TruncateAt?): T? {
         if (textView != null) {
-            textView.setEllipsize(where);
+            textView.ellipsize = where
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置 Ellipsize 效果
-     * @param view  {@link TextView}
-     * @param where {@link TextUtils.TruncateAt}
-     * @return {@link View}
+     * @param view  [TextView]
+     * @param where [TextUtils.TruncateAt]
+     * @return [View]
      */
-    public static View setEllipsize(final View view, final TextUtils.TruncateAt where) {
-        setEllipsize(getTextView(view), where);
-        return view;
+    fun setEllipsize(view: View?, where: TruncateAt?): View? {
+        setEllipsize(getTextView<TextView>(view), where)
+        return view
     }
-
     // =
-
     /**
      * 获取自动识别文本类型
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 自动识别文本类型
-     */
-    public static <T extends TextView> int getAutoLinkMask(final T textView) {
-        if (textView != null) {
-            return textView.getAutoLinkMask();
-        }
-        return 0;
+    </T> */
+    fun <T : TextView?> getAutoLinkMask(textView: T?): Int {
+        return textView?.autoLinkMask ?: 0
     }
 
     /**
      * 设置自动识别文本链接
-     * @param textView {@link TextView}
-     * @param mask     {@link android.text.util.Linkify}
+     * @param textView [TextView]
+     * @param mask     [android.text.util.Linkify]
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setAutoLinkMask(final T textView, final int mask) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setAutoLinkMask(textView: T?, mask: Int): T? {
         if (textView != null) {
-            textView.setAutoLinkMask(mask);
+            textView.autoLinkMask = mask
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置自动识别文本链接
-     * @param view {@link TextView}
-     * @param mask {@link android.text.util.Linkify}
-     * @return {@link View}
+     * @param view [TextView]
+     * @param mask [android.text.util.Linkify]
+     * @return [View]
      */
-    public static View setAutoLinkMask(final View view, final int mask) {
-        setAutoLinkMask(getTextView(view), mask);
-        return view;
+    fun setAutoLinkMask(view: View?, mask: Int): View? {
+        setAutoLinkMask(getTextView<TextView>(view), mask)
+        return view
     }
-
     // =
-
     /**
      * 设置文本全为大写
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param allCaps  是否全部大写
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setAllCaps(final T textView, final boolean allCaps) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setAllCaps(textView: T?, allCaps: Boolean): T? {
         if (textView != null) {
-            textView.setAllCaps(allCaps);
+            textView.isAllCaps = allCaps
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置文本全为大写
-     * @param view    {@link TextView}
+     * @param view    [TextView]
      * @param allCaps 是否全部大写
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setAllCaps(final View view, final boolean allCaps) {
-        setAllCaps(getTextView(view), allCaps);
-        return view;
+    fun setAllCaps(view: View?, allCaps: Boolean): View? {
+        setAllCaps(getTextView<TextView>(view), allCaps)
+        return view
     }
-
     // =
-
     /**
      * 获取 Gravity
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
-     * @return {@link android.view.Gravity}
-     */
-    public static <T extends TextView> int getGravity(final T textView) {
-        if (textView != null) {
-            return textView.getGravity();
-        }
-        return 0;
+     * @return [android.view.Gravity]
+    </T> */
+    fun <T : TextView?> getGravity(textView: T?): Int {
+        return textView?.gravity ?: 0
     }
 
     /**
      * 设置 Gravity
-     * @param textView {@link TextView}
-     * @param gravity  {@link android.view.Gravity}
+     * @param textView [TextView]
+     * @param gravity  [android.view.Gravity]
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setGravity(final T textView, final int gravity) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setGravity(textView: T?, gravity: Int): T? {
         if (textView != null) {
-            textView.setGravity(gravity);
+            textView.gravity = gravity
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置 Gravity
-     * @param view    {@link TextView}
-     * @param gravity {@link android.view.Gravity}
-     * @return {@link View}
+     * @param view    [TextView]
+     * @param gravity [android.view.Gravity]
+     * @return [View]
      */
-    public static View setGravity(final View view, final int gravity) {
-        setGravity(getTextView(view), gravity);
-        return view;
+    fun setGravity(view: View?, gravity: Int): View? {
+        setGravity(getTextView<TextView>(view), gravity)
+        return view
     }
-
     // =
-
     /**
      * 获取文本视图显示转换
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
-     * @return {@link TransformationMethod}
-     */
-    public static <T extends TextView> TransformationMethod getTransformationMethod(final T textView) {
-        if (textView != null) {
-            return textView.getTransformationMethod();
-        }
-        return null;
+     * @return [TransformationMethod]
+    </T> */
+    fun <T : TextView?> getTransformationMethod(textView: T?): TransformationMethod? {
+        return textView?.transformationMethod
     }
 
     /**
      * 设置文本视图显示转换
-     * @param textView {@link TextView}
-     * @param method   {@link TransformationMethod}
+     * @param textView [TextView]
+     * @param method   [TransformationMethod]
      * @param <T>      泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setTransformationMethod(final T textView, final TransformationMethod method) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setTransformationMethod(textView: T?, method: TransformationMethod?): T? {
         if (textView != null) {
-            textView.setTransformationMethod(method);
+            textView.transformationMethod = method
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置文本视图显示转换
-     * @param view   {@link TextView}
-     * @param method {@link TransformationMethod}
-     * @return {@link View}
+     * @param view   [TextView]
+     * @param method [TransformationMethod]
+     * @return [View]
      */
-    public static View setTransformationMethod(final View view, final TransformationMethod method) {
-        setTransformationMethod(getTextView(view), method);
-        return view;
+    fun setTransformationMethod(view: View?, method: TransformationMethod?): View? {
+        setTransformationMethod(getTextView<TextView>(view), method)
+        return view
     }
-
     // =
-
     /**
      * 设置密码文本视图显示转换
-     * @param textView          {@link TextView}
+     * @param textView          [TextView]
      * @param isDisplayPassword 是否显示密码
      * @param <T>               泛型
-     * @return {@link TextView}
-     */
-    public static <T extends TextView> T setTransformationMethod(final T textView, final boolean isDisplayPassword) {
+     * @return [TextView]
+    </T> */
+    fun <T : TextView?> setTransformationMethod(textView: T?, isDisplayPassword: Boolean): T? {
         if (textView != null) {
-            textView.setTransformationMethod(isDisplayPassword ?
-                    HideReturnsTransformationMethod.getInstance() : PasswordTransformationMethod.getInstance());
+            textView.transformationMethod =
+                if (isDisplayPassword) HideReturnsTransformationMethod.getInstance() else PasswordTransformationMethod.getInstance()
         }
-        return textView;
+        return textView
     }
 
     /**
      * 设置密码文本视图显示转换
-     * @param view              {@link TextView}
+     * @param view              [TextView]
      * @param isDisplayPassword 是否显示密码
-     * @return {@link View}
+     * @return [View]
      */
-    public static View setTransformationMethod(final View view, final boolean isDisplayPassword) {
-        setTransformationMethod(getTextView(view), isDisplayPassword);
-        return view;
+    fun setTransformationMethod(view: View?, isDisplayPassword: Boolean): View? {
+        setTransformationMethod(getTextView<TextView>(view), isDisplayPassword)
+        return view
     }
-
     // =
-
     /**
      * 获取 TextView Paint
-     * @param view {@link TextView}
+     * @param view [TextView]
      * @param <T>  泛型
-     * @return {@link Paint}
-     */
-    public static <T extends TextView> Paint getPaint(final View view) {
-        return getPaint(getTextView(view));
+     * @return [Paint]
+    </T> */
+    fun <T : TextView?> getPaint(view: View?): Paint? {
+        return getPaint(getTextView<TextView>(view))
     }
 
     /**
      * 获取 TextView Paint
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
-     * @return {@link Paint}
-     */
-    public static <T extends TextView> Paint getPaint(final T textView) {
-        if (textView != null) {
-            return textView.getPaint();
-        }
-        return null;
+     * @return [Paint]
+    </T> */
+    fun <T : TextView?> getPaint(textView: T?): Paint? {
+        return textView?.paint
     }
 
     /**
      * 获取字体高度
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 字体高度
-     */
-    public static <T extends TextView> int getTextHeight(final T textView) {
-        return getTextHeight(getPaint(textView));
+    </T> */
+    fun <T : TextView?> getTextHeight(textView: T): Int {
+        return getTextHeight(getPaint(textView))
     }
 
     /**
      * 获取字体高度
-     * @param paint {@link TextView#getPaint()}
+     * @param paint [TextView.getPaint]
      * @return 字体高度
      */
-    public static int getTextHeight(final Paint paint) {
+    fun getTextHeight(paint: Paint?): Int {
         if (paint != null) {
             // 获取字体高度
-            Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+            val fontMetrics = paint.fontMetricsInt
             // 计算内容高度
-            int textHeight = (int) Math.ceil((fontMetrics.descent - fontMetrics.ascent));
             // 返回字体高度
-            return textHeight;
+            return Math.ceil((fontMetrics.descent - fontMetrics.ascent).toDouble())
+                .toInt()
         }
-        return -1;
+        return -1
     }
-
     // =
-
     /**
      * 获取字体顶部偏移高度
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 字体顶部偏移高度
-     */
-    public static <T extends TextView> int getTextTopOffsetHeight(final T textView) {
-        return getTextTopOffsetHeight(getPaint(textView));
+    </T> */
+    fun <T : TextView?> getTextTopOffsetHeight(textView: T): Int {
+        return getTextTopOffsetHeight(getPaint(textView))
     }
 
     /**
      * 获取字体顶部偏移高度
-     * @param paint {@link TextView#getPaint()}
+     * @param paint [TextView.getPaint]
      * @return 字体顶部偏移高度
      */
-    public static int getTextTopOffsetHeight(final Paint paint) {
+    fun getTextTopOffsetHeight(paint: Paint?): Int {
         if (paint != null) {
             // 获取字体高度
-            Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+            val fontMetrics = paint.fontMetricsInt
             // 计算字体偏差 ( 顶部偏差 )
-            int baseLine = (int) Math.ceil(Math.abs(fontMetrics.top) - Math.abs(fontMetrics.ascent));
             // 返回顶部偏差
-            return baseLine;
+            return Math.ceil(
+                Math.abs(fontMetrics.top) - Math.abs(fontMetrics.ascent).toDouble()
+            ).toInt()
         }
-        return -1;
+        return -1
     }
-
     // =
-
     /**
      * 计算字体宽度
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param text     待测量文本
      * @param <T>      泛型
      * @return 字体宽度
-     */
-    public static <T extends TextView> float getTextWidth(final T textView, final String text) {
-        return getTextWidth(getPaint(textView), text);
+    </T> */
+    fun <T : TextView?> getTextWidth(textView: T, text: String?): Float {
+        return getTextWidth(getPaint(textView), text)
     }
 
     /**
      * 计算字体宽度
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return 字体宽度
-     */
-    public static <T extends TextView> float getTextWidth(final T textView) {
-        return getTextWidth(getPaint(textView), getText(textView));
+    </T> */
+    fun <T : TextView?> getTextWidth(textView: T): Float {
+        return getTextWidth(getPaint(textView), getText(textView))
     }
 
     /**
      * 计算字体宽度
-     * @param paint {@link TextView#getPaint()}
+     * @param paint [TextView.getPaint]
      * @param text  待测量文本
      * @return 字体宽度
      */
-    public static float getTextWidth(final Paint paint, final String text) {
-        if (paint != null && text != null) {
-            return paint.measureText(text);
-        }
-        return -1f;
+    fun getTextWidth(paint: Paint?, text: String?): Float {
+        return if (paint != null && text != null) {
+            paint.measureText(text)
+        } else -1f
     }
-
     // =
-
     /**
      * 计算字体宽度
-     * @param view  {@link TextView}
+     * @param view  [TextView]
      * @param text  待测量文本
      * @param start 开始位置
      * @param end   结束位置
      * @return 字体宽度
      */
-    public static float getTextWidth(final View view, final String text, final int start, final int end) {
-        return getTextWidth(getPaint(view), text, start, end);
+    fun getTextWidth(view: View?, text: String?, start: Int, end: Int): Float {
+        return getTextWidth(getPaint<TextView>(view), text, start, end)
     }
 
     /**
      * 计算字体宽度
-     * @param view  {@link TextView}
+     * @param view  [TextView]
      * @param text  待测量文本
      * @param start 开始位置
      * @param end   结束位置
      * @return 字体宽度
      */
-    public static float getTextWidth(final View view, final CharSequence text, final int start, final int end) {
-        return getTextWidth(getPaint(view), text, start, end);
+    fun getTextWidth(view: View?, text: CharSequence?, start: Int, end: Int): Float {
+        return getTextWidth(getPaint<TextView>(view), text, start, end)
     }
 
     /**
      * 计算字体宽度
-     * @param view  {@link TextView}
+     * @param view  [TextView]
      * @param text  待测量文本
      * @param start 开始位置
      * @param end   结束位置
      * @return 字体宽度
      */
-    public static float getTextWidth(final View view, final char[] text, final int start, final int end) {
-        return getTextWidth(getPaint(view), text, start, end);
+    fun getTextWidth(view: View?, text: CharArray?, start: Int, end: Int): Float {
+        return getTextWidth(getPaint<TextView>(view), text, start, end)
     }
-
     // =
-
     /**
      * 计算字体宽度
-     * @param paint {@link TextView#getPaint()}
+     * @param paint [TextView.getPaint]
      * @param text  待测量文本
      * @param start 开始位置
      * @param end   结束位置
      * @return 字体宽度
      */
-    public static float getTextWidth(final Paint paint, final String text, final int start, final int end) {
+    fun getTextWidth(paint: Paint?, text: String?, start: Int, end: Int): Float {
         if (paint != null && text != null) {
             try {
-                return paint.measureText(text, start, end);
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "getTextWidth");
+                return paint.measureText(text, start, end)
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getTextWidth")
             }
         }
-        return -1f;
+        return -1f
     }
 
     /**
      * 计算字体宽度
-     * @param paint {@link TextView#getPaint()}
+     * @param paint [TextView.getPaint]
      * @param text  待测量文本
      * @param start 开始位置
      * @param end   结束位置
      * @return 字体宽度
      */
-    public static float getTextWidth(final Paint paint, final CharSequence text, final int start, final int end) {
+    fun getTextWidth(paint: Paint?, text: CharSequence?, start: Int, end: Int): Float {
         if (paint != null && text != null) {
             try {
-                return paint.measureText(text, start, end);
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "getTextWidth");
+                return paint.measureText(text, start, end)
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getTextWidth")
             }
         }
-        return -1f;
+        return -1f
     }
 
     /**
      * 计算字体宽度
-     * @param paint {@link TextView#getPaint()}
+     * @param paint [TextView.getPaint]
      * @param text  待测量文本
      * @param start 开始位置
      * @param end   结束位置
      * @return 字体宽度
      */
-    public static float getTextWidth(final Paint paint, final char[] text, final int start, final int end) {
+    fun getTextWidth(paint: Paint?, text: CharArray?, start: Int, end: Int): Float {
         if (paint != null && text != null) {
             try {
-                return paint.measureText(text, start, end);
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "getTextWidth");
+                return paint.measureText(text, start, end)
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getTextWidth")
             }
         }
-        return -1f;
+        return -1f
     }
-
     // =
-
     /**
      * 获取画布中间居中位置
-     * @param targetRect {@link Rect} 目标坐标
-     * @param paint      {@link TextView#getPaint()}
+     * @param targetRect [Rect] 目标坐标
+     * @param paint      [TextView.getPaint]
      * @return 画布 Y 轴居中位置
      */
-    public static int getCenterRectY(final Rect targetRect, final Paint paint) {
+    fun getCenterRectY(targetRect: Rect?, paint: Paint?): Int {
         if (targetRect != null && paint != null) {
             // 获取字体高度
-            Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+            val fontMetrics = paint.fontMetricsInt
             // 获取底部 Y 轴居中位置
-            return targetRect.top + (targetRect.bottom - targetRect.top) / 2 - (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.top;
+            return targetRect.top + (targetRect.bottom - targetRect.top) / 2 - (fontMetrics.bottom - fontMetrics.top) / 2 - fontMetrics.top
             // canvas.drawText(testString, targetRect.centerX(), baseline, paint);
         }
-        return -1;
+        return -1
     }
-
-    /**
-     * 通过需要的高度, 计算字体大小
-     * @param height 需要的高度
-     * @return 字体大小
-     */
-    public static float reckonTextSizeByHeight(final int height) {
-        return reckonTextSizeByHeight(height, 40.0f);
-    }
-
     /**
      * 通过需要的高度, 计算字体大小
      * @param height    需要的高度
      * @param startSize 字体开始预估大小
      * @return 字体大小
      */
-    public static float reckonTextSizeByHeight(final int height, final float startSize) {
-        if (height <= 0 || startSize <= 0) return 0f;
-        Paint paint = new Paint();
+    /**
+     * 通过需要的高度, 计算字体大小
+     * @param height 需要的高度
+     * @return 字体大小
+     */
+    @JvmOverloads
+    fun reckonTextSizeByHeight(height: Int, startSize: Float = 40.0f): Float {
+        if (height <= 0 || startSize <= 0) return 0f
+        val paint = Paint()
         // 默认字体大小
-        float textSize = startSize;
+        var textSize = startSize
         // 计算内容高度
-        int calcTextHeight;
+        var calcTextHeight: Int
         // 特殊处理 ( 防止死循环记录控制 )
-        int state = 0; // 1 -=, 2 +=
+        var state = 0 // 1 -=, 2 +=
         // 循环计算
         while (true) {
             // 设置画笔大小
-            paint.setTextSize(textSize);
+            paint.textSize = textSize
             // 获取字体高度
-            Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+            val fontMetrics = paint.fontMetricsInt
             // 计算内容高度
-            calcTextHeight = (int) Math.ceil((fontMetrics.descent - fontMetrics.ascent));
+            calcTextHeight = Math.ceil((fontMetrics.descent - fontMetrics.ascent).toDouble())
+                .toInt()
             // 符合条件则直接返回
             if (calcTextHeight == height) {
-                return textSize;
+                return textSize
             } else if (calcTextHeight > height) { // 如果计算的字体高度大于
-                textSize -= 0.5f;
+                textSize -= 0.5f
                 if (state == 2) {
                     if (calcTextHeight < height) {
-                        return textSize;
+                        return textSize
                     }
                 }
-                state = 1;
+                state = 1
             } else {
-                textSize += 0.5f;
+                textSize += 0.5f
                 if (state == 1) {
                     if (calcTextHeight < height) {
-                        return textSize;
+                        return textSize
                     }
                 }
-                state = 2;
+                state = 2
             }
         }
     }
-
     /**
      * 通过需要的宽度, 计算字体大小 ( 最接近该宽度的字体大小 )
      * @param width    需要的宽度
-     * @param textView {@link TextView}
-     * @return 字体大小
-     */
-    public static float reckonTextSizeByWidth(final int width, final TextView textView) {
-        return reckonTextSizeByWidth(width, textView, TextViewUtils.getText(textView));
-    }
-
-    /**
-     * 通过需要的宽度, 计算字体大小 ( 最接近该宽度的字体大小 )
-     * @param width    需要的宽度
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param content  待计算内容
      * @return 字体大小
      */
-    public static float reckonTextSizeByWidth(final int width, final TextView textView, final String content) {
-        if (textView == null || content == null) return 0f;
-        return reckonTextSizeByWidth(width, TextViewUtils.getPaint(textView),
-                TextViewUtils.getTextSize(textView), content);
+    /**
+     * 通过需要的宽度, 计算字体大小 ( 最接近该宽度的字体大小 )
+     * @param width    需要的宽度
+     * @param textView [TextView]
+     * @return 字体大小
+     */
+    @JvmOverloads
+    fun reckonTextSizeByWidth(
+        width: Int,
+        textView: TextView?,
+        content: String? = getText<TextView?>(textView)
+    ): Float {
+        return if (textView == null || content == null) 0f else reckonTextSizeByWidth(
+            width, getPaint(textView),
+            getTextSize(textView), content
+        )
     }
 
     /**
@@ -2195,358 +2021,368 @@ public final class TextViewUtils {
      * @param content     待计算内容
      * @return 字体大小
      */
-    public static float reckonTextSizeByWidth(final int width, final float curTextSize, final String content) {
-        if (width <= 0 || curTextSize <= 0 || content == null) return 0f;
-        return reckonTextSizeByWidth(width, new Paint(), curTextSize, content);
+    fun reckonTextSizeByWidth(width: Int, curTextSize: Float, content: String?): Float {
+        return if (width <= 0 || curTextSize <= 0 || content == null) 0f else reckonTextSizeByWidth(
+            width,
+            Paint(),
+            curTextSize,
+            content
+        )
     }
 
     /**
      * 通过需要的宽度, 计算字体大小 ( 最接近该宽度的字体大小 )
      * @param width       需要的宽度
-     * @param paint       {@link Paint}
+     * @param paint       [Paint]
      * @param curTextSize 当前字体大小
      * @param content     待计算内容
      * @return 字体大小
      */
-    public static float reckonTextSizeByWidth(final int width, final Paint paint,
-                                              final float curTextSize, final String content) {
-        if (paint == null || width <= 0 || curTextSize <= 0 || content == null) return 0f;
-        if (StringUtils.isEmpty(content)) return curTextSize;
+    fun reckonTextSizeByWidth(
+        width: Int, paint: Paint?,
+        curTextSize: Float, content: String?
+    ): Float {
+        if (paint == null || width <= 0 || curTextSize <= 0 || content == null) return 0f
+        if (StringUtils.isEmpty(content)) return curTextSize
         // 初始化内容画笔, 计算宽高
-        TextPaint tvPaint = new TextPaint(paint);
+        val tvPaint = TextPaint(paint)
         // 字体大小
-        float textSize = curTextSize;
+        var textSize = curTextSize
         // 字体内容宽度
-        int calcTextWidth;
+        var calcTextWidth: Int
         // 特殊处理 ( 防止死循环记录控制 )
-        int state = 0; // 1 -=, 2 +=
+        var state = 0 // 1 -=, 2 +=
         // 循环计算
         while (true) {
             // 设置画笔大小
-            tvPaint.setTextSize(textSize);
+            tvPaint.textSize = textSize
             // 获取字体内容宽度
-            calcTextWidth = (int) tvPaint.measureText(content);
+            calcTextWidth = tvPaint.measureText(content).toInt()
             // 符合条件则直接返回
             if (calcTextWidth == width) {
-                return textSize;
+                return textSize
             } else if (calcTextWidth > width) { // 如果计算的字体宽度大于
-                textSize -= 0.5f;
+                textSize -= 0.5f
                 if (state == 2) {
                     if (calcTextWidth < width) {
-                        return textSize;
+                        return textSize
                     }
                 }
-                state = 1;
+                state = 1
             } else {
-                textSize += 0.5f;
+                textSize += 0.5f
                 if (state == 1) {
                     if (calcTextWidth < width) {
-                        return textSize;
+                        return textSize
                     }
                 }
-                state = 2;
+                state = 2
             }
         }
     }
-
     // =
-
     /**
      * 计算第几位超过宽度
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param text     待测量文本
      * @param width    指定的宽度
      * @param <T>      泛型
      * @return -1 表示没超过, 其他值表示对应的索引位置
-     */
-    public static <T extends TextView> int calcTextWidth(final T textView, final String text, final float width) {
-        return calcTextWidth(getPaint(textView), text, width);
+    </T> */
+    fun <T : TextView?> calcTextWidth(textView: T, text: String?, width: Float): Int {
+        return calcTextWidth(getPaint(textView), text, width)
     }
 
     /**
      * 计算第几位超过宽度
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param width    指定的宽度
      * @param <T>      泛型
      * @return -1 表示没超过, 其他值表示对应的索引位置
-     */
-    public static <T extends TextView> int calcTextWidth(final T textView, final float width) {
-        return calcTextWidth(getPaint(textView), getText(textView), width);
+    </T> */
+    fun <T : TextView?> calcTextWidth(textView: T, width: Float): Int {
+        return calcTextWidth(getPaint(textView), getText(textView), width)
     }
 
     /**
      * 计算第几位超过宽度
-     * @param paint {@link TextView#getPaint()}
+     * @param paint [TextView.getPaint]
      * @param text  文本内容
      * @param width 指定的宽度
      * @return -1 表示没超过, 其他值表示对应的索引位置
      */
-    public static int calcTextWidth(final Paint paint, final String text, final float width) {
+    fun calcTextWidth(paint: Paint?, text: String?, width: Float): Int {
         if (paint != null && text != null && width > 0) {
             // 全部文本宽度
-            float allTextWidth = getTextWidth(paint, text);
+            val allTextWidth = getTextWidth(paint, text)
             // 判断是否超过
-            if (allTextWidth <= width) return -1; // 表示没超过
+            if (allTextWidth <= width) return -1 // 表示没超过
             // 获取数据长度
-            int length = text.length();
+            val length = text.length
             // 超过长度且只有一个数据, 那么只能是第一个就超过了
-            if (length == 1) return 1;
+            if (length == 1) return 1
             // 二分法寻找最佳位置
-            int start = 0;
-            int end = length;
-            int mid = 0;
+            var start = 0
+            var end = length
+            var mid = 0
             // 判断是否大于位置
             while (start < end) {
-                mid = (start + end) / 2;
+                mid = (start + end) / 2
                 // 获取字体宽度
-                float textWidth = getTextWidth(paint, text, 0, mid);
+                val textWidth = getTextWidth(paint, text, 0, mid)
                 // 如果相等直接返回
                 if (textWidth == width) {
-                    return mid;
+                    return mid
                 } else if (textWidth > width) {
-                    end = mid - 1;
+                    end = mid - 1
                 } else {
-                    start = mid + 1;
+                    start = mid + 1
                 }
             }
             // 计算最符合的位置
-            for (int i = Math.min(Math.min(start, mid), end), len = length; i <= len; i++) {
-                float textWidth = TextViewUtils.getTextWidth(paint, text, 0, i);
-                if (textWidth >= width) return i;
+            var i = Math.min(Math.min(start, mid), end)
+            while (i <= length) {
+                val textWidth = getTextWidth(paint, text, 0, i)
+                if (textWidth >= width) return i
+                i++
             }
-            return start;
+            return start
         }
-        return -1;
+        return -1
     }
 
     /**
      * 计算文本换行行数
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param text     待测量文本
      * @param width    指定的宽度
      * @param <T>      泛型
      * @return 行数
-     */
-    public static <T extends TextView> int calcTextLine(final T textView, final String text, final float width) {
-        return calcTextLine(getPaint(textView), text, width);
+    </T> */
+    fun <T : TextView?> calcTextLine(textView: T, text: String?, width: Float): Int {
+        return calcTextLine(getPaint(textView), text, width)
     }
 
     /**
      * 计算文本行数
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param width    指定的宽度
      * @param <T>      泛型
      * @return 行数
-     */
-    public static <T extends TextView> int calcTextLine(final T textView, final float width) {
-        return calcTextLine(getPaint(textView), getText(textView), width);
+    </T> */
+    fun <T : TextView?> calcTextLine(textView: T, width: Float): Int {
+        return calcTextLine(getPaint(textView), getText(textView), width)
     }
 
     /**
      * 计算文本行数
-     * @param paint {@link TextView#getPaint()}
+     * @param paint [TextView.getPaint]
      * @param text  文本内容
      * @param width 指定的宽度
      * @return 行数
      */
-    public static int calcTextLine(final Paint paint, final String text, final float width) {
+    fun calcTextLine(paint: Paint?, text: String?, width: Float): Int {
         if (paint != null && text != null && width > 0) {
             // 全部文本宽度
-            float allTextWidth = getTextWidth(paint, text);
+            val allTextWidth = getTextWidth(paint, text)
             // 判断是否超过
-            if (allTextWidth <= width) return 1;
-            int result = (int) (allTextWidth / width);
-            return ((allTextWidth - width * result == 0f) ? result : result + 1);
+            if (allTextWidth <= width) return 1
+            val result = (allTextWidth / width).toInt()
+            return if (allTextWidth - width * result == 0f) result else result + 1
         }
-        return 0;
+        return 0
     }
-
     // =====================
     // = CompoundDrawables =
     // =====================
-
     /**
      * 获取 CompoundDrawables
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return Drawable[] { left, top, right, bottom }
-     */
-    public static <T extends TextView> Drawable[] getCompoundDrawables(final T textView) {
-        if (textView != null) {
-            return textView.getCompoundDrawables();
-        }
-        return new Drawable[]{null, null, null, null};
+    </T> */
+    fun <T : TextView?> getCompoundDrawables(textView: T?): Array<Drawable?> {
+        return textView?.compoundDrawables ?: arrayOf<Drawable?>(null, null, null, null)
     }
 
     /**
      * 获取 CompoundDrawables Padding
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param <T>      泛型
      * @return CompoundDrawables Padding
-     */
-    public static <T extends TextView> int getCompoundDrawablePadding(final T textView) {
-        if (textView != null) {
-            return textView.getCompoundDrawablePadding();
-        }
-        return 0;
+    </T> */
+    fun <T : TextView?> getCompoundDrawablePadding(textView: T?): Int {
+        return textView?.compoundDrawablePadding ?: 0
     }
 
     /**
      * 设置 CompoundDrawables Padding
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param padding  CompoundDrawables Padding
      * @param <T>      泛型
-     * @return {@link View}
-     */
-    public static <T extends TextView> T setCompoundDrawablePadding(final T textView, final int padding) {
-        if (textView != null) textView.setCompoundDrawablePadding(padding);
-        return textView;
+     * @return [View]
+    </T> */
+    fun <T : TextView?> setCompoundDrawablePadding(textView: T?, padding: Int): T? {
+        if (textView != null) textView.compoundDrawablePadding = padding
+        return textView
     }
-
     // ========================
     // = setCompoundDrawables =
     // ========================
-
     /**
      * 设置 Left CompoundDrawables
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param left     left Drawable
      * @param <T>      泛型
-     * @return {@link View}
-     */
-    public static <T extends TextView> T setCompoundDrawablesByLeft(final T textView, final Drawable left) {
-        return setCompoundDrawables(textView, left, null, null, null);
+     * @return [View]
+    </T> */
+    fun <T : TextView?> setCompoundDrawablesByLeft(textView: T, left: Drawable?): T? {
+        return setCompoundDrawables(textView, left, null, null, null)
     }
 
     /**
      * 设置 Top CompoundDrawables
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param top      top Drawable
      * @param <T>      泛型
-     * @return {@link View}
-     */
-    public static <T extends TextView> T setCompoundDrawablesByTop(final T textView, final Drawable top) {
-        return setCompoundDrawables(textView, null, top, null, null);
+     * @return [View]
+    </T> */
+    fun <T : TextView?> setCompoundDrawablesByTop(textView: T, top: Drawable?): T? {
+        return setCompoundDrawables(textView, null, top, null, null)
     }
 
     /**
      * 设置 Right CompoundDrawables
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param right    right Drawable
      * @param <T>      泛型
-     * @return {@link View}
-     */
-    public static <T extends TextView> T setCompoundDrawablesByRight(final T textView, final Drawable right) {
-        return setCompoundDrawables(textView, null, null, right, null);
+     * @return [View]
+    </T> */
+    fun <T : TextView?> setCompoundDrawablesByRight(textView: T, right: Drawable?): T? {
+        return setCompoundDrawables(textView, null, null, right, null)
     }
 
     /**
      * 设置 Bottom CompoundDrawables
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param bottom   bottom Drawable
      * @param <T>      泛型
-     * @return {@link View}
-     */
-    public static <T extends TextView> T setCompoundDrawablesByBottom(final T textView, final Drawable bottom) {
-        return setCompoundDrawables(textView, null, null, null, bottom);
+     * @return [View]
+    </T> */
+    fun <T : TextView?> setCompoundDrawablesByBottom(textView: T, bottom: Drawable?): T? {
+        return setCompoundDrawables(textView, null, null, null, bottom)
     }
 
     /**
      * 设置 CompoundDrawables
      * <pre>
-     *     CompoundDrawable 的大小控制是通过 drawable.setBounds() 控制
-     *     需要先设置 Drawable 的 setBounds
-     *     {@link dev.utils.app.image.ImageUtils#setBounds}
-     * </pre>
-     * @param textView {@link TextView}
+     * CompoundDrawable 的大小控制是通过 drawable.setBounds() 控制
+     * 需要先设置 Drawable 的 setBounds
+     * [dev.utils.app.image.ImageUtils.setBounds]
+    </pre> *
+     * @param textView [TextView]
      * @param left     left Drawable
      * @param top      top Drawable
      * @param right    right Drawable
      * @param bottom   bottom Drawable
      * @param <T>      泛型
-     * @return {@link View}
-     */
-    public static <T extends TextView> T setCompoundDrawables(final T textView,
-                                                              final Drawable left, final Drawable top,
-                                                              final Drawable right, final Drawable bottom) {
+     * @return [View]
+    </T> */
+    fun <T : TextView?> setCompoundDrawables(
+        textView: T?,
+        left: Drawable?, top: Drawable?,
+        right: Drawable?, bottom: Drawable?
+    ): T? {
         if (textView != null) {
             try {
-                textView.setCompoundDrawables(left, top, right, bottom);
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "setCompoundDrawables");
+                textView.setCompoundDrawables(left, top, right, bottom)
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "setCompoundDrawables")
             }
         }
-        return textView;
+        return textView
     }
-
     // ===========================================
     // = setCompoundDrawablesWithIntrinsicBounds =
     // ===========================================
-
     /**
      * 设置 Left CompoundDrawables - 按照原有比例大小显示图片
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param left     left Drawable
      * @param <T>      泛型
-     * @return {@link View}
-     */
-    public static <T extends TextView> T setCompoundDrawablesWithIntrinsicBoundsByLeft(final T textView, final Drawable left) {
-        return setCompoundDrawablesWithIntrinsicBounds(textView, left, null, null, null);
+     * @return [View]
+    </T> */
+    fun <T : TextView?> setCompoundDrawablesWithIntrinsicBoundsByLeft(
+        textView: T,
+        left: Drawable?
+    ): T? {
+        return setCompoundDrawablesWithIntrinsicBounds(textView, left, null, null, null)
     }
 
     /**
      * 设置 Top CompoundDrawables - 按照原有比例大小显示图片
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param top      top Drawable
      * @param <T>      泛型
-     * @return {@link View}
-     */
-    public static <T extends TextView> T setCompoundDrawablesWithIntrinsicBoundsByTop(final T textView, final Drawable top) {
-        return setCompoundDrawablesWithIntrinsicBounds(textView, null, top, null, null);
+     * @return [View]
+    </T> */
+    fun <T : TextView?> setCompoundDrawablesWithIntrinsicBoundsByTop(
+        textView: T,
+        top: Drawable?
+    ): T? {
+        return setCompoundDrawablesWithIntrinsicBounds(textView, null, top, null, null)
     }
 
     /**
      * 设置 Right CompoundDrawables - 按照原有比例大小显示图片
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param right    right Drawable
      * @param <T>      泛型
-     * @return {@link View}
-     */
-    public static <T extends TextView> T setCompoundDrawablesWithIntrinsicBoundsByRight(final T textView, final Drawable right) {
-        return setCompoundDrawablesWithIntrinsicBounds(textView, null, null, right, null);
+     * @return [View]
+    </T> */
+    fun <T : TextView?> setCompoundDrawablesWithIntrinsicBoundsByRight(
+        textView: T,
+        right: Drawable?
+    ): T? {
+        return setCompoundDrawablesWithIntrinsicBounds(textView, null, null, right, null)
     }
 
     /**
      * 设置 Bottom CompoundDrawables - 按照原有比例大小显示图片
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param bottom   bottom Drawable
      * @param <T>      泛型
-     * @return {@link View}
-     */
-    public static <T extends TextView> T setCompoundDrawablesWithIntrinsicBoundsByBottom(final T textView, final Drawable bottom) {
-        return setCompoundDrawablesWithIntrinsicBounds(textView, null, null, null, bottom);
+     * @return [View]
+    </T> */
+    fun <T : TextView?> setCompoundDrawablesWithIntrinsicBoundsByBottom(
+        textView: T,
+        bottom: Drawable?
+    ): T? {
+        return setCompoundDrawablesWithIntrinsicBounds(textView, null, null, null, bottom)
     }
 
     /**
      * 设置 CompoundDrawables - 按照原有比例大小显示图片
-     * @param textView {@link TextView}
+     * @param textView [TextView]
      * @param left     left Drawable
      * @param top      top Drawable
      * @param right    right Drawable
      * @param bottom   bottom Drawable
      * @param <T>      泛型
-     * @return {@link View}
-     */
-    public static <T extends TextView> T setCompoundDrawablesWithIntrinsicBounds(final T textView,
-                                                                                 final Drawable left, final Drawable top,
-                                                                                 final Drawable right, final Drawable bottom) {
+     * @return [View]
+    </T> */
+    fun <T : TextView?> setCompoundDrawablesWithIntrinsicBounds(
+        textView: T?,
+        left: Drawable?, top: Drawable?,
+        right: Drawable?, bottom: Drawable?
+    ): T? {
         if (textView != null) {
             try {
-                textView.setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom);
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "setCompoundDrawablesWithIntrinsicBounds");
+                textView.setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom)
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "setCompoundDrawablesWithIntrinsicBounds")
             }
         }
-        return textView;
+        return textView
     }
 }

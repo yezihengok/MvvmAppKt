@@ -36,8 +36,8 @@ class HeaderInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         var builder: Request.Builder = chain.request().newBuilder()
         // builder.addHeader("token", SpUtil.getInstance().getString(SpKey.KEY_TOKEN));
-        builder.addHeader("App-Version", AppUtils.getAppVersionCode().toString())
-        builder.addHeader("Model", DeviceUtils.getDevice())
+        builder.addHeader("App-Version", AppUtils.appVersionCode.toString())
+        builder.addHeader("Model", DeviceUtils.device)
         builder.addHeader("Content-Type", "application/json;charset=UTF-8")
         builder.addHeader("Accept", "application/json;versions=1")
         if (CheckNetwork.isNetworkConnected) {

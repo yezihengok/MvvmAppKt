@@ -1,257 +1,243 @@
-package com.example.commlib.utils;
+package com.example.commlib.utils
 
-import com.blankj.ALog;
-import com.example.commlib.utils.encrypt.MD5Utils;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
+import com.blankj.ALog
+import com.example.commlib.utils.encrypt.MD5Utils
+import java.io.*
+import java.net.HttpURLConnection
+import java.net.URL
+import java.text.DecimalFormat
+import java.util.*
 
 /**
  * detail: 文件操作工具类
  * @author Ttt
  */
-public final class FileUtils {
-
-    private FileUtils() {
-    }
-
+object FileUtils {
     // 日志 TAG
-    private static final String TAG = FileUtils.class.getSimpleName();
+    private val TAG = FileUtils::class.java.simpleName
+
     // 换行字符串
-    private static final String NEW_LINE_STR = System.getProperty("line.separator");
+    private val NEW_LINE_STR = System.getProperty("line.separator")
 
     /**
      * 获取文件
      * @param filePath 文件路径
-     * @return 文件 {@link File}
+     * @return 文件 [File]
      */
-    public static File getFile(final String filePath) {
-        return getFileByPath(filePath);
+    fun getFile(filePath: String?): File? {
+        return getFileByPath(filePath)
     }
 
     /**
      * 获取文件
      * @param filePath 文件路径
      * @param fileName 文件名
-     * @return 文件 {@link File}
+     * @return 文件 [File]
      */
-    public static File getFile(final String filePath, final String fileName) {
-        return (filePath != null && fileName != null) ? new File(filePath, fileName) : null;
+    fun getFile(filePath: String?, fileName: String?): File? {
+        return if (filePath != null && fileName != null) File(filePath, fileName) else null
     }
 
     /**
      * 获取文件
      * @param filePath 文件路径
-     * @return 文件 {@link File}
+     * @return 文件 [File]
      */
-    public static File getFileByPath(final String filePath) {
-        return filePath != null ? new File(filePath) : null;
+    @JvmStatic
+    fun getFileByPath(filePath: String?): File? {
+        return if (filePath != null) File(filePath) else null
     }
 
     /**
      * 获取路径, 并且进行创建目录
      * @param filePath 保存目录
      * @param fileName 文件名
-     * @return 文件 {@link File}
+     * @return 文件 [File]
      */
-    public static File getFileCreateFolder(final String filePath, final String fileName) {
+    fun getFileCreateFolder(filePath: String?, fileName: String?): File? {
         // 防止不存在目录文件, 自动创建
-        createFolder(filePath);
+        createFolder(filePath)
         // 返回处理过后的 File
-        return getFile(filePath, fileName);
+        return getFile(filePath, fileName)
     }
 
     /**
      * 获取路径, 并且进行创建目录
      * @param filePath 保存目录
      * @param fileName 文件名
-     * @return 文件 {@link File}
+     * @return 文件 [File]
      */
-    public static String getFilePathCreateFolder(final String filePath, final String fileName) {
+    fun getFilePathCreateFolder(filePath: String?, fileName: String?): String? {
         // 防止不存在目录文件, 自动创建
-        createFolder(filePath);
+        createFolder(filePath)
         // 返回处理过后的 File
-        File file = getFile(filePath, fileName);
+        val file = getFile(filePath, fileName)
         // 返回文件路径
-        return getAbsolutePath(file);
+        return getAbsolutePath(file)
     }
 
     /**
      * 判断某个文件夹是否创建, 未创建则创建 ( 纯路径 - 无文件名 )
      * @param dirPath 文件夹路径 ( 无文件名字. 后缀 )
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean createFolder(final String dirPath) {
-        return createFolder(getFileByPath(dirPath));
+    fun createFolder(dirPath: String?): Boolean {
+        return createFolder(getFileByPath(dirPath))
     }
 
     /**
      * 判断某个文件夹是否创建, 未创建则创建 ( 纯路径 - 无文件名 )
      * @param file 文件夹路径 ( 无文件名字. 后缀 )
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean createFolder(final File file) {
+    fun createFolder(file: File?): Boolean {
         if (file != null) {
             try {
                 // 当这个文件夹不存在的时候则创建文件夹
-                if (!file.exists()) {
+                return if (!file.exists()) {
                     // 允许创建多级目录
-                    return file.mkdirs();
-                }
-                return true;
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "createFolder");
+                    file.mkdirs()
+                } else true
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "createFolder")
             }
         }
-        return false;
+        return false
     }
 
     /**
      * 创建文件夹目录 - 可以传入文件名
      * @param filePath 文件路径 + 文件名
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean createFolderByPath(final String filePath) {
-        return createFolderByPath(getFileByPath(filePath));
+    fun createFolderByPath(filePath: String?): Boolean {
+        return createFolderByPath(getFileByPath(filePath))
     }
 
     /**
      * 创建文件夹目录 - 可以传入文件名
      * @param file 文件
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean createFolderByPath(final File file) {
+    fun createFolderByPath(file: File?): Boolean {
         // 创建文件夹 - 如果失败才创建
         if (file != null) {
             if (file.exists()) {
-                return true;
-            } else if (!file.getParentFile().mkdirs()) {
-                return createFolder(file.getParent());
+                return true
+            } else if (!file.parentFile.mkdirs()) {
+                return createFolder(file.parent)
             }
         }
-        return false;
+        return false
     }
 
     /**
      * 创建多个文件夹, 如果不存在则创建
      * @param filePaths 文件路径数组
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean createFolderByPaths(final String... filePaths) {
-        if (filePaths != null && filePaths.length != 0) {
-            for (int i = 0, len = filePaths.length; i < len; i++) {
-                createFolder(filePaths[i]);
+    fun createFolderByPaths(vararg filePaths: String?): Boolean {
+        if (filePaths != null && filePaths.size != 0) {
+            var i = 0
+            val len = filePaths.size
+            while (i < len) {
+                createFolder(filePaths[i])
+                i++
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     /**
      * 创建多个文件夹, 如果不存在则创建
      * @param files 文件数组
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean createFolderByPaths(final File... files) {
-        if (files != null && files.length != 0) {
-            for (int i = 0, len = files.length; i < len; i++) {
-                createFolder(files[i]);
+    fun createFolderByPaths(vararg files: File?): Boolean {
+        if (files != null && files.size != 0) {
+            var i = 0
+            val len = files.size
+            while (i < len) {
+                createFolder(files[i])
+                i++
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
-
     // =
-
     /**
      * 判断目录是否存在, 不存在则判断是否创建成功
      * @param dirPath 目录路径
-     * @return {@code true} 存在或创建成功, {@code false} 不存在或创建失败
+     * @return `true` 存在或创建成功, `false` 不存在或创建失败
      */
-    public static boolean createOrExistsDir(final String dirPath) {
-        return createOrExistsDir(getFileByPath(dirPath));
+    fun createOrExistsDir(dirPath: String?): Boolean {
+        return createOrExistsDir(getFileByPath(dirPath))
     }
 
     /**
      * 判断目录是否存在, 不存在则判断是否创建成功
      * @param file 文件
-     * @return {@code true} 存在或创建成功, {@code false} 不存在或创建失败
+     * @return `true` 存在或创建成功, `false` 不存在或创建失败
      */
-    public static boolean createOrExistsDir(final File file) {
+    fun createOrExistsDir(file: File?): Boolean {
         // 如果存在, 是目录则返回 true, 是文件则返回 false, 不存在则返回是否创建成功
-        return file != null && (file.exists() ? file.isDirectory() : file.mkdirs());
+        return file != null && if (file.exists()) file.isDirectory else file.mkdirs()
     }
 
     /**
      * 判断文件是否存在, 不存在则判断是否创建成功
      * @param filePath 文件路径
-     * @return {@code true} 存在或创建成功, {@code false} 不存在或创建失败
+     * @return `true` 存在或创建成功, `false` 不存在或创建失败
      */
-    public static boolean createOrExistsFile(final String filePath) {
-        return createOrExistsFile(getFileByPath(filePath));
+    fun createOrExistsFile(filePath: String?): Boolean {
+        return createOrExistsFile(getFileByPath(filePath))
     }
 
     /**
      * 判断文件是否存在, 不存在则判断是否创建成功
      * @param file 文件
-     * @return {@code true} 存在或创建成功, {@code false} 不存在或创建失败
+     * @return `true` 存在或创建成功, `false` 不存在或创建失败
      */
-    public static boolean createOrExistsFile(final File file) {
-        if (file == null) return false;
+    fun createOrExistsFile(file: File?): Boolean {
+        if (file == null) return false
         // 如果存在, 是文件则返回 true, 是目录则返回 false
-        if (file.exists()) return file.isFile();
+        if (file.exists()) return file.isFile
         // 判断文件是否存在, 不存在则直接返回
-        if (!createOrExistsDir(file.getParentFile())) return false;
-        try {
+        return if (!createOrExistsDir(file.parentFile)) false else try {
             // 存在, 则返回新的路径
-            return file.createNewFile();
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "createOrExistsFile");
-            return false;
+            file.createNewFile()
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "createOrExistsFile")
+            false
         }
     }
 
     /**
      * 判断文件是否存在, 存在则在创建之前删除
      * @param filePath 文件路径
-     * @return {@code true} 创建成功, {@code false} 创建失败
+     * @return `true` 创建成功, `false` 创建失败
      */
-    public static boolean createFileByDeleteOldFile(final String filePath) {
-        return createFileByDeleteOldFile(getFileByPath(filePath));
+    fun createFileByDeleteOldFile(filePath: String?): Boolean {
+        return createFileByDeleteOldFile(getFileByPath(filePath))
     }
 
     /**
      * 判断文件是否存在, 存在则在创建之前删除
      * @param file 文件
-     * @return {@code true} 创建成功, {@code false} 创建失败
+     * @return `true` 创建成功, `false` 创建失败
      */
-    public static boolean createFileByDeleteOldFile(final File file) {
-        if (file == null) return false;
+    fun createFileByDeleteOldFile(file: File?): Boolean {
+        if (file == null) return false
         // 文件存在并且删除失败返回 false
-        if (file.exists() && !file.delete()) return false;
+        if (file.exists() && !file.delete()) return false
         // 创建目录失败返回 false
-        if (!createOrExistsDir(file.getParentFile())) return false;
-        try {
-            return file.createNewFile();
-        } catch (IOException e) {
-            ALog.eTag(TAG, e, "createFileByDeleteOldFile");
-            return false;
+        return if (!createOrExistsDir(file.parentFile)) false else try {
+            file.createNewFile()
+        } catch (e: IOException) {
+            ALog.eTag(TAG, e, "createFileByDeleteOldFile")
+            false
         }
     }
 
@@ -260,8 +246,8 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件路径
      */
-    public static String getPath(final File file) {
-        return file != null ? file.getPath() : null;
+    fun getPath(file: File?): String? {
+        return file?.path
     }
 
     /**
@@ -269,19 +255,17 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件绝对路径
      */
-    public static String getAbsolutePath(final File file) {
-        return file != null ? file.getAbsolutePath() : null;
+    fun getAbsolutePath(file: File?): String? {
+        return file?.absolutePath
     }
-
     // =
-
     /**
      * 获取文件名
      * @param file 文件
      * @return 文件名
      */
-    public static String getName(final File file) {
-        return file != null ? file.getName() : null;
+    fun getName(file: File?): String? {
+        return file?.name
     }
 
     /**
@@ -289,8 +273,8 @@ public final class FileUtils {
      * @param filePath 文件路径
      * @return 文件名
      */
-    public static String getName(final String filePath) {
-        return getName(filePath, "");
+    fun getName(filePath: String?): String {
+        return getName(filePath, "")
     }
 
     /**
@@ -299,8 +283,8 @@ public final class FileUtils {
      * @param defaultStr 默认字符串
      * @return 文件名, 如果文件路径为 null 时, 返回默认字符串
      */
-    public static String getName(final String filePath, final String defaultStr) {
-        return CommUtils.isEmpty(filePath) ? defaultStr : new File(filePath).getName();
+    fun getName(filePath: String?, defaultStr: String): String {
+        return if (CommUtils.isEmpty(filePath)) defaultStr else File(filePath).name
     }
 
     /**
@@ -308,8 +292,8 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件后缀名 ( 无 "." 单独后缀 )
      */
-    public static String getFileSuffix(final File file) {
-        return getFileSuffix(getAbsolutePath(file));
+    fun getFileSuffix(file: File?): String? {
+        return getFileSuffix(getAbsolutePath(file))
     }
 
     /**
@@ -317,18 +301,17 @@ public final class FileUtils {
      * @param filePath 文件路径或文件名
      * @return 文件后缀名 ( 无 "." 单独后缀 )
      */
-    public static String getFileSuffix(final String filePath) {
+    fun getFileSuffix(filePath: String?): String? {
         // 获取最后的索引
-        int lastIndexOf;
+        var lastIndexOf=0
         // 判断是否存在
-        if (filePath != null && (lastIndexOf = filePath.lastIndexOf('.')) != -1) {
-            String result = filePath.substring(lastIndexOf);
-            if (result.startsWith(".")) {
-                return result.substring(1);
-            }
-            return result;
+        if (filePath != null && filePath.lastIndexOf('.').also { lastIndexOf = it } != -1) {
+            val result = filePath.substring(lastIndexOf)
+            return if (result.startsWith(".")) {
+                result.substring(1)
+            } else result
         }
-        return null;
+        return null
     }
 
     /**
@@ -336,8 +319,8 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件名 ( 无后缀 )
      */
-    public static String getFileNotSuffix(final File file) {
-        return getFileNotSuffix(getName(file));
+    fun getFileNotSuffix(file: File?): String? {
+        return getFileNotSuffix(getName(file))
     }
 
     /**
@@ -345,8 +328,8 @@ public final class FileUtils {
      * @param filePath 文件路径
      * @return 文件名 ( 无后缀 )
      */
-    public static String getFileNotSuffixToPath(final String filePath) {
-        return getFileNotSuffix(getName(filePath));
+    fun getFileNotSuffixToPath(filePath: String?): String? {
+        return getFileNotSuffix(getName(filePath))
     }
 
     /**
@@ -354,15 +337,14 @@ public final class FileUtils {
      * @param fileName 文件名
      * @return 文件名 ( 无后缀 )
      */
-    public static String getFileNotSuffix(final String fileName) {
-        if (fileName != null) {
+    fun getFileNotSuffix(fileName: String?): String? {
+        return if (fileName != null) {
             if (fileName.lastIndexOf('.') != -1) {
-                return fileName.substring(0, fileName.lastIndexOf('.'));
+                fileName.substring(0, fileName.lastIndexOf('.'))
             } else {
-                return fileName;
+                fileName
             }
-        }
-        return null;
+        } else null
     }
 
     /**
@@ -370,9 +352,8 @@ public final class FileUtils {
      * @param file 文件
      * @return 不带拓展名的文件名
      */
-    public static String getFileNameNoExtension(final File file) {
-        if (file == null) return null;
-        return getFileNameNoExtension(file.getPath());
+    fun getFileNameNoExtension(file: File?): String? {
+        return if (file == null) null else getFileNameNoExtension(file.path)
     }
 
     /**
@@ -380,17 +361,16 @@ public final class FileUtils {
      * @param filePath 文件路径
      * @return 不带拓展名的文件名
      */
-    public static String getFileNameNoExtension(final String filePath) {
-        if (CommUtils.isEmpty(filePath)) return filePath;
-        int lastPoi = filePath.lastIndexOf('.');
-        int lastSep = filePath.lastIndexOf(File.separator);
+    fun getFileNameNoExtension(filePath: String): String {
+        if (CommUtils.isEmpty(filePath)) return filePath
+        val lastPoi = filePath.lastIndexOf('.')
+        val lastSep = filePath.lastIndexOf(File.separator)
         if (lastSep == -1) {
-            return (lastPoi == -1 ? filePath : filePath.substring(0, lastPoi));
+            return if (lastPoi == -1) filePath else filePath.substring(0, lastPoi)
         }
-        if (lastPoi == -1 || lastSep > lastPoi) {
-            return filePath.substring(lastSep + 1);
-        }
-        return filePath.substring(lastSep + 1, lastPoi);
+        return if (lastPoi == -1 || lastSep > lastPoi) {
+            filePath.substring(lastSep + 1)
+        } else filePath.substring(lastSep + 1, lastPoi)
     }
 
     /**
@@ -398,9 +378,8 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件拓展名
      */
-    public static String getFileExtension(final File file) {
-        if (file == null) return null;
-        return getFileExtension(file.getPath());
+    fun getFileExtension(file: File?): String? {
+        return if (file == null) null else getFileExtension(file.path)
     }
 
     /**
@@ -408,107 +387,102 @@ public final class FileUtils {
      * @param filePath 文件路径
      * @return 文件拓展名
      */
-    public static String getFileExtension(final String filePath) {
-        if (CommUtils.isEmpty(filePath)) return filePath;
-        int lastPoi = filePath.lastIndexOf('.');
-        int lastSep = filePath.lastIndexOf(File.separator);
-        if (lastPoi == -1 || lastSep >= lastPoi) return "";
-        return filePath.substring(lastPoi + 1);
+    fun getFileExtension(filePath: String): String {
+        if (CommUtils.isEmpty(filePath)) return filePath
+        val lastPoi = filePath.lastIndexOf('.')
+        val lastSep = filePath.lastIndexOf(File.separator)
+        return if (lastPoi == -1 || lastSep >= lastPoi) "" else filePath.substring(lastPoi + 1)
     }
-
     // =
-
     /**
      * 检查是否存在某个文件
      * @param file 文件
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isFileExists(final File file) {
-        return file != null && file.exists();
+    fun isFileExists(file: File?): Boolean {
+        return file != null && file.exists()
     }
 
     /**
      * 检查是否存在某个文件
      * @param filePath 文件路径
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isFileExists(final String filePath) {
-        return isFileExists(getFileByPath(filePath));
+    fun isFileExists(filePath: String?): Boolean {
+        return isFileExists(getFileByPath(filePath))
     }
 
     /**
      * 检查是否存在某个文件
      * @param filePath 文件路径
      * @param fileName 文件名
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isFileExists(final String filePath, final String fileName) {
-        return filePath != null && fileName != null && new File(filePath, fileName).exists();
+    fun isFileExists(filePath: String?, fileName: String?): Boolean {
+        return filePath != null && fileName != null && File(filePath, fileName).exists()
     }
 
     /**
      * 判断是否文件
      * @param filePath 文件路径
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isFile(final String filePath) {
-        return isFile(getFileByPath(filePath));
+    fun isFile(filePath: String?): Boolean {
+        return isFile(getFileByPath(filePath))
     }
 
     /**
      * 判断是否文件
      * @param file 文件
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isFile(final File file) {
-        return file != null && file.exists() && file.isFile();
+    fun isFile(file: File?): Boolean {
+        return file != null && file.exists() && file.isFile
     }
 
     /**
      * 判断是否文件夹
      * @param filePath 文件路径
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isDirectory(final String filePath) {
-        return isDirectory(getFileByPath(filePath));
+    fun isDirectory(filePath: String?): Boolean {
+        return isDirectory(getFileByPath(filePath))
     }
 
     /**
      * 判断是否文件夹
      * @param file 文件
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isDirectory(final File file) {
-        return file != null && file.exists() && file.isDirectory();
+    fun isDirectory(file: File?): Boolean {
+        return file != null && file.exists() && file.isDirectory
     }
 
     /**
      * 判断是否隐藏文件
      * @param filePath 文件路径
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isHidden(final String filePath) {
-        return isHidden(getFileByPath(filePath));
+    fun isHidden(filePath: String?): Boolean {
+        return isHidden(getFileByPath(filePath))
     }
 
     /**
      * 判断是否隐藏文件
      * @param file 文件
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isHidden(final File file) {
-        return file != null && file.exists() && file.isHidden();
+    fun isHidden(file: File?): Boolean {
+        return file != null && file.exists() && file.isHidden
     }
-
     // =
-
     /**
      * 获取文件最后修改的毫秒时间戳
      * @param filePath 文件路径
      * @return 文件最后修改的毫秒时间戳
      */
-    public static long getFileLastModified(final String filePath) {
-        return getFileLastModified(getFileByPath(filePath));
+    fun getFileLastModified(filePath: String?): Long {
+        return getFileLastModified(getFileByPath(filePath))
     }
 
     /**
@@ -516,9 +490,8 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件最后修改的毫秒时间戳
      */
-    public static long getFileLastModified(final File file) {
-        if (file == null) return 0L;
-        return file.lastModified();
+    fun getFileLastModified(file: File?): Long {
+        return file?.lastModified() ?: 0L
     }
 
     /**
@@ -526,8 +499,8 @@ public final class FileUtils {
      * @param filePath 文件路径
      * @return 文件编码格式
      */
-    public static String getFileCharsetSimple(final String filePath) {
-        return getFileCharsetSimple(getFileByPath(filePath));
+    fun getFileCharsetSimple(filePath: String?): String? {
+        return getFileCharsetSimple(getFileByPath(filePath))
     }
 
     /**
@@ -535,27 +508,23 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件编码格式
      */
-    public static String getFileCharsetSimple(final File file) {
-        if (!isFileExists(file)) return null;
-        int pos = 0;
-        InputStream is = null;
+    fun getFileCharsetSimple(file: File?): String? {
+        if (!isFileExists(file)) return null
+        var pos = 0
+        var `is`: InputStream? = null
         try {
-            is = new BufferedInputStream(new FileInputStream(file));
-            pos = (is.read() << 8) + is.read();
-        } catch (IOException e) {
-            ALog.eTag(TAG, e, "getFileCharsetSimple");
+            `is` = BufferedInputStream(FileInputStream(file))
+            pos = (`is`.read() shl 8) + `is`.read()
+        } catch (e: IOException) {
+            ALog.eTag(TAG, e, "getFileCharsetSimple")
         } finally {
-            CloseUtils.closeIOQuietly(is);
+            CloseUtils.closeIOQuietly(`is`)
         }
-        switch (pos) {
-            case 0xefbb:
-                return "UTF-8";
-            case 0xfffe:
-                return "Unicode";
-            case 0xfeff:
-                return "UTF-16BE";
-            default:
-                return "GBK";
+        return when (pos) {
+            0xefbb -> "UTF-8"
+            0xfffe -> "Unicode"
+            0xfeff -> "UTF-16BE"
+            else -> "GBK"
         }
     }
 
@@ -564,8 +533,8 @@ public final class FileUtils {
      * @param filePath 文件路径
      * @return 文件行数
      */
-    public static int getFileLines(final String filePath) {
-        return getFileLines(getFileByPath(filePath));
+    fun getFileLines(filePath: String?): Int {
+        return getFileLines(getFileByPath(filePath))
     }
 
     /**
@@ -573,44 +542,73 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件行数
      */
-    public static int getFileLines(final File file) {
-        if (!isFileExists(file)) return 0;
-        int lineCount = 1;
-        InputStream is = null;
+    fun getFileLines(file: File?): Int {
+        if (!isFileExists(file)) return 0
+        var lineCount = 1
+        var `is`: InputStream? = null
         try {
-            is = new BufferedInputStream(new FileInputStream(file));
-            byte[] buffer = new byte[1024];
-            int readChars;
-            if (NEW_LINE_STR.endsWith("\n")) {
-                while ((readChars = is.read(buffer, 0, 1024)) != -1) {
-                    for (int i = 0; i < readChars; ++i) {
-                        if (buffer[i] == '\n') ++lineCount;
+            `is` = BufferedInputStream(FileInputStream(file))
+            val buffer = ByteArray(1024)
+            var readChars: Int
+            if (NEW_LINE_STR!!.endsWith("\n")) {
+                while (`is`.read(buffer, 0, 1024).also { readChars = it } != -1) {
+                    for (i in 0 until readChars) {
+                        if (buffer[i] == '\n'.toByte()) ++lineCount
                     }
                 }
             } else {
-                while ((readChars = is.read(buffer, 0, 1024)) != -1) {
-                    for (int i = 0; i < readChars; ++i) {
-                        if (buffer[i] == '\r') ++lineCount;
+                while (`is`.read(buffer, 0, 1024).also { readChars = it } != -1) {
+                    for (i in 0 until readChars) {
+                        if (buffer[i] == '\r'.toByte()) ++lineCount
                     }
                 }
             }
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getFileLines");
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getFileLines")
         } finally {
-            CloseUtils.closeIOQuietly(is);
+            CloseUtils.closeIOQuietly(`is`)
         }
-        return lineCount;
+        return lineCount
     }
+
+//    public static int getFileLines(final File file) {
+//        if (!isFileExists(file)) return 0;
+//        int lineCount = 1;
+//        InputStream is = null;
+//        try {
+//            is = new BufferedInputStream(new FileInputStream(file));
+//            byte[] buffer = new byte[1024];
+//            int readChars;
+//            if (NEW_LINE_STR.endsWith("\n")) {
+//                while ((readChars = is.read(buffer, 0, 1024)) != -1) {
+//                    for (int i = 0; i < readChars; ++i) {
+//                        if (buffer[i] == '\n') ++lineCount;
+//                    }
+//                }
+//            } else {
+//                while ((readChars = is.read(buffer, 0, 1024)) != -1) {
+//                    for (int i = 0; i < readChars; ++i) {
+//                        if (buffer[i] == '\r') ++lineCount;
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//            ALog.eTag(TAG, e, "getFileLines");
+//        } finally {
+//            CloseUtils.closeIOQuietly(is);
+//        }
+//        return lineCount;
+//    }
+
 
     // =
-
     /**
      * 获取文件大小
      * @param filePath 文件路径
      * @return 文件大小
      */
-    public static String getFileSize(final String filePath) {
-        return getFileSize(getFileByPath(filePath));
+    fun getFileSize(filePath: String?): String {
+        return getFileSize(getFileByPath(filePath))
     }
 
     /**
@@ -618,8 +616,8 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件大小
      */
-    public static String getFileSize(final File file) {
-        return formatByteMemorySize(getFileLength(file));
+    fun getFileSize(file: File?): String {
+        return formatByteMemorySize(getFileLength(file).toDouble())
     }
 
     /**
@@ -627,8 +625,8 @@ public final class FileUtils {
      * @param dirPath 目录路径
      * @return 文件大小
      */
-    public static String getDirSize(final String dirPath) {
-        return getDirSize(getFileByPath(dirPath));
+    fun getDirSize(dirPath: String?): String {
+        return getDirSize(getFileByPath(dirPath))
     }
 
     /**
@@ -636,8 +634,8 @@ public final class FileUtils {
      * @param dir 目录
      * @return 文件大小
      */
-    public static String getDirSize(final File dir) {
-        return formatByteMemorySize(getDirLength(dir));
+    fun getDirSize(dir: File?): String {
+        return formatByteMemorySize(getDirLength(dir).toDouble())
     }
 
     /**
@@ -645,8 +643,8 @@ public final class FileUtils {
      * @param filePath 文件路径
      * @return 文件大小
      */
-    public static long getFileLength(final String filePath) {
-        return getFileLength(getFileByPath(filePath));
+    fun getFileLength(filePath: String?): Long {
+        return getFileLength(getFileByPath(filePath))
     }
 
     /**
@@ -654,8 +652,8 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件大小
      */
-    public static long getFileLength(final File file) {
-        return file != null ? file.length() : 0L;
+    fun getFileLength(file: File?): Long {
+        return file?.length() ?: 0L
     }
 
     /**
@@ -663,8 +661,8 @@ public final class FileUtils {
      * @param dirPath 目录路径
      * @return 目录全部文件大小
      */
-    public static long getDirLength(final String dirPath) {
-        return getDirLength(getFileByPath(dirPath));
+    fun getDirLength(dirPath: String?): Long {
+        return getDirLength(getFileByPath(dirPath))
     }
 
     /**
@@ -672,20 +670,20 @@ public final class FileUtils {
      * @param dir 目录
      * @return 目录全部文件大小
      */
-    public static long getDirLength(final File dir) {
-        if (!isDirectory(dir)) return 0;
-        long len = 0;
-        File[] files = dir.listFiles();
-        if (files != null && files.length != 0) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    len += getDirLength(file);
+    fun getDirLength(dir: File?): Long {
+        if (!isDirectory(dir)) return 0
+        var len: Long = 0
+        val files = dir!!.listFiles()
+        if (files != null && files.size != 0) {
+            for (file in files) {
+                len += if (file.isDirectory) {
+                    getDirLength(file)
                 } else {
-                    len += file.length();
+                    file.length()
                 }
             }
         }
-        return len;
+        return len
     }
 
     /**
@@ -693,24 +691,24 @@ public final class FileUtils {
      * @param httpUri 文件网络链接
      * @return 文件大小
      */
-    public static long getFileLengthNetwork(final String httpUri) {
-        if (CommUtils.isEmpty(httpUri)) return 0L;
+    fun getFileLengthNetwork(httpUri: String): Long {
+        if (CommUtils.isEmpty(httpUri)) return 0L
         // 判断是否网络资源
-        boolean isHttpRes = httpUri.toLowerCase().startsWith("http:") || httpUri.toLowerCase().startsWith("https:");
+        val isHttpRes =
+            httpUri.toLowerCase().startsWith("http:") || httpUri.toLowerCase().startsWith("https:")
         if (isHttpRes) {
             try {
-                HttpURLConnection conn = (HttpURLConnection) new URL(httpUri).openConnection();
-                conn.setRequestProperty("Accept-Encoding", "identity");
-                conn.connect();
-                if (conn.getResponseCode() == 200) {
-                    return conn.getContentLength();
-                }
-                return 0L;
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "getFileLengthNetwork");
+                val conn = URL(httpUri).openConnection() as HttpURLConnection
+                conn.setRequestProperty("Accept-Encoding", "identity")
+                conn.connect()
+                return if (conn.responseCode == 200) {
+                    conn.contentLength.toLong()
+                } else 0L
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getFileLengthNetwork")
             }
         }
-        return 0L;
+        return 0L
     }
 
     /**
@@ -718,9 +716,8 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件名
      */
-    public static String getFileName(final File file) {
-        if (file == null) return null;
-        return getFileName(file.getPath());
+    fun getFileName(file: File?): String? {
+        return if (file == null) null else getFileName(file.path)
     }
 
     /**
@@ -728,10 +725,10 @@ public final class FileUtils {
      * @param filePath 文件路径
      * @return 文件名
      */
-    public static String getFileName(final String filePath) {
-        if (CommUtils.isEmpty(filePath)) return filePath;
-        int lastSep = filePath.lastIndexOf(File.separator);
-        return lastSep == -1 ? filePath : filePath.substring(lastSep + 1);
+    fun getFileName(filePath: String): String {
+        if (CommUtils.isEmpty(filePath)) return filePath
+        val lastSep = filePath.lastIndexOf(File.separator)
+        return if (lastSep == -1) filePath else filePath.substring(lastSep + 1)
     }
 
     /**
@@ -739,9 +736,8 @@ public final class FileUtils {
      * @param file 文件
      * @return 最长目录地址
      */
-    public static String getDirName(final File file) {
-        if (file == null) return null;
-        return getDirName(file.getPath());
+    fun getDirName(file: File?): String? {
+        return if (file == null) null else getDirName(file.path)
     }
 
     /**
@@ -749,64 +745,63 @@ public final class FileUtils {
      * @param filePath 文件路径
      * @return 最长目录地址
      */
-    public static String getDirName(final String filePath) {
-        if (CommUtils.isEmpty(filePath)) return filePath;
-        int lastSep = filePath.lastIndexOf(File.separator);
-        return lastSep == -1 ? "" : filePath.substring(0, lastSep + 1);
+    fun getDirName(filePath: String): String {
+        if (CommUtils.isEmpty(filePath)) return filePath
+        val lastSep = filePath.lastIndexOf(File.separator)
+        return if (lastSep == -1) "" else filePath.substring(0, lastSep + 1)
     }
-
     // =
-
     /**
      * 重命名文件 - 同个目录下, 修改文件名
      * @param filePath    文件路径
      * @param newFileName 文件新名称
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean rename(final String filePath, final String newFileName) {
-        return rename(getFileByPath(filePath), newFileName);
+    fun rename(filePath: String?, newFileName: String): Boolean {
+        return rename(getFileByPath(filePath), newFileName)
     }
 
     /**
      * 重命名文件 - 同个目录下, 修改文件名
      * @param file        文件
      * @param newFileName 文件新名称
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean rename(final File file, final String newFileName) {
+    fun rename(file: File?, newFileName: String): Boolean {
         // 文件为空返回 false
-        if (file == null) return false;
+        if (file == null) return false
         // 文件不存在返回 false
-        if (!file.exists()) return false;
+        if (!file.exists()) return false
         // 如果文件名没有改变返回 true
-        if (newFileName.equals(file.getName())) return true;
+        if (newFileName == file.name) return true
         // 拼接新的文件路径
-        File newFile = new File(file.getParent() + File.separator + newFileName);
+        val newFile = File(file.parent + File.separator + newFileName)
         // 如果重命名的文件已存在返回 false
-        return !newFile.exists() && file.renameTo(newFile);
+        return !newFile.exists() && file.renameTo(newFile)
     }
-
     // ================
     // = 文件大小处理 =
     // ================
-
     /**
      * 传入文件路径, 返回对应的文件大小
      * @param filePath 文件路径
      * @return 文件大小转换字符串
      */
-    public static String formatFileSize(final String filePath) {
-        File file = getFileByPath(filePath);
-        return formatFileSize(file != null ? file.length() : 0);
+    fun formatFileSize(filePath: String?): String {
+        val file = getFileByPath(filePath)
+
+        return formatFileSize(file?.length()?.toDouble() ?: 0.toDouble())
     }
+
+
 
     /**
      * 传入文件路径, 返回对应的文件大小
      * @param file 文件
      * @return 文件大小转换字符串
      */
-    public static String formatFileSize(final File file) {
-        return formatFileSize(file != null ? file.length() : 0);
+    fun formatFileSize(file: File?): String {
+        return formatFileSize(file?.length()?.toDouble() ?: 0.toDouble())
     }
 
     /**
@@ -814,24 +809,31 @@ public final class FileUtils {
      * @param fileSize 文件大小
      * @return 文件大小转换字符串
      */
-    public static String formatFileSize(final double fileSize) {
+    fun formatFileSize(fileSize: Double): String {
         // 转换文件大小
-        DecimalFormat df = new DecimalFormat("#.00");
-        String fileSizeStr;
-        if (fileSize <= 0) {
-            fileSizeStr = "0B";
-        } else if (fileSize < 1024) {
-            fileSizeStr = df.format(fileSize) + "B";
-        } else if (fileSize < 1048576) {
-            fileSizeStr = df.format(fileSize / 1024) + "KB";
-        } else if (fileSize < 1073741824) {
-            fileSizeStr = df.format(fileSize / 1048576) + "MB";
-        } else if (fileSize < 1099511627776d) {
-            fileSizeStr = df.format(fileSize / 1073741824) + "GB";
-        } else {
-            fileSizeStr = df.format(fileSize / 1099511627776d) + "TB";
+        val df = DecimalFormat("#.00")
+        val fileSizeStr: String
+        fileSizeStr = when {
+            fileSize <= 0 -> {
+                "0B"
+            }
+            fileSize < 1024 -> {
+                df.format(fileSize) + "B"
+            }
+            fileSize < 1048576 -> {
+                df.format(fileSize / 1024) + "KB"
+            }
+            fileSize < 1073741824 -> {
+                df.format(fileSize / 1048576) + "MB"
+            }
+            fileSize < 1099511627776.0 -> {
+                df.format(fileSize / 1073741824) + "GB"
+            }
+            else -> {
+                df.format(fileSize / 1099511627776.0) + "TB"
+            }
         }
-        return fileSizeStr;
+        return fileSizeStr
     }
 
     /**
@@ -839,8 +841,8 @@ public final class FileUtils {
      * @param byteSize 字节数
      * @return 合适内存大小字符串
      */
-    public static String formatByteMemorySize(final double byteSize) {
-        return formatByteMemorySize(3, byteSize);
+    fun formatByteMemorySize(byteSize: Double): String {
+        return formatByteMemorySize(3, byteSize)
     }
 
     /**
@@ -849,200 +851,199 @@ public final class FileUtils {
      * @param byteSize 字节数
      * @return 合适内存大小字符串
      */
-    public static String formatByteMemorySize(final int number, final double byteSize) {
-        if (byteSize < 0d) {
-            return "0B";
-        } else if (byteSize < 1024d) {
-            return String.format("%." + number + "fB", byteSize);
-        } else if (byteSize < 1048576d) {
-            return String.format("%." + number + "fKB", byteSize / 1024d);
-        } else if (byteSize < 1073741824d) {
-            return String.format("%." + number + "fMB", byteSize / 1048576d);
-        } else if (byteSize < 1099511627776d) {
-            return String.format("%." + number + "fGB", byteSize / 1073741824d);
+    fun formatByteMemorySize(number: Int, byteSize: Double): String {
+        return if (byteSize < 0.0) {
+            "0B"
+        } else if (byteSize < 1024.0) {
+            String.format("%." + number + "fB", byteSize)
+        } else if (byteSize < 1048576.0) {
+            String.format("%." + number + "fKB", byteSize / 1024.0)
+        } else if (byteSize < 1073741824.0) {
+            String.format("%." + number + "fMB", byteSize / 1048576.0)
+        } else if (byteSize < 1099511627776.0) {
+            String.format("%." + number + "fGB", byteSize / 1073741824.0)
         } else {
-            return String.format("%." + number + "fTB", byteSize / 1099511627776d);
+            String.format("%." + number + "fTB", byteSize / 1099511627776.0)
         }
     }
-
     // ============
     // = 文件操作 =
     // ============
-
     /**
      * 删除文件
      * @param filePath 文件路径
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean deleteFile(final String filePath) {
-        return deleteFile(getFileByPath(filePath));
+    fun deleteFile(filePath: String?): Boolean {
+        return deleteFile(getFileByPath(filePath))
     }
 
     /**
      * 删除文件
      * @param file 文件
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean deleteFile(final File file) {
+    fun deleteFile(file: File?): Boolean {
         // 文件存在, 并且不是目录文件, 则直接删除
-        if (file != null && file.exists() && !file.isDirectory()) {
-            return file.delete();
-        }
-        return false;
+        return if (file != null && file.exists() && !file.isDirectory) {
+            file.delete()
+        } else false
     }
 
     /**
      * 删除多个文件
      * @param filePaths 文件路径数组
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean deleteFiles(final String... filePaths) {
-        if (filePaths != null && filePaths.length != 0) {
-            for (int i = 0, len = filePaths.length; i < len; i++) {
-                deleteFile(filePaths[i]);
+    fun deleteFiles(vararg filePaths: String?): Boolean {
+        if (filePaths != null && filePaths.size != 0) {
+            var i = 0
+            val len = filePaths.size
+            while (i < len) {
+                deleteFile(filePaths[i])
+                i++
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     /**
      * 删除多个文件
      * @param files 文件数组
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean deleteFiles(final File... files) {
-        if (files != null && files.length != 0) {
-            for (int i = 0, len = files.length; i < len; i++) {
-                deleteFile(files[i]);
+    fun deleteFiles(vararg files: File?): Boolean {
+        if (files != null && files.size != 0) {
+            var i = 0
+            val len = files.size
+            while (i < len) {
+                deleteFile(files[i])
+                i++
             }
-            return true;
+            return true
         }
-        return false;
+        return false
     }
-
     // =
-
     /**
      * 删除文件夹
      * @param filePath 文件路径
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean deleteFolder(final String filePath) {
-        return deleteFolder(getFileByPath(filePath));
+    fun deleteFolder(filePath: String?): Boolean {
+        return deleteFolder(getFileByPath(filePath))
     }
 
     /**
      * 删除文件夹
      * @param file 文件
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean deleteFolder(final File file) {
+    fun deleteFolder(file: File?): Boolean {
         if (file != null) {
             try {
                 // 文件存在, 并且不是目录文件, 则直接删除
                 if (file.exists()) {
-                    if (file.isDirectory()) { // 属于文件目录
-                        File[] files = file.listFiles();
-                        if (null == files || files.length == 0) {
-                            file.delete();
+                    return if (file.isDirectory) { // 属于文件目录
+                        val files = file.listFiles()
+                        if (null == files || files.size == 0) {
+                            file.delete()
                         }
-                        for (File f : files) {
-                            deleteFolder(f.getPath());
+                        for (f in files!!) {
+                            deleteFolder(f.path)
                         }
-                        return file.delete();
+                        file.delete()
                     } else { // 属于文件
-                        return deleteFile(file);
+                        deleteFile(file)
                     }
                 }
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "deleteFolder");
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "deleteFolder")
             }
         }
-        return false;
+        return false
     }
 
     /**
      * 保存文件
      * @param filePath 文件路径
      * @param data     待存储数据
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean saveFile(final String filePath, final byte[] data) {
-        return saveFile(FileUtils.getFile(filePath), data);
+    fun saveFile(filePath: String?, data: ByteArray?): Boolean {
+        return saveFile(getFile(filePath), data)
     }
 
     /**
      * 保存文件
      * @param file 文件
      * @param data 待存储数据
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean saveFile(final File file, final byte[] data) {
+    fun saveFile(file: File?, data: ByteArray?): Boolean {
         if (file != null && data != null) {
             try {
                 // 防止文件夹没创建
-                createFolder(getDirName(file));
+                createFolder(getDirName(file))
                 // 写入文件
-                FileOutputStream fos = new FileOutputStream(file);
-                BufferedOutputStream bos = new BufferedOutputStream(fos);
-                bos.write(data);
-                bos.close();
-                fos.close();
-                return true;
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "saveFile");
+                val fos = FileOutputStream(file)
+                val bos = BufferedOutputStream(fos)
+                bos.write(data)
+                bos.close()
+                fos.close()
+                return true
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "saveFile")
             }
         }
-        return false;
+        return false
     }
 
     /**
      * 追加文件
      * @param filePath 文件路径
      * @param data     待追加数据
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean appendFile(final String filePath, final byte[] data) {
-        return appendFile(FileUtils.getFile(filePath), data);
+    fun appendFile(filePath: String?, data: ByteArray?): Boolean {
+        return appendFile(getFile(filePath), data)
     }
 
     /**
      * 追加文件
      * <pre>
-     *     如果未创建文件, 则会创建并写入数据 ( 等同 {@link #saveFile} )
-     *     如果已创建文件, 则在结尾追加数据
-     * </pre>
+     * 如果未创建文件, 则会创建并写入数据 ( 等同 [.saveFile] )
+     * 如果已创建文件, 则在结尾追加数据
+    </pre> *
      * @param file 文件
      * @param data 待追加数据
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean appendFile(final File file, final byte[] data) {
+    fun appendFile(file: File?, data: ByteArray?): Boolean {
         try {
             // 防止文件夹没创建
-            createFolder(getDirName(file));
+            createFolder(getDirName(file))
             // 写入文件
-            FileOutputStream fos = new FileOutputStream(file, true);
-            BufferedOutputStream bos = new BufferedOutputStream(fos);
-            bos.write(data);
-            bos.close();
-            fos.close();
-            return true;
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "appendFile");
+            val fos = FileOutputStream(file, true)
+            val bos = BufferedOutputStream(fos)
+            bos.write(data)
+            bos.close()
+            fos.close()
+            return true
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "appendFile")
         }
-        return false;
+        return false
     }
-
     // =
-
     /**
      * 读取文件
      * @param filePath 文件路径
      * @return 文件内容 byte[]
      */
-    public static byte[] readFileBytes(final String filePath) {
-        return readFileBytes(getFileByPath(filePath));
+    fun readFileBytes(filePath: String?): ByteArray? {
+        return readFileBytes(getFileByPath(filePath))
     }
 
     /**
@@ -1050,40 +1051,40 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件内容 byte[]
      */
-    public static byte[] readFileBytes(final File file) {
+    fun readFileBytes(file: File?): ByteArray? {
         if (file != null && file.exists()) {
             try {
-                FileInputStream fis = new FileInputStream(file);
-                int length = fis.available();
-                byte[] buffer = new byte[length];
-                fis.read(buffer);
-                fis.close();
-                return buffer;
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "readFileBytes");
+                val fis = FileInputStream(file)
+                val length = fis.available()
+                val buffer = ByteArray(length)
+                fis.read(buffer)
+                fis.close()
+                return buffer
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "readFileBytes")
             }
         }
-        return null;
+        return null
     }
 
     /**
      * 读取文件
-     * @param inputStream {@link InputStream}
+     * @param inputStream [InputStream]
      * @return 文件内容 byte[]
      */
-    public static byte[] readFileBytes(final InputStream inputStream) {
+    fun readFileBytes(inputStream: InputStream?): ByteArray? {
         if (inputStream != null) {
             try {
-                int length = inputStream.available();
-                byte[] buffer = new byte[length];
-                inputStream.read(buffer);
-                inputStream.close();
-                return buffer;
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "readFileBytes");
+                val length = inputStream.available()
+                val buffer = ByteArray(length)
+                inputStream.read(buffer)
+                inputStream.close()
+                return buffer
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "readFileBytes")
             }
         }
-        return null;
+        return null
     }
 
     /**
@@ -1091,8 +1092,8 @@ public final class FileUtils {
      * @param filePath 文件路径
      * @return 文件内容字符串
      */
-    public static String readFile(final String filePath) {
-        return readFile(getFileByPath(filePath));
+    fun readFile(filePath: String?): String? {
+        return readFile(getFileByPath(filePath))
     }
 
     /**
@@ -1100,109 +1101,103 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件内容字符串
      */
-    public static String readFile(final File file) {
+    fun readFile(file: File?): String? {
         if (file != null && file.exists()) {
             try {
-                return readFile(new FileInputStream(file));
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "readFile");
+                return readFile(FileInputStream(file))
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "readFile")
             }
         }
-        return null;
+        return null
     }
-
     /**
      * 读取文件
-     * @param inputStream {@link InputStream} new FileInputStream(path)
-     * @return 文件内容字符串
-     */
-    public static String readFile(final InputStream inputStream) {
-        return readFile(inputStream, null);
-    }
-
-    /**
-     * 读取文件
-     * @param inputStream {@link InputStream} new FileInputStream(path)
+     * @param inputStream [InputStream] new FileInputStream(path)
      * @param encode      编码格式
      * @return 文件内容字符串
      */
-    public static String readFile(final InputStream inputStream, final String encode) {
+    /**
+     * 读取文件
+     * @param inputStream [InputStream] new FileInputStream(path)
+     * @return 文件内容字符串
+     */
+    @JvmOverloads
+    fun readFile(inputStream: InputStream?, encode: String? = null): String? {
         if (inputStream != null) {
             try {
-                InputStreamReader isr = null;
+                val isr: InputStreamReader? = null
                 if (encode != null) {
-                    new InputStreamReader(inputStream, encode);
+                    InputStreamReader(inputStream, encode)
                 } else {
-                    new InputStreamReader(inputStream);
+                    InputStreamReader(inputStream)
                 }
-                BufferedReader br = new BufferedReader(isr);
-                StringBuilder builder = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    builder.append(line);
+                val br = BufferedReader(isr)
+                val builder = StringBuilder()
+                var line: String?
+                while (br.readLine().also { line = it } != null) {
+                    builder.append(line)
                 }
-                isr.close();
-                br.close();
-                return builder.toString();
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "readFile");
+                isr!!.close()
+                br.close()
+                return builder.toString()
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "readFile")
             }
         }
-        return null;
+        return null
     }
-
     // =
-
     /**
      * 复制单个文件
      * @param inputStream  文件流 ( 被复制 )
      * @param destFilePath 目标文件地址
      * @param overlay      如果目标文件存在, 是否覆盖
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean copyFile(final InputStream inputStream, final String destFilePath, final boolean overlay) {
+    fun copyFile(inputStream: InputStream?, destFilePath: String?, overlay: Boolean): Boolean {
         if (inputStream == null || destFilePath == null) {
-            return false;
+            return false
         }
-        File destFile = new File(destFilePath);
+        val destFile = File(destFilePath)
         // 如果属于文件夹则跳过
-        if (destFile.isDirectory()) {
-            return false;
+        if (destFile.isDirectory) {
+            return false
         }
         if (destFile.exists()) {
             // 如果目标文件存在并允许覆盖
             if (overlay) {
                 // 删除已经存在的目标文件, 无论目标文件是目录还是单个文件
-                destFile.delete();
+                destFile.delete()
             } else { // 如果文件存在, 但是不覆盖, 则返回 false 表示失败
-                return false;
+                return false
             }
         } else {
             // 如果目标文件所在目录不存在, 则创建目录
-            if (!destFile.getParentFile().exists()) {
+            if (!destFile.parentFile.exists()) {
                 // 目标文件所在目录不存在
-                if (!destFile.getParentFile().mkdirs()) {
+                if (!destFile.parentFile.mkdirs()) {
                     // 复制文件失败: 创建目标文件所在目录失败
-                    return false;
+                    return false
                 }
             }
         }
         // 复制文件
-        int byteread = 0; // 读取的字节数
-        InputStream is = inputStream;
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(destFile);
-            byte[] buffer = new byte[1024];
-            while ((byteread = is.read(buffer)) != -1) {
-                os.write(buffer, 0, byteread);
+        var byteread = 0 // 读取的字节数
+        val `is`: InputStream = inputStream
+        var os: OutputStream? = null
+        return try {
+            os = FileOutputStream(destFile)
+            val buffer = ByteArray(1024)
+            while (`is`.read(buffer).also { byteread = it } != -1) {
+                os.write(buffer, 0, byteread)
             }
-            return true;
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "copyFile");
-            return false;
+            true
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "copyFile")
+            false
         } finally {
-            CloseUtils.closeIOQuietly(os, is);
+            CloseUtils.closeIOQuietly(os, `is`)
         }
     }
 
@@ -1211,60 +1206,60 @@ public final class FileUtils {
      * @param srcFilePath  待复制的文件地址
      * @param destFilePath 目标文件地址
      * @param overlay      如果目标文件存在, 是否覆盖
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean copyFile(final String srcFilePath, final String destFilePath, final boolean overlay) {
+    fun copyFile(srcFilePath: String?, destFilePath: String?, overlay: Boolean): Boolean {
         if (srcFilePath == null || destFilePath == null) {
-            return false;
+            return false
         }
-        File srcFile = new File(srcFilePath);
+        val srcFile = File(srcFilePath)
         // 判断源文件是否存在
         if (!srcFile.exists()) {
-            return false;
-        } else if (!srcFile.isFile()) { // srcFile.isDirectory();
-            return false;
+            return false
+        } else if (!srcFile.isFile) { // srcFile.isDirectory();
+            return false
         }
         // 判断目标文件是否存在
-        File destFile = new File(destFilePath);
+        val destFile = File(destFilePath)
         // 如果属于文件夹则跳过
-        if (destFile.isDirectory()) {
-            return false;
+        if (destFile.isDirectory) {
+            return false
         }
         if (destFile.exists()) {
             // 如果目标文件存在并允许覆盖
             if (overlay) {
                 // 删除已经存在的目标文件, 无论目标文件是目录还是单个文件
-                new File(destFilePath).delete();
+                File(destFilePath).delete()
             } else { // 如果文件存在, 但是不覆盖, 则返回 false 表示失败
-                return false;
+                return false
             }
         } else {
             // 如果目标文件所在目录不存在, 则创建目录
-            if (!destFile.getParentFile().exists()) {
+            if (!destFile.parentFile.exists()) {
                 // 目标文件所在目录不存在
-                if (!destFile.getParentFile().mkdirs()) {
+                if (!destFile.parentFile.mkdirs()) {
                     // 复制文件失败: 创建目标文件所在目录失败
-                    return false;
+                    return false
                 }
             }
         }
         // 复制文件
-        int byteread = 0; // 读取的字节数
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(srcFile);
-            os = new FileOutputStream(destFile);
-            byte[] buffer = new byte[1024];
-            while ((byteread = is.read(buffer)) != -1) {
-                os.write(buffer, 0, byteread);
+        var byteread = 0 // 读取的字节数
+        var `is`: InputStream? = null
+        var os: OutputStream? = null
+        return try {
+            `is` = FileInputStream(srcFile)
+            os = FileOutputStream(destFile)
+            val buffer = ByteArray(1024)
+            while (`is`.read(buffer).also { byteread = it } != -1) {
+                os.write(buffer, 0, byteread)
             }
-            return true;
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "copyFile");
-            return false;
+            true
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "copyFile")
+            false
         } finally {
-            CloseUtils.closeIOQuietly(os, is);
+            CloseUtils.closeIOQuietly(os, `is`)
         }
     }
 
@@ -1273,10 +1268,10 @@ public final class FileUtils {
      * @param srcFolderPath  待复制的文件夹地址
      * @param destFolderPath 目标文件夹地址
      * @param overlay        如果目标文件存在, 是否覆盖
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean copyFolder(final String srcFolderPath, final String destFolderPath, final boolean overlay) {
-        return copyFolder(srcFolderPath, destFolderPath, srcFolderPath, overlay);
+    fun copyFolder(srcFolderPath: String?, destFolderPath: String?, overlay: Boolean): Boolean {
+        return copyFolder(srcFolderPath, destFolderPath, srcFolderPath, overlay)
     }
 
     /**
@@ -1285,81 +1280,83 @@ public final class FileUtils {
      * @param destFolderPath 目标文件夹地址
      * @param sourcePath     源文件地址 ( 用于保递归留记录 )
      * @param overlay        如果目标文件存在, 是否覆盖
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    private static boolean copyFolder(final String srcFolderPath, final String destFolderPath, final String sourcePath, final boolean overlay) {
+    private fun copyFolder(
+        srcFolderPath: String?,
+        destFolderPath: String?,
+        sourcePath: String?,
+        overlay: Boolean
+    ): Boolean {
         if (srcFolderPath == null || destFolderPath == null || sourcePath == null) {
-            return false;
+            return false
         }
-        File srcFile = new File(srcFolderPath);
+        val srcFile = File(srcFolderPath)
         // 判断源文件是否存在
         if (!srcFile.exists()) {
-            return false;
-        } else if (!srcFile.isDirectory()) { // 不属于文件夹则跳过
-            return false;
+            return false
+        } else if (!srcFile.isDirectory) { // 不属于文件夹则跳过
+            return false
         }
         // 判断目标文件是否存在
-        File destFile = new File(destFolderPath);
+        val destFile = File(destFolderPath)
         // 如果文件夹没创建, 则创建
         if (!destFile.exists()) {
             // 允许创建多级目录
-            destFile.mkdirs();
+            destFile.mkdirs()
         }
         // 判断是否属于文件夹
-        if (!destFile.isDirectory()) { // 不属于文件夹则跳过
-            return false;
+        if (!destFile.isDirectory) { // 不属于文件夹则跳过
+            return false
         }
         // 判断是否存在
         if (srcFile.exists()) {
             // 获取文件路径
-            File[] files = srcFile.listFiles();
+            val files = srcFile.listFiles()
             // 防止不存在文件
-            if (files != null && files.length != 0) {
+            if (files != null && files.size != 0) {
                 // 进行遍历
-                for (File file : files) {
+                for (file in files) {
                     // 文件存在才进行处理
                     if (file.exists()) {
                         // 属于文件夹
-                        if (file.isDirectory()) {
-                            copyFolder(file.getAbsolutePath(), destFolderPath, sourcePath, overlay);
+                        if (file.isDirectory) {
+                            copyFolder(file.absolutePath, destFolderPath, sourcePath, overlay)
                         } else { // 属于文件
                             // 复制的文件地址
-                            String filePath = file.getAbsolutePath();
+                            val filePath = file.absolutePath
                             // 获取源文件地址 - 并且进行判断
-                            String dealSource = new File(sourcePath).getAbsolutePath();
+                            var dealSource = File(sourcePath).absolutePath
                             // 属于最前才进行处理
                             if (filePath.indexOf(dealSource) == 0) {
                                 // 获取处理后的地址
-                                dealSource = filePath.substring(dealSource.length());
+                                dealSource = filePath.substring(dealSource.length)
                                 // 获取需要复制保存的地址
-                                String savePath = new File(destFolderPath, dealSource).getAbsolutePath();
+                                val savePath = File(destFolderPath, dealSource).absolutePath
                                 // 进行复制文件
-                                boolean isResult = copyFile(filePath, savePath, overlay);
+                                val isResult = copyFile(filePath, savePath, overlay)
                             }
                         }
                     }
                 }
             }
         }
-        return true;
+        return true
     }
-
     // =
-
     /**
      * 移动 ( 剪切 ) 文件
      * @param srcFilePath  待移动的文件地址
      * @param destFilePath 目标文件地址
      * @param overlay      如果目标文件存在, 是否覆盖
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean moveFile(final String srcFilePath, final String destFilePath, final boolean overlay) {
+    fun moveFile(srcFilePath: String?, destFilePath: String?, overlay: Boolean): Boolean {
         // 复制文件
-        if (copyFile(srcFilePath, destFilePath, overlay)) {
+        return if (copyFile(srcFilePath, destFilePath, overlay)) {
             // 删除文件
-            return deleteFile(srcFilePath);
-        }
-        return false;
+            deleteFile(srcFilePath)
+        } else false
     }
 
     /**
@@ -1367,30 +1364,14 @@ public final class FileUtils {
      * @param srcFilePath  待移动的文件夹地址
      * @param destFilePath 目标文件夹地址
      * @param overlay      如果目标文件存在, 是否覆盖
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean moveFolder(final String srcFilePath, final String destFilePath, final boolean overlay) {
+    fun moveFolder(srcFilePath: String?, destFilePath: String?, overlay: Boolean): Boolean {
         // 复制文件夹
-        if (copyFolder(srcFilePath, destFilePath, overlay)) {
+        return if (copyFolder(srcFilePath, destFilePath, overlay)) {
             // 删除文件夹
-            return deleteFolder(srcFilePath);
-        }
-        return false;
-    }
-
-    // =
-
-    /**
-     * detail: 覆盖 / 替换事件
-     * @author Ttt
-     */
-    public interface OnReplaceListener {
-
-        /**
-         * 是否覆盖 / 替换文件
-         * @return {@code true} yes, {@code false} no
-         */
-        boolean onReplace();
+            deleteFolder(srcFilePath)
+        } else false
     }
 
     /**
@@ -1399,10 +1380,20 @@ public final class FileUtils {
      * @param destDirPath 目标目录路径
      * @param listener    是否覆盖监听器
      * @param isMove      是否移动
-     * @return {@code true} 复制或移动成功, {@code false} 复制或移动失败
+     * @return `true` 复制或移动成功, `false` 复制或移动失败
      */
-    public static boolean copyOrMoveDir(final String srcDirPath, final String destDirPath, final OnReplaceListener listener, final boolean isMove) {
-        return copyOrMoveDir(getFileByPath(srcDirPath), getFileByPath(destDirPath), listener, isMove);
+    fun copyOrMoveDir(
+        srcDirPath: String?,
+        destDirPath: String?,
+        listener: OnReplaceListener?,
+        isMove: Boolean
+    ): Boolean {
+        return copyOrMoveDir(
+            getFileByPath(srcDirPath),
+            getFileByPath(destDirPath),
+            listener,
+            isMove
+        )
     }
 
     /**
@@ -1411,39 +1402,44 @@ public final class FileUtils {
      * @param destDir  目标目录
      * @param listener 是否覆盖监听器
      * @param isMove   是否移动
-     * @return {@code true} 复制或移动成功, {@code false} 复制或移动失败
+     * @return `true` 复制或移动成功, `false` 复制或移动失败
      */
-    public static boolean copyOrMoveDir(final File srcDir, final File destDir, final OnReplaceListener listener, final boolean isMove) {
-        if (srcDir == null || destDir == null || listener == null) return false;
+    fun copyOrMoveDir(
+        srcDir: File?,
+        destDir: File?,
+        listener: OnReplaceListener?,
+        isMove: Boolean
+    ): Boolean {
+        if (srcDir == null || destDir == null || listener == null) return false
         // 为防止以上这种情况出现出现误判, 须分别在后面加个路径分隔符
-        String srcPath = srcDir.getPath() + File.separator;
-        String destPath = destDir.getPath() + File.separator;
-        if (destPath.contains(srcPath)) return false;
+        val srcPath = srcDir.path + File.separator
+        val destPath = destDir.path + File.separator
+        if (destPath.contains(srcPath)) return false
         // 源文件不存在或者不是目录则返回 false
-        if (!srcDir.exists() || !srcDir.isDirectory()) return false;
+        if (!srcDir.exists() || !srcDir.isDirectory) return false
         if (destDir.exists()) {
             if (listener.onReplace()) { // 需要覆盖则删除旧目录
                 if (!deleteAllInDir(destDir)) { // 删除文件失败的话返回 false
-                    return false;
+                    return false
                 }
             } else { // 不需要覆盖直接返回即可 true
-                return true;
+                return true
             }
         }
         // 目标目录不存在返回 false
-        if (!createOrExistsDir(destDir)) return false;
-        File[] files = srcDir.listFiles();
-        for (File file : files) {
-            File oneDestFile = new File(destPath + file.getName());
-            if (file.isFile()) {
+        if (!createOrExistsDir(destDir)) return false
+        val files = srcDir.listFiles()
+        for (file in files) {
+            val oneDestFile = File(destPath + file.name)
+            if (file.isFile) {
                 // 如果操作失败返回 false
-                if (!copyOrMoveFile(file, oneDestFile, listener, isMove)) return false;
-            } else if (file.isDirectory()) {
+                if (!copyOrMoveFile(file, oneDestFile, listener, isMove)) return false
+            } else if (file.isDirectory) {
                 // 如果操作失败返回 false
-                if (!copyOrMoveDir(file, oneDestFile, listener, isMove)) return false;
+                if (!copyOrMoveDir(file, oneDestFile, listener, isMove)) return false
             }
         }
-        return !isMove || deleteDir(srcDir);
+        return !isMove || deleteDir(srcDir)
     }
 
     /**
@@ -1452,10 +1448,20 @@ public final class FileUtils {
      * @param destFilePath 目标文件路径
      * @param listener     是否覆盖监听器
      * @param isMove       是否移动
-     * @return {@code true} 复制或移动成功, {@code false} 复制或移动失败
+     * @return `true` 复制或移动成功, `false` 复制或移动失败
      */
-    public static boolean copyOrMoveFile(final String srcFilePath, final String destFilePath, final OnReplaceListener listener, final boolean isMove) {
-        return copyOrMoveFile(getFileByPath(srcFilePath), getFileByPath(destFilePath), listener, isMove);
+    fun copyOrMoveFile(
+        srcFilePath: String?,
+        destFilePath: String?,
+        listener: OnReplaceListener?,
+        isMove: Boolean
+    ): Boolean {
+        return copyOrMoveFile(
+            getFileByPath(srcFilePath),
+            getFileByPath(destFilePath),
+            listener,
+            isMove
+        )
     }
 
     /**
@@ -1464,30 +1470,38 @@ public final class FileUtils {
      * @param destFile 目标文件
      * @param listener 是否覆盖监听器
      * @param isMove   是否移动
-     * @return {@code true} 复制或移动成功, {@code false} 复制或移动失败
+     * @return `true` 复制或移动成功, `false` 复制或移动失败
      */
-    public static boolean copyOrMoveFile(final File srcFile, final File destFile, final OnReplaceListener listener, final boolean isMove) {
-        if (srcFile == null || destFile == null || listener == null) return false;
+    fun copyOrMoveFile(
+        srcFile: File?,
+        destFile: File?,
+        listener: OnReplaceListener?,
+        isMove: Boolean
+    ): Boolean {
+        if (srcFile == null || destFile == null || listener == null) return false
         // 如果源文件和目标文件相同则返回 false
-        if (srcFile.equals(destFile)) return false;
+        if (srcFile == destFile) return false
         // 源文件不存在或者不是文件则返回 false
-        if (!srcFile.exists() || !srcFile.isFile()) return false;
+        if (!srcFile.exists() || !srcFile.isFile) return false
         if (destFile.exists()) { // 目标文件存在
             if (listener.onReplace()) { // 需要覆盖则删除旧文件
                 if (!destFile.delete()) { // 删除文件失败的话返回 false
-                    return false;
+                    return false
                 }
             } else { // 不需要覆盖直接返回即可 true
-                return true;
+                return true
             }
         }
         // 目标目录不存在返回 false
-        if (!createOrExistsDir(destFile.getParentFile())) return false;
-        try {
-            return FileIOUtils.writeFileFromIS(destFile, new FileInputStream(srcFile), false) && !(isMove && !deleteFile(srcFile));
-        } catch (FileNotFoundException e) {
-            ALog.eTag(TAG, e, "copyOrMoveFile");
-            return false;
+        return if (!createOrExistsDir(destFile.parentFile)) false else try {
+            FileIOUtils.writeFileFromIS(
+                destFile,
+                FileInputStream(srcFile),
+                false
+            ) && !(isMove && !deleteFile(srcFile))
+        } catch (e: FileNotFoundException) {
+            ALog.eTag(TAG, e, "copyOrMoveFile")
+            false
         }
     }
 
@@ -1496,10 +1510,10 @@ public final class FileUtils {
      * @param srcDirPath  源目录路径
      * @param destDirPath 目标目录路径
      * @param listener    是否覆盖监听器
-     * @return {@code true} 复制成功, {@code false} 复制失败
+     * @return `true` 复制成功, `false` 复制失败
      */
-    public static boolean copyDir(final String srcDirPath, final String destDirPath, final OnReplaceListener listener) {
-        return copyDir(getFileByPath(srcDirPath), getFileByPath(destDirPath), listener);
+    fun copyDir(srcDirPath: String?, destDirPath: String?, listener: OnReplaceListener?): Boolean {
+        return copyDir(getFileByPath(srcDirPath), getFileByPath(destDirPath), listener)
     }
 
     /**
@@ -1507,10 +1521,10 @@ public final class FileUtils {
      * @param srcDir   源目录
      * @param destDir  目标目录
      * @param listener 是否覆盖监听器
-     * @return {@code true} 复制成功, {@code false} 复制失败
+     * @return `true` 复制成功, `false` 复制失败
      */
-    public static boolean copyDir(final File srcDir, final File destDir, final OnReplaceListener listener) {
-        return copyOrMoveDir(srcDir, destDir, listener, false);
+    fun copyDir(srcDir: File?, destDir: File?, listener: OnReplaceListener?): Boolean {
+        return copyOrMoveDir(srcDir, destDir, listener, false)
     }
 
     /**
@@ -1518,10 +1532,14 @@ public final class FileUtils {
      * @param srcFilePath  源文件路径
      * @param destFilePath 目标文件路径
      * @param listener     是否覆盖监听器
-     * @return {@code true} 复制成功, {@code false} 复制失败
+     * @return `true` 复制成功, `false` 复制失败
      */
-    public static boolean copyFile(final String srcFilePath, final String destFilePath, final OnReplaceListener listener) {
-        return copyFile(getFileByPath(srcFilePath), getFileByPath(destFilePath), listener);
+    fun copyFile(
+        srcFilePath: String?,
+        destFilePath: String?,
+        listener: OnReplaceListener?
+    ): Boolean {
+        return copyFile(getFileByPath(srcFilePath), getFileByPath(destFilePath), listener)
     }
 
     /**
@@ -1529,10 +1547,10 @@ public final class FileUtils {
      * @param srcFile  源文件
      * @param destFile 目标文件
      * @param listener 是否覆盖监听器
-     * @return {@code true} 复制成功, {@code false} 复制失败
+     * @return `true` 复制成功, `false` 复制失败
      */
-    public static boolean copyFile(final File srcFile, final File destFile, final OnReplaceListener listener) {
-        return copyOrMoveFile(srcFile, destFile, listener, false);
+    fun copyFile(srcFile: File?, destFile: File?, listener: OnReplaceListener?): Boolean {
+        return copyOrMoveFile(srcFile, destFile, listener, false)
     }
 
     /**
@@ -1540,10 +1558,10 @@ public final class FileUtils {
      * @param srcDirPath  源目录路径
      * @param destDirPath 目标目录路径
      * @param listener    是否覆盖监听器
-     * @return {@code true} 移动成功, {@code false} 移动失败
+     * @return `true` 移动成功, `false` 移动失败
      */
-    public static boolean moveDir(final String srcDirPath, final String destDirPath, final OnReplaceListener listener) {
-        return moveDir(getFileByPath(srcDirPath), getFileByPath(destDirPath), listener);
+    fun moveDir(srcDirPath: String?, destDirPath: String?, listener: OnReplaceListener?): Boolean {
+        return moveDir(getFileByPath(srcDirPath), getFileByPath(destDirPath), listener)
     }
 
     /**
@@ -1551,10 +1569,10 @@ public final class FileUtils {
      * @param srcDir   源目录
      * @param destDir  目标目录
      * @param listener 是否覆盖监听器
-     * @return {@code true} 移动成功, {@code false} 移动失败
+     * @return `true` 移动成功, `false` 移动失败
      */
-    public static boolean moveDir(final File srcDir, final File destDir, final OnReplaceListener listener) {
-        return copyOrMoveDir(srcDir, destDir, listener, true);
+    fun moveDir(srcDir: File?, destDir: File?, listener: OnReplaceListener?): Boolean {
+        return copyOrMoveDir(srcDir, destDir, listener, true)
     }
 
     /**
@@ -1562,10 +1580,14 @@ public final class FileUtils {
      * @param srcFilePath  源文件路径
      * @param destFilePath 目标文件路径
      * @param listener     是否覆盖监听器
-     * @return {@code true} 移动成功, {@code false} 移动失败
+     * @return `true` 移动成功, `false` 移动失败
      */
-    public static boolean moveFile(final String srcFilePath, final String destFilePath, final OnReplaceListener listener) {
-        return moveFile(getFileByPath(srcFilePath), getFileByPath(destFilePath), listener);
+    fun moveFile(
+        srcFilePath: String?,
+        destFilePath: String?,
+        listener: OnReplaceListener?
+    ): Boolean {
+        return moveFile(getFileByPath(srcFilePath), getFileByPath(destFilePath), listener)
     }
 
     /**
@@ -1573,171 +1595,148 @@ public final class FileUtils {
      * @param srcFile  源文件
      * @param destFile 目标文件
      * @param listener 是否覆盖监听器
-     * @return {@code true} 移动成功, {@code false} 移动失败
+     * @return `true` 移动成功, `false` 移动失败
      */
-    public static boolean moveFile(final File srcFile, final File destFile, final OnReplaceListener listener) {
-        return copyOrMoveFile(srcFile, destFile, listener, true);
+    fun moveFile(srcFile: File?, destFile: File?, listener: OnReplaceListener?): Boolean {
+        return copyOrMoveFile(srcFile, destFile, listener, true)
     }
 
     /**
      * 删除目录
      * @param dirPath 目录路径
-     * @return {@code true} 删除成功, {@code false} 删除失败
+     * @return `true` 删除成功, `false` 删除失败
      */
-    public static boolean deleteDir(final String dirPath) {
-        return deleteDir(getFileByPath(dirPath));
+    fun deleteDir(dirPath: String?): Boolean {
+        return deleteDir(getFileByPath(dirPath))
     }
 
     /**
      * 删除目录
      * @param dir 目录
-     * @return {@code true} 删除成功, {@code false} 删除失败
+     * @return `true` 删除成功, `false` 删除失败
      */
-    public static boolean deleteDir(final File dir) {
-        if (dir == null) return false;
+    fun deleteDir(dir: File?): Boolean {
+        if (dir == null) return false
         // dir doesn't exist then return true
-        if (!dir.exists()) return true;
+        if (!dir.exists()) return true
         // dir isn't a directory then return false
-        if (!dir.isDirectory()) return false;
-        File[] files = dir.listFiles();
-        if (files != null && files.length != 0) {
-            for (File file : files) {
-                if (file.isFile()) {
-                    if (!file.delete()) return false;
-                } else if (file.isDirectory()) {
-                    if (!deleteDir(file)) return false;
+        if (!dir.isDirectory) return false
+        val files = dir.listFiles()
+        if (files != null && files.size != 0) {
+            for (file in files) {
+                if (file.isFile) {
+                    if (!file.delete()) return false
+                } else if (file.isDirectory) {
+                    if (!deleteDir(file)) return false
                 }
             }
         }
-        return dir.delete();
+        return dir.delete()
     }
 
     /**
      * 删除目录下所有东西
      * @param dirPath 目录路径
-     * @return {@code true} 删除成功, {@code false} 删除失败
+     * @return `true` 删除成功, `false` 删除失败
      */
-    public static boolean deleteAllInDir(final String dirPath) {
-        return deleteAllInDir(getFileByPath(dirPath));
+    fun deleteAllInDir(dirPath: String?): Boolean {
+        return deleteAllInDir(getFileByPath(dirPath))
     }
 
     /**
      * 删除目录下所有东西
      * @param dir 目录
-     * @return {@code true} 删除成功, {@code false} 删除失败
+     * @return `true` 删除成功, `false` 删除失败
      */
-    public static boolean deleteAllInDir(final File dir) {
-        return deleteFilesInDirWithFilter(dir, new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return true;
-            }
-        });
+    fun deleteAllInDir(dir: File?): Boolean {
+        return deleteFilesInDirWithFilter(dir, FileFilter { true })
     }
 
     /**
      * 删除目录下所有文件
      * @param dirPath 目录路径
-     * @return {@code true} 删除成功, {@code false} 删除失败
+     * @return `true` 删除成功, `false` 删除失败
      */
-    public static boolean deleteFilesInDir(final String dirPath) {
-        return deleteFilesInDir(getFileByPath(dirPath));
+    fun deleteFilesInDir(dirPath: String?): Boolean {
+        return deleteFilesInDir(getFileByPath(dirPath))
     }
 
     /**
      * 删除目录下所有文件
      * @param dir 目录
-     * @return {@code true} 删除成功, {@code false} 删除失败
+     * @return `true` 删除成功, `false` 删除失败
      */
-    public static boolean deleteFilesInDir(final File dir) {
-        return deleteFilesInDirWithFilter(dir, new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isFile();
-            }
-        });
+    fun deleteFilesInDir(dir: File?): Boolean {
+        return deleteFilesInDirWithFilter(dir, FileFilter { pathname -> pathname.isFile })
     }
 
     /**
      * 删除目录下所有过滤的文件
      * @param dirPath 目录路径
      * @param filter  过滤器
-     * @return {@code true} 删除成功, {@code false} 删除失败
+     * @return `true` 删除成功, `false` 删除失败
      */
-    public static boolean deleteFilesInDirWithFilter(final String dirPath, final FileFilter filter) {
-        return deleteFilesInDirWithFilter(getFileByPath(dirPath), filter);
+    fun deleteFilesInDirWithFilter(dirPath: String?, filter: FileFilter?): Boolean {
+        return deleteFilesInDirWithFilter(getFileByPath(dirPath), filter)
     }
 
     /**
      * 删除目录下所有过滤的文件
      * @param dir    目录
      * @param filter 过滤器
-     * @return {@code true} 删除成功, {@code false} 删除失败
+     * @return `true` 删除成功, `false` 删除失败
      */
-    public static boolean deleteFilesInDirWithFilter(final File dir, final FileFilter filter) {
-        if (filter == null) return false;
+    fun deleteFilesInDirWithFilter(dir: File?, filter: FileFilter?): Boolean {
+        if (filter == null) return false
         // dir is null then return false
-        if (dir == null) return false;
+        if (dir == null) return false
         // dir doesn't exist then return true
-        if (!dir.exists()) return true;
+        if (!dir.exists()) return true
         // dir isn't a directory then return false
-        if (!dir.isDirectory()) return false;
-        File[] files = dir.listFiles();
-        if (files != null && files.length != 0) {
-            for (File file : files) {
+        if (!dir.isDirectory) return false
+        val files = dir.listFiles()
+        if (files != null && files.size != 0) {
+            for (file in files) {
                 if (filter.accept(file)) {
-                    if (file.isFile()) {
-                        if (!file.delete()) return false;
-                    } else if (file.isDirectory()) {
-                        if (!deleteDir(file)) return false;
+                    if (file.isFile) {
+                        if (!file.delete()) return false
+                    } else if (file.isDirectory) {
+                        if (!deleteDir(file)) return false
                     }
                 }
             }
         }
-        return true;
+        return true
     }
-
-    /**
-     * 获取目录下所有文件 - 不递归进子目录
-     * @param dirPath 目录路径
-     * @return 文件链表
-     */
-    public static List<File> listFilesInDir(final String dirPath) {
-        return listFilesInDir(dirPath, false);
-    }
-
-    /**
-     * 获取目录下所有文件 - 不递归进子目录
-     * @param dir 目录
-     * @return 文件链表
-     */
-    public static List<File> listFilesInDir(final File dir) {
-        return listFilesInDir(dir, false);
-    }
-
     /**
      * 获取目录下所有文件
      * @param dirPath     目录路径
      * @param isRecursive 是否递归进子目录
      * @return 文件链表
      */
-    public static List<File> listFilesInDir(final String dirPath, final boolean isRecursive) {
-        return listFilesInDir(getFileByPath(dirPath), isRecursive);
+    /**
+     * 获取目录下所有文件 - 不递归进子目录
+     * @param dirPath 目录路径
+     * @return 文件链表
+     */
+    @JvmOverloads
+    fun listFilesInDir(dirPath: String?, isRecursive: Boolean = false): List<File>? {
+        return listFilesInDir(getFileByPath(dirPath), isRecursive)
     }
-
     /**
      * 获取目录下所有文件
      * @param dir         目录
      * @param isRecursive 是否递归进子目录
      * @return 文件链表
      */
-    public static List<File> listFilesInDir(final File dir, final boolean isRecursive) {
-        return listFilesInDirWithFilter(dir, new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return true;
-            }
-        }, isRecursive);
+    /**
+     * 获取目录下所有文件 - 不递归进子目录
+     * @param dir 目录
+     * @return 文件链表
+     */
+    @JvmOverloads
+    fun listFilesInDir(dir: File?, isRecursive: Boolean = false): List<File>? {
+        return listFilesInDirWithFilter(dir, FileFilter { true }, isRecursive)
     }
 
     /**
@@ -1746,148 +1745,88 @@ public final class FileUtils {
      * @param filter  过滤器
      * @return 文件链表
      */
-    public static List<File> listFilesInDirWithFilter(final String dirPath, final FileFilter filter) {
-        return listFilesInDirWithFilter(getFileByPath(dirPath), filter, false);
+    fun listFilesInDirWithFilter(dirPath: String?, filter: FileFilter?): List<File>? {
+        return listFilesInDirWithFilter(getFileByPath(dirPath), filter, false)
     }
 
+    /**
+     * 获取目录下所有过滤的文件
+     * @param dirPath     目录路径
+     * @param filter      过滤器
+     * @param isRecursive 是否递归进子目录
+     * @return 文件链表
+     */
+    fun listFilesInDirWithFilter(
+        dirPath: String?,
+        filter: FileFilter?,
+        isRecursive: Boolean
+    ): List<File>? {
+        return listFilesInDirWithFilter(getFileByPath(dirPath), filter, isRecursive)
+    }
+    /**
+     * 获取目录下所有过滤的文件
+     * @param dir         目录
+     * @param filter      过滤器
+     * @param isRecursive 是否递归进子目录
+     * @return 文件链表
+     */
     /**
      * 获取目录下所有过滤的文件 - 不递归进子目录
      * @param dir    目录
      * @param filter 过滤器
      * @return 文件链表
      */
-    public static List<File> listFilesInDirWithFilter(final File dir, final FileFilter filter) {
-        return listFilesInDirWithFilter(dir, filter, false);
-    }
-
-    /**
-     * 获取目录下所有过滤的文件
-     * @param dirPath     目录路径
-     * @param filter      过滤器
-     * @param isRecursive 是否递归进子目录
-     * @return 文件链表
-     */
-    public static List<File> listFilesInDirWithFilter(final String dirPath, final FileFilter filter, final boolean isRecursive) {
-        return listFilesInDirWithFilter(getFileByPath(dirPath), filter, isRecursive);
-    }
-
-    /**
-     * 获取目录下所有过滤的文件
-     * @param dir         目录
-     * @param filter      过滤器
-     * @param isRecursive 是否递归进子目录
-     * @return 文件链表
-     */
-    public static List<File> listFilesInDirWithFilter(final File dir, final FileFilter filter, final boolean isRecursive) {
-        if (!isDirectory(dir) || filter == null) return null;
-        List<File> list = new ArrayList<>();
-        File[] files = dir.listFiles();
-        if (files != null && files.length != 0) {
-            for (File file : files) {
+    @JvmOverloads
+    fun listFilesInDirWithFilter(
+        dir: File?,
+        filter: FileFilter?,
+        isRecursive: Boolean = false
+    ): List<File>? {
+        if (!isDirectory(dir) || filter == null) return null
+        val list: MutableList<File> = ArrayList()
+        val files = dir!!.listFiles()
+        if (files != null && files.size != 0) {
+            for (file in files) {
                 if (filter.accept(file)) {
-                    list.add(file);
+                    list.add(file)
                 }
-                if (isRecursive && file.isDirectory()) {
-                    list.addAll(listFilesInDirWithFilter(file, filter, true));
+                if (isRecursive && file.isDirectory) {
+                    list.addAll(listFilesInDirWithFilter(file, filter, true)!!)
                 }
             }
         }
-        return list;
+        return list
     }
-
-    // =
-
     /**
-     * detail: 文件列表
-     * @author Ttt
+     * 获取目录下所有文件
+     * @param dirPath     目录路径
+     * @param isRecursive 是否递归进子目录
+     * @return 文件链表
      */
-    public static class FileList {
-
-        // 当前文件夹
-        private File mFile;
-        // 文件夹内子文件列表
-        private List<FileList> mSubFiles;
-
-        /**
-         * 构造函数
-         * @param file 当前文件夹
-         */
-        public FileList(File file) {
-            this(file, new ArrayList<>(0));
-        }
-
-        /**
-         * 构造函数
-         * @param file  当前文件夹
-         * @param lists 文件夹内子文件列表
-         */
-        public FileList(File file, List<FileList> lists) {
-            this.mFile = file;
-            this.mSubFiles = lists;
-        }
-
-        // =
-
-        /**
-         * 获取当前文件夹
-         * @return {@link File}
-         */
-        public File getFile() {
-            return mFile;
-        }
-
-        /**
-         * 获取文件夹内子文件列表
-         * @return {@link ArrayList}
-         */
-        public List<FileList> getSubFiles() {
-            return mSubFiles;
-        }
-    }
-
     // =
-
     /**
      * 获取目录下所有文件 - 不递归进子目录
      * @param dirPath 目录路径
      * @return 文件链表
      */
-    public static List<FileList> listFilesInDirBean(final String dirPath) {
-        return listFilesInDirBean(dirPath, false);
+    @JvmOverloads
+    fun listFilesInDirBean(dirPath: String?, isRecursive: Boolean = false): List<FileList>? {
+        return listFilesInDirBean(getFileByPath(dirPath), isRecursive)
     }
-
-    /**
-     * 获取目录下所有文件 - 不递归进子目录
-     * @param dir 目录
-     * @return 文件链表
-     */
-    public static List<FileList> listFilesInDirBean(final File dir) {
-        return listFilesInDirBean(dir, false);
-    }
-
-    /**
-     * 获取目录下所有文件
-     * @param dirPath     目录路径
-     * @param isRecursive 是否递归进子目录
-     * @return 文件链表
-     */
-    public static List<FileList> listFilesInDirBean(final String dirPath, final boolean isRecursive) {
-        return listFilesInDirBean(getFileByPath(dirPath), isRecursive);
-    }
-
     /**
      * 获取目录下所有文件
      * @param dir         目录
      * @param isRecursive 是否递归进子目录
      * @return 文件链表
      */
-    public static List<FileList> listFilesInDirBean(final File dir, final boolean isRecursive) {
-        return listFilesInDirWithFilterBean(dir, new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return true;
-            }
-        }, isRecursive);
+    /**
+     * 获取目录下所有文件 - 不递归进子目录
+     * @param dir 目录
+     * @return 文件链表
+     */
+    @JvmOverloads
+    fun listFilesInDirBean(dir: File?, isRecursive: Boolean = false): List<FileList>? {
+        return listFilesInDirWithFilterBean(dir, FileFilter { true }, isRecursive)
     }
 
     /**
@@ -1896,18 +1835,8 @@ public final class FileUtils {
      * @param filter  过滤器
      * @return 文件链表
      */
-    public static List<FileList> listFilesInDirWithFilterBean(final String dirPath, final FileFilter filter) {
-        return listFilesInDirWithFilterBean(getFileByPath(dirPath), filter, false);
-    }
-
-    /**
-     * 获取目录下所有过滤的文件 - 不递归进子目录
-     * @param dir    目录
-     * @param filter 过滤器
-     * @return 文件链表
-     */
-    public static List<FileList> listFilesInDirWithFilterBean(final File dir, final FileFilter filter) {
-        return listFilesInDirWithFilterBean(dir, filter, false);
+    fun listFilesInDirWithFilterBean(dirPath: String?, filter: FileFilter?): List<FileList>? {
+        return listFilesInDirWithFilterBean(getFileByPath(dirPath), filter, false)
     }
 
     /**
@@ -1917,10 +1846,13 @@ public final class FileUtils {
      * @param isRecursive 是否递归进子目录
      * @return 文件链表
      */
-    public static List<FileList> listFilesInDirWithFilterBean(final String dirPath, final FileFilter filter, final boolean isRecursive) {
-        return listFilesInDirWithFilterBean(getFileByPath(dirPath), filter, isRecursive);
+    fun listFilesInDirWithFilterBean(
+        dirPath: String?,
+        filter: FileFilter?,
+        isRecursive: Boolean
+    ): List<FileList>? {
+        return listFilesInDirWithFilterBean(getFileByPath(dirPath), filter, isRecursive)
     }
-
     /**
      * 获取目录下所有过滤的文件
      * @param dir         目录
@@ -1928,174 +1860,190 @@ public final class FileUtils {
      * @param isRecursive 是否递归进子目录
      * @return 文件链表
      */
-    public static List<FileList> listFilesInDirWithFilterBean(final File dir, final FileFilter filter, final boolean isRecursive) {
-        if (!isDirectory(dir) || filter == null) return null;
-        List<FileList> list = new ArrayList<>();
-        File[] files = dir.listFiles();
-        if (files != null && files.length != 0) {
-            for (File file : files) {
+    /**
+     * 获取目录下所有过滤的文件 - 不递归进子目录
+     * @param dir    目录
+     * @param filter 过滤器
+     * @return 文件链表
+     */
+    @JvmOverloads
+    fun listFilesInDirWithFilterBean(
+        dir: File?,
+        filter: FileFilter?,
+        isRecursive: Boolean = false
+    ): List<FileList>? {
+        if (!isDirectory(dir) || filter == null) return null
+        val list: MutableList<FileList> = ArrayList()
+        val files = dir!!.listFiles()
+        if (files != null && files.size != 0) {
+            for (file in files) {
                 if (filter.accept(file)) {
-                    FileList fileList;
-                    if (isRecursive && file.isDirectory()) {
-                        List<FileList> subs = listFilesInDirWithFilterBean(file, filter, true);
-                        fileList = new FileList(file, subs);
+                    var fileList: FileList
+                    fileList = if (isRecursive && file.isDirectory) {
+                        val subs = listFilesInDirWithFilterBean(file, filter, true)
+                        FileList(file, subs)
                     } else {
-                        fileList = new FileList(file);
+                        FileList(file)
                     }
-                    list.add(fileList);
+                    list.add(fileList)
                 }
             }
         }
-        return list;
+        return list
     }
 
     // ================
     // = 图片类型判断 =
     // ================
-
     // 图片格式
-    private static final String[] IMAGE_FORMATS = new String[]{".PNG", ".JPG", ".JPEG", ".BMP", ".GIF", ".WEBP"};
+    private val IMAGE_FORMATS = arrayOf(".PNG", ".JPG", ".JPEG", ".BMP", ".GIF", ".WEBP")
 
     /**
      * 根据文件名判断文件是否为图片
      * @param file 文件
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isImageFormats(final File file) {
-        return file != null && isImageFormats(file.getPath(), IMAGE_FORMATS);
+    fun isImageFormats(file: File?): Boolean {
+        return file != null && isImageFormats(file.path, IMAGE_FORMATS)
     }
 
     /**
      * 根据文件名判断文件是否为图片
      * @param filePath 文件路径
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isImageFormats(final String filePath) {
-        return isImageFormats(filePath, IMAGE_FORMATS);
+    fun isImageFormats(filePath: String?): Boolean {
+        return isImageFormats(filePath, IMAGE_FORMATS)
     }
 
     /**
      * 根据文件名判断文件是否为图片
      * @param filePath    文件路径
      * @param fileFormats 文件格式
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isImageFormats(final String filePath, final String[] fileFormats) {
-        return isFileFormats(filePath, fileFormats);
+    fun isImageFormats(filePath: String?, fileFormats: Array<String>?): Boolean {
+        return isFileFormats(filePath, fileFormats)
     }
 
     // ================
     // = 音频类型判断 =
     // ================
-
     // 音频格式
-    private static final String[] AUDIO_FORMATS = new String[]{".MP3", ".AAC", ".OGG", ".WMA", ".APE", ".FLAC", ".RA"};
+    private val AUDIO_FORMATS = arrayOf(".MP3", ".AAC", ".OGG", ".WMA", ".APE", ".FLAC", ".RA")
 
     /**
      * 根据文件名判断文件是否为音频
      * @param file 文件
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isAudioFormats(final File file) {
-        return file != null && isAudioFormats(file.getPath(), AUDIO_FORMATS);
+    fun isAudioFormats(file: File?): Boolean {
+        return file != null && isAudioFormats(file.path, AUDIO_FORMATS)
     }
 
     /**
      * 根据文件名判断文件是否为音频
      * @param filePath 文件路径
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isAudioFormats(final String filePath) {
-        return isAudioFormats(filePath, AUDIO_FORMATS);
+    fun isAudioFormats(filePath: String?): Boolean {
+        return isAudioFormats(filePath, AUDIO_FORMATS)
     }
 
     /**
      * 根据文件名判断文件是否为音频
      * @param filePath    文件路径
      * @param fileFormats 文件格式
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isAudioFormats(final String filePath, final String[] fileFormats) {
-        return isFileFormats(filePath, fileFormats);
+    fun isAudioFormats(filePath: String?, fileFormats: Array<String>?): Boolean {
+        return isFileFormats(filePath, fileFormats)
     }
 
     // ================
     // = 视频类型判断 =
     // ================
-
     // 视频格式
-    private static final String[] VIDEO_FORMATS = new String[]{".MP4", ".AVI", ".MOV", ".ASF", ".MPG", ".MPEG", ".WMV", ".RM", ".RMVB", ".3GP", ".MKV"};
+    private val VIDEO_FORMATS = arrayOf(
+        ".MP4",
+        ".AVI",
+        ".MOV",
+        ".ASF",
+        ".MPG",
+        ".MPEG",
+        ".WMV",
+        ".RM",
+        ".RMVB",
+        ".3GP",
+        ".MKV"
+    )
 
     /**
      * 根据文件名判断文件是否为视频
      * @param file 文件
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isVideoFormats(final File file) {
-        return file != null && isVideoFormats(file.getPath(), VIDEO_FORMATS);
+    fun isVideoFormats(file: File?): Boolean {
+        return file != null && isVideoFormats(file.path, VIDEO_FORMATS)
     }
 
     /**
      * 根据文件名判断文件是否为视频
      * @param filePath 文件路径
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isVideoFormats(final String filePath) {
-        return isVideoFormats(filePath, VIDEO_FORMATS);
+    fun isVideoFormats(filePath: String?): Boolean {
+        return isVideoFormats(filePath, VIDEO_FORMATS)
     }
 
     /**
      * 根据文件名判断文件是否为视频
      * @param filePath    文件路径
      * @param fileFormats 文件格式
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isVideoFormats(final String filePath, final String[] fileFormats) {
-        return isFileFormats(filePath, fileFormats);
+    fun isVideoFormats(filePath: String?, fileFormats: Array<String>?): Boolean {
+        return isFileFormats(filePath, fileFormats)
     }
-
     // =
-
     /**
      * 根据文件名判断文件是否为指定格式
      * @param file        文件
      * @param fileFormats 文件格式
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isFileFormats(final File file, final String[] fileFormats) {
-        return file != null && isFileFormats(file.getPath(), fileFormats);
+    fun isFileFormats(file: File?, fileFormats: Array<String>?): Boolean {
+        return file != null && isFileFormats(file.path, fileFormats)
     }
 
     /**
      * 根据文件名判断文件是否为指定格式
      * @param filePath    文件路径
      * @param fileFormats 文件格式
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isFileFormats(final String filePath, final String[] fileFormats) {
-        if (filePath == null || fileFormats == null || fileFormats.length == 0) return false;
-        String path = filePath.toUpperCase();
-        for (String format : fileFormats) {
+    fun isFileFormats(filePath: String?, fileFormats: Array<String>?): Boolean {
+        if (filePath == null || fileFormats == null || fileFormats.size == 0) return false
+        val path = filePath.toUpperCase()
+        for (format in fileFormats) {
             if (format != null) {
                 if (path.endsWith(format.toUpperCase())) {
-                    return true;
+                    return true
                 }
             }
         }
-        return false;
+        return false
     }
-
     // ============
     // = MD5Utils =
     // ============
-
     /**
      * 获取文件 MD5 值
      * @param filePath 文件路径
      * @return 文件 MD5 值
      */
-    public static byte[] getFileMD5(final String filePath) {
-        return MD5Utils.getFileMD5(filePath);
+    fun getFileMD5(filePath: String?): ByteArray {
+        return MD5Utils.getFileMD5(filePath)
     }
 
     /**
@@ -2103,8 +2051,8 @@ public final class FileUtils {
      * @param filePath 文件路径
      * @return 文件 MD5 值转十六进制字符串
      */
-    public static String getFileMD5ToHexString(final String filePath) {
-        return MD5Utils.getFileMD5ToHexString(filePath);
+    fun getFileMD5ToHexString(filePath: String?): String {
+        return MD5Utils.getFileMD5ToHexString(filePath)
     }
 
     /**
@@ -2112,8 +2060,8 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件 MD5 值转十六进制字符串
      */
-    public static String getFileMD5ToHexString(final File file) {
-        return MD5Utils.getFileMD5ToHexString(file);
+    fun getFileMD5ToHexString(file: File?): String {
+        return MD5Utils.getFileMD5ToHexString(file)
     }
 
     /**
@@ -2121,7 +2069,51 @@ public final class FileUtils {
      * @param file 文件
      * @return 文件 MD5 值 byte[]
      */
-    public static byte[] getFileMD5(final File file) {
-        return MD5Utils.getFileMD5(file);
+    fun getFileMD5(file: File?): ByteArray {
+        return MD5Utils.getFileMD5(file)
+    }
+    // =
+    /**
+     * detail: 覆盖 / 替换事件
+     * @author Ttt
+     */
+    interface OnReplaceListener {
+        /**
+         * 是否覆盖 / 替换文件
+         * @return `true` yes, `false` no
+         */
+        fun onReplace(): Boolean
+    }
+    // =
+    /**
+     * detail: 文件列表
+     * @author Ttt
+     */
+    class FileList
+
+    /**
+     * 构造函数
+     * @param file 当前文件夹
+     */ @JvmOverloads constructor(
+        /**
+         * 获取当前文件夹
+         * @return [File]
+         */
+        // 当前文件夹
+        val file: File,
+        /**
+         * 获取文件夹内子文件列表
+         * @return [ArrayList]
+         */
+        // 文件夹内子文件列表
+        val subFiles: List<FileList>? = ArrayList(0)
+    ) {
+
+        // =
+        /**
+         * 构造函数
+         * @param file  当前文件夹
+         * @param subFiles 文件夹内子文件列表
+         */
     }
 }

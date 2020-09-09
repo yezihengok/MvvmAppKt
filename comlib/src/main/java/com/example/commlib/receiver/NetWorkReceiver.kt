@@ -93,7 +93,7 @@ class NetWorkReceiver private constructor() : BroadcastReceiver() {
             // 获取手机所有连接管理对象 ( 包括对 wi-fi,net 等连接的管理 )
             try {
                 // 获取网络连接状态
-                val cManager: ConnectivityManager? = AppUtils.getConnectivityManager()
+                val cManager: ConnectivityManager? = AppUtils.connectivityManager
                 // 版本兼容处理
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
                     // 判断连接的是否 Wifi

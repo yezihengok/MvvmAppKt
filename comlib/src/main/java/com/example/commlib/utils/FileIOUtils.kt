@@ -1,176 +1,154 @@
-package com.example.commlib.utils;
+package com.example.commlib.utils
 
-import com.blankj.ALog;
-
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.List;
+import com.blankj.ALog
+import java.io.*
+import java.nio.ByteBuffer
+import java.nio.channels.FileChannel
+import java.util.*
 
 /**
  * detail: 文件 (IO 流 ) 工具类
  * @author Ttt
  */
-public final class FileIOUtils {
-
-    private FileIOUtils() {
-    }
-
+object FileIOUtils {
     // 日志 TAG
-    private static final String TAG = FileIOUtils.class.getSimpleName();
+    private val TAG = FileIOUtils::class.java.simpleName
+
     // 换行符
-    private static final String NEW_LINE_STR = System.getProperty("line.separator");
+    private val NEW_LINE_STR = System.getProperty("line.separator")
+
     // 缓存大小
-    private static int sBufferSize = 8192;
+    private var sBufferSize = 8192
+
     // 无数据读取
-    public static final int EOF = -1;
+    const val EOF = -1
 
     /**
      * 设置缓冲区的大小, 默认大小等于 8192 字节
      * @param bufferSize 缓冲 Buffer 大小
      */
-    public static void setBufferSize(final int bufferSize) {
-        sBufferSize = bufferSize;
+    fun setBufferSize(bufferSize: Int) {
+        sBufferSize = bufferSize
     }
 
     /**
      * 获取输入流
      * @param filePath 文件路径
-     * @return {@link FileInputStream}
+     * @return [FileInputStream]
      */
-    public static FileInputStream getFileInputStream(final String filePath) {
-        return getFileInputStream(FileUtils.getFile(filePath));
+    fun getFileInputStream(filePath: String?): FileInputStream? {
+        return getFileInputStream(FileUtils.getFile(filePath))
     }
 
     /**
      * 获取输入流
      * @param file 文件
-     * @return {@link FileInputStream}
+     * @return [FileInputStream]
      */
-    public static FileInputStream getFileInputStream(final File file) {
-        if (file == null) return null;
+    fun getFileInputStream(file: File?): FileInputStream? {
+        if (file == null) return null
         try {
-            return new FileInputStream(file);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getFileInputStream");
+            return FileInputStream(file)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getFileInputStream")
         }
-        return null;
+        return null
     }
 
     /**
      * 获取输出流
      * @param filePath 文件路径
-     * @return {@link FileOutputStream}
+     * @return [FileOutputStream]
      */
-    public static FileOutputStream getFileOutputStream(final String filePath) {
-        return getFileOutputStream(FileUtils.getFile(filePath));
+    fun getFileOutputStream(filePath: String?): FileOutputStream? {
+        return getFileOutputStream(FileUtils.getFile(filePath))
     }
 
     /**
      * 获取输出流
      * @param filePath 文件路径
      * @param append   是否追加到结尾
-     * @return {@link FileOutputStream}
+     * @return [FileOutputStream]
      */
-    public static FileOutputStream getFileOutputStream(final String filePath, final boolean append) {
-        return getFileOutputStream(FileUtils.getFile(filePath), append);
+    fun getFileOutputStream(filePath: String?, append: Boolean): FileOutputStream? {
+        return getFileOutputStream(FileUtils.getFile(filePath), append)
     }
 
     /**
      * 获取输出流
      * @param file 文件
-     * @return {@link FileOutputStream}
+     * @return [FileOutputStream]
      */
-    public static FileOutputStream getFileOutputStream(final File file) {
-        return getFileOutputStream(file, false);
+    fun getFileOutputStream(file: File?): FileOutputStream? {
+        return getFileOutputStream(file, false)
     }
 
     /**
      * 获取输出流
      * @param file   文件
      * @param append 是否追加到结尾
-     * @return {@link FileOutputStream}
+     * @return [FileOutputStream]
      */
-    public static FileOutputStream getFileOutputStream(final File file, final boolean append) {
-        if (file == null) return null;
+    fun getFileOutputStream(file: File?, append: Boolean): FileOutputStream? {
+        if (file == null) return null
         try {
-            return new FileOutputStream(file, append);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getFileOutputStream");
+            return FileOutputStream(file, append)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getFileOutputStream")
         }
-        return null;
+        return null
     }
-
     // =
+    /**
+     * 通过输入流写入文件
+     * @param filePath    文件路径
+     * @param inputStream [InputStream]
+     * @return `true` success, `false` fail
+     */
+    fun writeFileFromIS(filePath: String?, inputStream: InputStream?): Boolean {
+        return writeFileFromIS(FileUtils.getFileByPath(filePath), inputStream, false)
+    }
 
     /**
      * 通过输入流写入文件
      * @param filePath    文件路径
-     * @param inputStream {@link InputStream}
-     * @return {@code true} success, {@code false} fail
-     */
-    public static boolean writeFileFromIS(final String filePath, final InputStream inputStream) {
-        return writeFileFromIS(FileUtils.getFileByPath(filePath), inputStream, false);
-    }
-
-    /**
-     * 通过输入流写入文件
-     * @param filePath    文件路径
-     * @param inputStream {@link InputStream}
+     * @param inputStream [InputStream]
      * @param append      是否追加到结尾
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromIS(final String filePath, final InputStream inputStream, final boolean append) {
-        return writeFileFromIS(FileUtils.getFileByPath(filePath), inputStream, append);
+    fun writeFileFromIS(filePath: String?, inputStream: InputStream?, append: Boolean): Boolean {
+        return writeFileFromIS(FileUtils.getFileByPath(filePath), inputStream, append)
     }
-
     /**
      * 通过输入流写入文件
      * @param file        文件
-     * @param inputStream {@link InputStream}
-     * @return {@code true} success, {@code false} fail
+     * @param inputStream [InputStream]
+     * @param append      是否追加到结尾
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromIS(final File file, final InputStream inputStream) {
-        return writeFileFromIS(file, inputStream, false);
-    }
-
     /**
      * 通过输入流写入文件
      * @param file        文件
-     * @param inputStream {@link InputStream}
-     * @param append      是否追加到结尾
-     * @return {@code true} success, {@code false} fail
+     * @param inputStream [InputStream]
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromIS(final File file, final InputStream inputStream, final boolean append) {
-        if (inputStream == null || !FileUtils.createOrExistsFile(file)) return false;
-        OutputStream os = null;
-        try {
-            os = new BufferedOutputStream(new FileOutputStream(file, append));
-            byte[] data = new byte[sBufferSize];
-            int len;
-            while ((len = inputStream.read(data, 0, sBufferSize)) != EOF) {
-                os.write(data, 0, len);
+    @JvmOverloads
+    fun writeFileFromIS(file: File?, inputStream: InputStream?, append: Boolean = false): Boolean {
+        if (inputStream == null || !FileUtils.createOrExistsFile(file)) return false
+        var os: OutputStream? = null
+        return try {
+            os = BufferedOutputStream(FileOutputStream(file, append))
+            val data = ByteArray(sBufferSize)
+            var len: Int
+            while (inputStream.read(data, 0, sBufferSize).also { len = it } != EOF) {
+                os.write(data, 0, len)
             }
-            return true;
-        } catch (IOException e) {
-            ALog.eTag(TAG, e, "writeFileFromIS");
-            return false;
+            true
+        } catch (e: IOException) {
+            ALog.eTag(TAG, e, "writeFileFromIS")
+            false
         } finally {
-            CloseUtils.closeIOQuietly(inputStream, os);
+            CloseUtils.closeIOQuietly(inputStream, os)
         }
     }
 
@@ -178,10 +156,10 @@ public final class FileIOUtils {
      * 通过字节流写入文件
      * @param filePath 文件路径
      * @param bytes    byte[]
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromBytesByStream(final String filePath, final byte[] bytes) {
-        return writeFileFromBytesByStream(FileUtils.getFileByPath(filePath), bytes, false);
+    fun writeFileFromBytesByStream(filePath: String?, bytes: ByteArray?): Boolean {
+        return writeFileFromBytesByStream(FileUtils.getFileByPath(filePath), bytes, false)
     }
 
     /**
@@ -189,41 +167,41 @@ public final class FileIOUtils {
      * @param filePath 文件路径
      * @param bytes    byte[]
      * @param append   是否追加到结尾
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromBytesByStream(final String filePath, final byte[] bytes, final boolean append) {
-        return writeFileFromBytesByStream(FileUtils.getFileByPath(filePath), bytes, append);
+    fun writeFileFromBytesByStream(filePath: String?, bytes: ByteArray?, append: Boolean): Boolean {
+        return writeFileFromBytesByStream(FileUtils.getFileByPath(filePath), bytes, append)
     }
-
-    /**
-     * 通过字节流写入文件
-     * @param file  文件
-     * @param bytes byte[]
-     * @return {@code true} success, {@code false} fail
-     */
-    public static boolean writeFileFromBytesByStream(final File file, final byte[] bytes) {
-        return writeFileFromBytesByStream(file, bytes, false);
-    }
-
     /**
      * 通过字节流写入文件
      * @param file   文件
      * @param bytes  byte[]
      * @param append 是否追加到结尾
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromBytesByStream(final File file, final byte[] bytes, final boolean append) {
-        if (bytes == null || !FileUtils.createOrExistsFile(file)) return false;
-        BufferedOutputStream bos = null;
-        try {
-            bos = new BufferedOutputStream(new FileOutputStream(file, append));
-            bos.write(bytes);
-            return true;
-        } catch (IOException e) {
-            ALog.eTag(TAG, e, "writeFileFromBytesByStream");
-            return false;
+    /**
+     * 通过字节流写入文件
+     * @param file  文件
+     * @param bytes byte[]
+     * @return `true` success, `false` fail
+     */
+    @JvmOverloads
+    fun writeFileFromBytesByStream(
+        file: File?,
+        bytes: ByteArray?,
+        append: Boolean = false
+    ): Boolean {
+        if (bytes == null || !FileUtils.createOrExistsFile(file)) return false
+        var bos: BufferedOutputStream? = null
+        return try {
+            bos = BufferedOutputStream(FileOutputStream(file, append))
+            bos.write(bytes)
+            true
+        } catch (e: IOException) {
+            ALog.eTag(TAG, e, "writeFileFromBytesByStream")
+            false
         } finally {
-            CloseUtils.closeIOQuietly(bos);
+            CloseUtils.closeIOQuietly(bos)
         }
     }
 
@@ -232,10 +210,14 @@ public final class FileIOUtils {
      * @param filePath 文件路径
      * @param bytes    byte[]
      * @param isForce  是否强制写入
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromBytesByChannel(final String filePath, final byte[] bytes, final boolean isForce) {
-        return writeFileFromBytesByChannel(FileUtils.getFileByPath(filePath), bytes, false, isForce);
+    fun writeFileFromBytesByChannel(
+        filePath: String?,
+        bytes: ByteArray?,
+        isForce: Boolean
+    ): Boolean {
+        return writeFileFromBytesByChannel(FileUtils.getFileByPath(filePath), bytes, false, isForce)
     }
 
     /**
@@ -244,10 +226,20 @@ public final class FileIOUtils {
      * @param bytes    byte[]
      * @param append   是否追加到结尾
      * @param isForce  是否强制写入
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromBytesByChannel(final String filePath, final byte[] bytes, final boolean append, final boolean isForce) {
-        return writeFileFromBytesByChannel(FileUtils.getFileByPath(filePath), bytes, append, isForce);
+    fun writeFileFromBytesByChannel(
+        filePath: String?,
+        bytes: ByteArray?,
+        append: Boolean,
+        isForce: Boolean
+    ): Boolean {
+        return writeFileFromBytesByChannel(
+            FileUtils.getFileByPath(filePath),
+            bytes,
+            append,
+            isForce
+        )
     }
 
     /**
@@ -255,10 +247,10 @@ public final class FileIOUtils {
      * @param file    文件
      * @param bytes   byte[]
      * @param isForce 是否强制写入
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromBytesByChannel(final File file, final byte[] bytes, final boolean isForce) {
-        return writeFileFromBytesByChannel(file, bytes, false, isForce);
+    fun writeFileFromBytesByChannel(file: File?, bytes: ByteArray?, isForce: Boolean): Boolean {
+        return writeFileFromBytesByChannel(file, bytes, false, isForce)
     }
 
     /**
@@ -267,22 +259,27 @@ public final class FileIOUtils {
      * @param bytes   byte[]
      * @param append  是否追加到结尾
      * @param isForce 是否强制写入
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromBytesByChannel(final File file, final byte[] bytes, final boolean append, final boolean isForce) {
-        if (bytes == null || !FileUtils.createOrExistsFile(file)) return false;
-        FileChannel fc = null;
-        try {
-            fc = new FileOutputStream(file, append).getChannel();
-            fc.position(fc.size());
-            fc.write(ByteBuffer.wrap(bytes));
-            if (isForce) fc.force(true);
-            return true;
-        } catch (IOException e) {
-            ALog.eTag(TAG, e, "writeFileFromBytesByChannel");
-            return false;
+    fun writeFileFromBytesByChannel(
+        file: File?,
+        bytes: ByteArray?,
+        append: Boolean,
+        isForce: Boolean
+    ): Boolean {
+        if (bytes == null || !FileUtils.createOrExistsFile(file)) return false
+        var fc: FileChannel? = null
+        return try {
+            fc = FileOutputStream(file, append).channel
+            fc.position(fc.size())
+            fc.write(ByteBuffer.wrap(bytes))
+            if (isForce) fc.force(true)
+            true
+        } catch (e: IOException) {
+            ALog.eTag(TAG, e, "writeFileFromBytesByChannel")
+            false
         } finally {
-            CloseUtils.closeIOQuietly(fc);
+            CloseUtils.closeIOQuietly(fc)
         }
     }
 
@@ -291,10 +288,10 @@ public final class FileIOUtils {
      * @param filePath 文件路径
      * @param bytes    byte[]
      * @param isForce  是否强制写入
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromBytesByMap(final String filePath, final byte[] bytes, final boolean isForce) {
-        return writeFileFromBytesByMap(filePath, bytes, false, isForce);
+    fun writeFileFromBytesByMap(filePath: String?, bytes: ByteArray?, isForce: Boolean): Boolean {
+        return writeFileFromBytesByMap(filePath, bytes, false, isForce)
     }
 
     /**
@@ -303,10 +300,15 @@ public final class FileIOUtils {
      * @param bytes    byte[]
      * @param append   是否追加到结尾
      * @param isForce  是否强制写入
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromBytesByMap(final String filePath, final byte[] bytes, final boolean append, final boolean isForce) {
-        return writeFileFromBytesByMap(FileUtils.getFileByPath(filePath), bytes, append, isForce);
+    fun writeFileFromBytesByMap(
+        filePath: String?,
+        bytes: ByteArray?,
+        append: Boolean,
+        isForce: Boolean
+    ): Boolean {
+        return writeFileFromBytesByMap(FileUtils.getFileByPath(filePath), bytes, append, isForce)
     }
 
     /**
@@ -314,10 +316,10 @@ public final class FileIOUtils {
      * @param file    文件
      * @param bytes   byte[]
      * @param isForce 是否强制写入
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromBytesByMap(final File file, final byte[] bytes, final boolean isForce) {
-        return writeFileFromBytesByMap(file, bytes, false, isForce);
+    fun writeFileFromBytesByMap(file: File?, bytes: ByteArray?, isForce: Boolean): Boolean {
+        return writeFileFromBytesByMap(file, bytes, false, isForce)
     }
 
     /**
@@ -326,22 +328,27 @@ public final class FileIOUtils {
      * @param bytes   byte[]
      * @param append  是否追加到结尾
      * @param isForce 是否强制写入
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromBytesByMap(final File file, final byte[] bytes, final boolean append, final boolean isForce) {
-        if (bytes == null || !FileUtils.createOrExistsFile(file)) return false;
-        FileChannel fc = null;
-        try {
-            fc = new FileOutputStream(file, append).getChannel();
-            MappedByteBuffer mbb = fc.map(FileChannel.MapMode.READ_WRITE, fc.size(), bytes.length);
-            mbb.put(bytes);
-            if (isForce) mbb.force();
-            return true;
-        } catch (IOException e) {
-            ALog.eTag(TAG, e, "writeFileFromBytesByMap");
-            return false;
+    fun writeFileFromBytesByMap(
+        file: File?,
+        bytes: ByteArray?,
+        append: Boolean,
+        isForce: Boolean
+    ): Boolean {
+        if (bytes == null || !FileUtils.createOrExistsFile(file)) return false
+        var fc: FileChannel? = null
+        return try {
+            fc = FileOutputStream(file, append).channel
+            val mbb = fc.map(FileChannel.MapMode.READ_WRITE, fc.size(), bytes.size.toLong())
+            mbb.put(bytes)
+            if (isForce) mbb.force()
+            true
+        } catch (e: IOException) {
+            ALog.eTag(TAG, e, "writeFileFromBytesByMap")
+            false
         } finally {
-            CloseUtils.closeIOQuietly(fc);
+            CloseUtils.closeIOQuietly(fc)
         }
     }
 
@@ -349,10 +356,10 @@ public final class FileIOUtils {
      * 通过字符串写入文件
      * @param filePath 文件路径
      * @param content  写入内容
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromString(final String filePath, final String content) {
-        return writeFileFromString(FileUtils.getFileByPath(filePath), content, false);
+    fun writeFileFromString(filePath: String?, content: String?): Boolean {
+        return writeFileFromString(FileUtils.getFileByPath(filePath), content, false)
     }
 
     /**
@@ -360,84 +367,69 @@ public final class FileIOUtils {
      * @param filePath 文件路径
      * @param content  写入内容
      * @param append   是否追加到结尾
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromString(final String filePath, final String content, final boolean append) {
-        return writeFileFromString(FileUtils.getFileByPath(filePath), content, append);
+    fun writeFileFromString(filePath: String?, content: String?, append: Boolean): Boolean {
+        return writeFileFromString(FileUtils.getFileByPath(filePath), content, append)
     }
-
-    /**
-     * 通过字符串写入文件
-     * @param file    文件
-     * @param content 写入内容
-     * @return {@code true} success, {@code false} fail
-     */
-    public static boolean writeFileFromString(final File file, final String content) {
-        return writeFileFromString(file, content, false);
-    }
-
     /**
      * 通过字符串写入文件
      * @param file    文件
      * @param content 写入内容
      * @param append  是否追加到结尾
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean writeFileFromString(final File file, final String content, final boolean append) {
-        if (content == null || !FileUtils.createOrExistsFile(file)) return false;
-        BufferedWriter bw = null;
-        try {
-            bw = new BufferedWriter(new FileWriter(file, append));
-            bw.write(content);
-            return true;
-        } catch (IOException e) {
-            ALog.eTag(TAG, e, "writeFileFromString");
-            return false;
+    /**
+     * 通过字符串写入文件
+     * @param file    文件
+     * @param content 写入内容
+     * @return `true` success, `false` fail
+     */
+    @JvmOverloads
+    fun writeFileFromString(file: File?, content: String?, append: Boolean = false): Boolean {
+        if (content == null || !FileUtils.createOrExistsFile(file)) return false
+        var bw: BufferedWriter? = null
+        return try {
+            bw = BufferedWriter(FileWriter(file, append))
+            bw.write(content)
+            true
+        } catch (e: IOException) {
+            ALog.eTag(TAG, e, "writeFileFromString")
+            false
         } finally {
-            CloseUtils.closeIOQuietly(bw);
+            CloseUtils.closeIOQuietly(bw)
         }
     }
-
     // ==============
     // = 读写分界线 =
     // ==============
-
     /**
      * 读取文件内容, 返回换行 List
      * @param filePath 文件路径
-     * @return 换行 {@link List<String>}
+     * @return 换行 [<]
      */
-    public static List<String> readFileToList(final String filePath) {
-        return readFileToList(FileUtils.getFileByPath(filePath), null);
+    fun readFileToList(filePath: String?): List<String>? {
+        return readFileToList(FileUtils.getFileByPath(filePath), null)
     }
 
     /**
      * 读取文件内容, 返回换行 List
      * @param filePath    文件路径
      * @param charsetName 字符编码
-     * @return 换行 {@link List<String>}
+     * @return 换行 [<]
      */
-    public static List<String> readFileToList(final String filePath, final String charsetName) {
-        return readFileToList(FileUtils.getFileByPath(filePath), charsetName);
-    }
-
-    /**
-     * 读取文件内容, 返回换行 List
-     * @param file 文件
-     * @return 换行 {@link List<String>}
-     */
-    public static List<String> readFileToList(final File file) {
-        return readFileToList(file, 0, Integer.MAX_VALUE, null);
+    fun readFileToList(filePath: String?, charsetName: String?): List<String>? {
+        return readFileToList(FileUtils.getFileByPath(filePath), charsetName)
     }
 
     /**
      * 读取文件内容, 返回换行 List
      * @param file        文件
      * @param charsetName 字符编码
-     * @return 换行 {@link List<String>}
+     * @return 换行 [<]
      */
-    public static List<String> readFileToList(final File file, final String charsetName) {
-        return readFileToList(file, 0, Integer.MAX_VALUE, charsetName);
+    fun readFileToList(file: File?, charsetName: String?): List<String>? {
+        return readFileToList(file, 0, Int.MAX_VALUE, charsetName)
     }
 
     /**
@@ -445,10 +437,10 @@ public final class FileIOUtils {
      * @param filePath 文件路径
      * @param start    开始位置
      * @param end      结束位置
-     * @return 换行 {@link List<String>}
+     * @return 换行 [<]
      */
-    public static List<String> readFileToList(final String filePath, final int start, final int end) {
-        return readFileToList(FileUtils.getFileByPath(filePath), start, end, null);
+    fun readFileToList(filePath: String?, start: Int, end: Int): List<String>? {
+        return readFileToList(FileUtils.getFileByPath(filePath), start, end, null)
     }
 
     /**
@@ -457,67 +449,76 @@ public final class FileIOUtils {
      * @param start       开始位置
      * @param end         结束位置
      * @param charsetName 字符编码
-     * @return 换行 {@link List<String>}
+     * @return 换行 [<]
      */
-    public static List<String> readFileToList(final String filePath, final int start, final int end, final String charsetName) {
-        return readFileToList(FileUtils.getFileByPath(filePath), start, end, charsetName);
+    fun readFileToList(
+        filePath: String?,
+        start: Int,
+        end: Int,
+        charsetName: String?
+    ): List<String>? {
+        return readFileToList(FileUtils.getFileByPath(filePath), start, end, charsetName)
     }
-
+    /**
+     * 读取文件内容, 返回换行 List
+     * @param file        文件
+     * @param start       开始位置
+     * @param end         结束位置
+     * @param charsetName 字符编码
+     * @return 换行 [<]
+     */
+    /**
+     * 读取文件内容, 返回换行 List
+     * @param file 文件
+     * @return 换行 [<]
+     */
     /**
      * 读取文件内容, 返回换行 List
      * @param file  文件
      * @param start 开始位置
      * @param end   结束位置
-     * @return 换行 {@link List<String>}
+     * @return 换行 [<]
      */
-    public static List<String> readFileToList(final File file, final int start, final int end) {
-        return readFileToList(file, start, end, null);
-    }
-
-    /**
-     * 读取文件内容, 返回换行 List
-     * @param file        文件
-     * @param start       开始位置
-     * @param end         结束位置
-     * @param charsetName 字符编码
-     * @return 换行 {@link List<String>}
-     */
-    public static List<String> readFileToList(final File file, final int start, final int end, final String charsetName) {
-        if (!FileUtils.isFileExists(file)) return null;
-        if (start > end) return null;
-        BufferedReader br = null;
-        try {
-            String line;
-            int curLine = 1;
-            List<String> list = new ArrayList<>();
-            if (CommUtils.isEmpty(charsetName)) {
-                br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+    @JvmOverloads
+    fun readFileToList(
+        file: File?,
+        start: Int = 0,
+        end: Int = Int.MAX_VALUE,
+        charsetName: String? = null
+    ): List<String>? {
+        if (!FileUtils.isFileExists(file)) return null
+        if (start > end) return null
+        var br: BufferedReader? = null
+        return try {
+            var line: String
+            var curLine = 1
+            val list: MutableList<String> = ArrayList()
+            br = if (CommUtils.isEmpty(charsetName)) {
+                BufferedReader(InputStreamReader(FileInputStream(file)))
             } else {
-                br = new BufferedReader(new InputStreamReader(new FileInputStream(file), charsetName));
+                BufferedReader(InputStreamReader(FileInputStream(file), charsetName))
             }
-            while ((line = br.readLine()) != null) {
-                if (curLine > end) break;
-                if (start <= curLine && curLine <= end) list.add(line);
-                ++curLine;
+            while (br.readLine().also { line = it } != null) {
+                if (curLine > end) break
+                if (start <= curLine && curLine <= end) list.add(line)
+                ++curLine
             }
-            return list;
-        } catch (IOException e) {
-            ALog.eTag(TAG, e, "readFileToList");
-            return null;
+            list
+        } catch (e: IOException) {
+            ALog.eTag(TAG, e, "readFileToList")
+            null
         } finally {
-            CloseUtils.closeIOQuietly(br);
+            CloseUtils.closeIOQuietly(br)
         }
     }
-
     // =
-
     /**
      * 读取文件内容, 返回字符串
      * @param filePath 文件路径
      * @return 文件内容字符串
      */
-    public static String readFileToString(final String filePath) {
-        return readFileToString(FileUtils.getFileByPath(filePath), null);
+    fun readFileToString(filePath: String?): String? {
+        return readFileToString(FileUtils.getFileByPath(filePath), null)
     }
 
     /**
@@ -526,48 +527,44 @@ public final class FileIOUtils {
      * @param charsetName 字符编码
      * @return 文件内容字符串
      */
-    public static String readFileToString(final String filePath, final String charsetName) {
-        return readFileToString(FileUtils.getFileByPath(filePath), charsetName);
+    fun readFileToString(filePath: String?, charsetName: String?): String? {
+        return readFileToString(FileUtils.getFileByPath(filePath), charsetName)
     }
-
-    /**
-     * 读取文件内容, 返回字符串
-     * @param file 文件
-     * @return 文件内容字符串
-     */
-    public static String readFileToString(final File file) {
-        return readFileToString(file, null);
-    }
-
     /**
      * 读取文件内容, 返回字符串
      * @param file        文件
      * @param charsetName 字符编码
      * @return 文件内容字符串
      */
-    public static String readFileToString(final File file, final String charsetName) {
-        if (!FileUtils.isFileExists(file)) return null;
-        BufferedReader br = null;
-        try {
-            StringBuilder builder = new StringBuilder();
-            if (CommUtils.isEmpty(charsetName)) {
-                br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+    /**
+     * 读取文件内容, 返回字符串
+     * @param file 文件
+     * @return 文件内容字符串
+     */
+    @JvmOverloads
+    fun readFileToString(file: File?, charsetName: String? = null): String? {
+        if (!FileUtils.isFileExists(file)) return null
+        var br: BufferedReader? = null
+        return try {
+            val builder = StringBuilder()
+            br = if (CommUtils.isEmpty(charsetName)) {
+                BufferedReader(InputStreamReader(FileInputStream(file)))
             } else {
-                br = new BufferedReader(new InputStreamReader(new FileInputStream(file), charsetName));
+                BufferedReader(InputStreamReader(FileInputStream(file), charsetName))
             }
-            String line;
-            if ((line = br.readLine()) != null) {
-                builder.append(line);
-                while ((line = br.readLine()) != null) {
-                    builder.append(NEW_LINE_STR).append(line);
+            var line: String?
+            if (br.readLine().also { line = it } != null) {
+                builder.append(line)
+                while (br.readLine().also { line = it } != null) {
+                    builder.append(NEW_LINE_STR).append(line)
                 }
             }
-            return builder.toString();
-        } catch (IOException e) {
-            ALog.eTag(TAG, e, "readFileToString");
-            return null;
+            builder.toString()
+        } catch (e: IOException) {
+            ALog.eTag(TAG, e, "readFileToString")
+            null
         } finally {
-            CloseUtils.closeIOQuietly(br);
+            CloseUtils.closeIOQuietly(br)
         }
     }
 
@@ -576,8 +573,8 @@ public final class FileIOUtils {
      * @param filePath 文件路径
      * @return 文件内容 byte[]
      */
-    public static byte[] readFileToBytesByStream(final String filePath) {
-        return readFileToBytesByStream(FileUtils.getFileByPath(filePath));
+    fun readFileToBytesByStream(filePath: String?): ByteArray? {
+        return readFileToBytesByStream(FileUtils.getFileByPath(filePath))
     }
 
     /**
@@ -585,24 +582,24 @@ public final class FileIOUtils {
      * @param file 文件
      * @return 文件内容 byte[]
      */
-    public static byte[] readFileToBytesByStream(final File file) {
-        if (!FileUtils.isFileExists(file)) return null;
-        FileInputStream fis = null;
-        ByteArrayOutputStream baos = null;
-        try {
-            fis = new FileInputStream(file);
-            baos = new ByteArrayOutputStream();
-            byte[] b = new byte[sBufferSize];
-            int len;
-            while ((len = fis.read(b, 0, sBufferSize)) != EOF) {
-                baos.write(b, 0, len);
+    fun readFileToBytesByStream(file: File?): ByteArray? {
+        if (!FileUtils.isFileExists(file)) return null
+        var fis: FileInputStream? = null
+        var baos: ByteArrayOutputStream? = null
+        return try {
+            fis = FileInputStream(file)
+            baos = ByteArrayOutputStream()
+            val b = ByteArray(sBufferSize)
+            var len: Int
+            while (fis.read(b, 0, sBufferSize).also { len = it } != EOF) {
+                baos.write(b, 0, len)
             }
-            return baos.toByteArray();
-        } catch (IOException e) {
-            ALog.eTag(TAG, e, "readFileToBytesByStream");
-            return null;
+            baos.toByteArray()
+        } catch (e: IOException) {
+            ALog.eTag(TAG, e, "readFileToBytesByStream")
+            null
         } finally {
-            CloseUtils.closeIOQuietly(fis, baos);
+            CloseUtils.closeIOQuietly(fis, baos)
         }
     }
 
@@ -611,8 +608,8 @@ public final class FileIOUtils {
      * @param filePath 文件路径
      * @return 文件内容 byte[]
      */
-    public static byte[] readFileToBytesByChannel(final String filePath) {
-        return readFileToBytesByChannel(FileUtils.getFileByPath(filePath));
+    fun readFileToBytesByChannel(filePath: String?): ByteArray? {
+        return readFileToBytesByChannel(FileUtils.getFileByPath(filePath))
     }
 
     /**
@@ -620,21 +617,21 @@ public final class FileIOUtils {
      * @param file 文件
      * @return 文件内容 byte[]
      */
-    public static byte[] readFileToBytesByChannel(final File file) {
-        if (!FileUtils.isFileExists(file)) return null;
-        FileChannel fc = null;
-        try {
-            fc = new RandomAccessFile(file, "r").getChannel();
-            ByteBuffer byteBuffer = ByteBuffer.allocate((int) fc.size());
+    fun readFileToBytesByChannel(file: File?): ByteArray? {
+        if (!FileUtils.isFileExists(file)) return null
+        var fc: FileChannel? = null
+        return try {
+            fc = RandomAccessFile(file, "r").channel
+            val byteBuffer = ByteBuffer.allocate(fc.size().toInt())
             while (true) {
-                if (!((fc.read(byteBuffer)) > 0)) break;
+                if (fc.read(byteBuffer) <= 0) break
             }
-            return byteBuffer.array();
-        } catch (IOException e) {
-            ALog.eTag(TAG, e, "readFileToBytesByChannel");
-            return null;
+            byteBuffer.array()
+        } catch (e: IOException) {
+            ALog.eTag(TAG, e, "readFileToBytesByChannel")
+            null
         } finally {
-            CloseUtils.closeIOQuietly(fc);
+            CloseUtils.closeIOQuietly(fc)
         }
     }
 
@@ -643,8 +640,8 @@ public final class FileIOUtils {
      * @param filePath 文件路径
      * @return 文件内容 byte[]
      */
-    public static byte[] readFileToBytesByMap(final String filePath) {
-        return readFileToBytesByMap(FileUtils.getFileByPath(filePath));
+    fun readFileToBytesByMap(filePath: String?): ByteArray? {
+        return readFileToBytesByMap(FileUtils.getFileByPath(filePath))
     }
 
     /**
@@ -652,47 +649,45 @@ public final class FileIOUtils {
      * @param file 文件
      * @return 文件内容 byte[]
      */
-    public static byte[] readFileToBytesByMap(final File file) {
-        if (!FileUtils.isFileExists(file)) return null;
-        FileChannel fc = null;
-        try {
-            fc = new RandomAccessFile(file, "r").getChannel();
-            int size = (int) fc.size();
-            MappedByteBuffer mbb = fc.map(FileChannel.MapMode.READ_ONLY, 0, size).load();
-            byte[] result = new byte[size];
-            mbb.get(result, 0, size);
-            return result;
-        } catch (IOException e) {
-            ALog.eTag(TAG, e, "readFileToBytesByMap");
-            return null;
+    fun readFileToBytesByMap(file: File?): ByteArray? {
+        if (!FileUtils.isFileExists(file)) return null
+        var fc: FileChannel? = null
+        return try {
+            fc = RandomAccessFile(file, "r").channel
+            val size = fc.size().toInt()
+            val mbb = fc.map(FileChannel.MapMode.READ_ONLY, 0, size.toLong()).load()
+            val result = ByteArray(size)
+            mbb[result, 0, size]
+            result
+        } catch (e: IOException) {
+            ALog.eTag(TAG, e, "readFileToBytesByMap")
+            null
         } finally {
-            CloseUtils.closeIOQuietly(fc);
+            CloseUtils.closeIOQuietly(fc)
         }
     }
-
     // =
-
     /**
      * 复制 InputStream 到 OutputStream
-     * @param inputStream  {@link InputStream} 读取流
-     * @param outputStream {@link OutputStream} 写入流
+     * @param inputStream  [InputStream] 读取流
+     * @param outputStream [OutputStream] 写入流
      * @return bytes number
      */
-    public static long copyLarge(final InputStream inputStream, final OutputStream outputStream) {
+    fun copyLarge(inputStream: InputStream, outputStream: OutputStream): Long {
         try {
-            byte[] data = new byte[sBufferSize];
-            long count = 0;
-            int n;
-            while (EOF != (n = inputStream.read(data))) {
-                outputStream.write(data, 0, n);
-                count += n;
+            val data = ByteArray(sBufferSize)
+            var count: Long = 0
+            var n: Int
+            while (EOF != inputStream.read(data).also { n = it }) {
+                outputStream.write(data, 0, n)
+                count += n.toLong()
             }
-            return count;
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "copyLarge");
+            return count
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "copyLarge")
         } finally {
-            CloseUtils.closeIOQuietly(inputStream, outputStream);
+            CloseUtils.closeIOQuietly(inputStream, outputStream)
         }
-        return -1;
+        return -1
     }
 }

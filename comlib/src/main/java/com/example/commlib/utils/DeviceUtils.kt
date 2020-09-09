@@ -1,120 +1,79 @@
-package com.example.commlib.utils;
+package com.example.commlib.utils
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.os.Build;
-import android.provider.Settings;
-import android.text.TextUtils;
-
-import androidx.annotation.RequiresApi;
-import androidx.annotation.RequiresPermission;
-
-import com.blankj.ALog;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
+import android.text.TextUtils
+import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
+import com.blankj.ALog
+import com.example.commlib.utils.ResourceUtils.contentResolver
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
+import java.net.InetAddress
+import java.net.NetworkInterface
+import java.util.*
 
 /**
  * detail: 设备相关工具类
  * @author Ttt
  * <pre>
- *     @see <a href="http://blog.csdn.net/zhangcanyan/article/details/52817866"/>
- *     android.os.Build.BOARD: 获取设备基板名称
- *     android.os.Build.BOOTLOADER: 获取设备引导程序版本号
- *     android.os.Build.BRAND: 获取设备品牌
- *     android.os.Build.CPU_ABI: 获取设备指令集名称 (CPU 的类型 )
- *     android.os.Build.CPU_ABI2: 获取第二个指令集名称
- *     android.os.Build.DEVICE: 获取设备驱动名称
- *     android.os.Build.DISPLAY: 获取设备显示的版本包 ( 在系统设置中显示为版本号 ) 和 ID 一样
- *     android.os.Build.FINGERPRINT: 设备的唯一标识, 由设备的多个信息拼接合成
- *     android.os.Build.HARDWARE: 设备硬件名称, 一般和基板名称一样 (BOARD)
- *     android.os.Build.HOST: 设备主机地址
- *     android.os.Build.ID: 设备版本号
- *     android.os.Build.MODEL : 获取手机的型号 设备名称
- *     android.os.Build.MANUFACTURER: 获取设备制造商
- *     android:os.Build.PRODUCT: 整个产品的名称
- *     android:os.Build.RADIO: 无线电固件版本号, 通常是不可用的 显示 unknown
- *     android.os.Build.TAGS: 设备标签, 如 release-keys 或测试的 test-keys
- *     android.os.Build.TIME: 时间
- *     android.os.Build.TYPE: 设备版本类型 主要为 "user" 或 "eng".
- *     android.os.Build.USER: 设备用户名 基本上都为 android-build
- *     android.os.Build.VERSION.RELEASE: 获取系统版本字符串, 如 4.1.2 或 2.2 或 2.3 等
- *     android.os.Build.VERSION.CODENAME: 设备当前的系统开发代号, 一般使用 REL 代替
- *     android.os.Build.VERSION.INCREMENTAL: 系统源代码控制值, 一个数字或者 git hash 值
- *     android.os.Build.VERSION.SDK: 系统的 API 级别 一般使用下面大的 SDK_INT 来查看
- *     android.os.Build.VERSION.SDK_INT: 系统的 API 级别 数字表示
- *     <p></p>
- *     所需权限
- *     <uses-permission android:name="android.permission.INTERNET" />
- *     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
- * </pre>
- */
-public final class DeviceUtils {
-
-    private DeviceUtils() {
-    }
-
+ * @see [](http://blog.csdn.net/zhangcanyan/article/details/52817866)
+ * android.os.Build.BOARD: 获取设备基板名称
+ * android.os.Build.BOOTLOADER: 获取设备引导程序版本号
+ * android.os.Build.BRAND: 获取设备品牌
+ * android.os.Build.CPU_ABI: 获取设备指令集名称
+</pre> */
+object DeviceUtils {
     // 日志 TAG
-    private static final String TAG = DeviceUtils.class.getSimpleName();
+    private val TAG = DeviceUtils::class.java.simpleName
+
     // 换行字符串
-    private static final String NEW_LINE_STR = System.getProperty("line.separator");
+    private val NEW_LINE_STR = System.getProperty("line.separator")
 
     /**
      * 获取设备信息
-     * @return {@link Map<String, String>}
+     * @return [,][<]
      */
-    public static Map<String, String> getDeviceInfo() {
-        return getDeviceInfo(new HashMap<>());
-    }
+    val deviceInfo: Map<String?, String?>
+        get() = getDeviceInfo(HashMap())
 
     /**
      * 获取设备信息
      * @param deviceInfoMap 设备信息 Map
-     * @return {@link Map<String, String>}
+     * @return [,][<]
      */
-    public static Map<String, String> getDeviceInfo(final Map<String, String> deviceInfoMap) {
+    fun getDeviceInfo(deviceInfoMap: MutableMap<String?, String?>): Map<String?, String?> {
         // 获取设备信息类的所有申明的字段, 即包括 public、private 和 proteced, 但是不包括父类的申明字段
-        Field[] fields = Build.class.getDeclaredFields();
+        val fields = Build::class.java.declaredFields
         // 遍历字段
-        for (Field field : fields) {
+        for (field in fields) {
             try {
                 // 取消 Java 的权限控制检查
-                field.setAccessible(true);
+                field.isAccessible = true
                 // 转换当前设备支持的 ABI - CPU 指令集
-                if (field.getName().toLowerCase().startsWith("SUPPORTED".toLowerCase())) {
+                if (field.name.toLowerCase().startsWith("SUPPORTED".toLowerCase())) {
                     try {
-                        Object object = field.get(null);
+                        val `object` = field[null]
+                        val keywords = arrayOf("foo", "bar", "spam")
                         // 判断是否数组
-                        if (object instanceof String[]) {
-                            if (object != null) {
-                                // 获取类型对应字段的数据, 并保存支持的指令集 [arm64-v8a, armeabi-v7a, armeabi]
-                                deviceInfoMap.put(field.getName(), Arrays.toString((String[]) object));
-                            }
-                            continue;
+                        if (`object` is Array<*>) {
+                            deviceInfoMap[field.name] = `object`.contentToString()
+                            continue
                         }
-                    } catch (Exception e) {
+                    } catch (e: Exception) {
                     }
                 }
                 // 获取类型对应字段的数据, 并保存
-                deviceInfoMap.put(field.getName(), field.get(null).toString());
-            } catch (Exception e) {
-                ALog.eTag(TAG, e, "getDeviceInfo");
+                deviceInfoMap[field.name] = field[null].toString()
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getDeviceInfo")
             }
         }
-        return deviceInfoMap;
+        return deviceInfoMap
     }
 
     /**
@@ -123,579 +82,548 @@ public final class DeviceUtils {
      * @param errorInfo     错误提示信息, 如获取设备信息失败
      * @return 拼接后的设备信息字符串
      */
-    public static String handlerDeviceInfo(final Map<String, String> deviceInfoMap, final String errorInfo) {
+    fun handlerDeviceInfo(deviceInfoMap: Map<String?, String?>, errorInfo: String): String {
         try {
             // 初始化 Builder, 拼接字符串
-            StringBuilder builder = new StringBuilder();
+            val builder = StringBuilder()
             // 获取设备信息
-            Iterator<Map.Entry<String, String>> mapIter = deviceInfoMap.entrySet().iterator();
+            val mapIter = deviceInfoMap.entries.iterator()
             // 遍历设备信息
             while (mapIter.hasNext()) {
                 // 获取对应的 key - value
-                Map.Entry<String, String> rnEntry = mapIter.next();
-                String rnKey = rnEntry.getKey(); // key
-                String rnValue = rnEntry.getValue(); // value
+                val rnEntry = mapIter.next()
+                val rnKey = rnEntry.key // key
+                val rnValue = rnEntry.value // value
                 // 保存设备信息
-                builder.append(rnKey);
-                builder.append(" = ");
-                builder.append(rnValue);
-                builder.append(NEW_LINE_STR);
+                builder.append(rnKey)
+                builder.append(" = ")
+                builder.append(rnValue)
+                builder.append(NEW_LINE_STR)
             }
-            return builder.toString();
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "handlerDeviceInfo");
+            return builder.toString()
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "handlerDeviceInfo")
         }
-        return errorInfo;
+        return errorInfo
     }
-
     // =
-
     /**
      * 获取设备基板名称
      * @return 设备基板名称
      */
-    public static String getBoard() {
-        return Build.BOARD;
-    }
+    val board: String
+        get() = Build.BOARD
 
     /**
      * 获取设备引导程序版本号
      * @return 设备引导程序版本号
      */
-    public static String getBootloader() {
-        return Build.BOOTLOADER;
-    }
+    val bootloader: String
+        get() = Build.BOOTLOADER
 
     /**
      * 获取设备品牌
      * @return 设备品牌
      */
-    public static String getBrand() {
-        return Build.BRAND;
-    }
+    val brand: String
+        get() = Build.BRAND
 
     /**
      * 获取支持的第一个指令集
      * @return 支持的第一个指令集
      */
-    public static String getCPU_ABI() {
-        return Build.CPU_ABI;
-    }
+    val cPU_ABI: String
+        get() = Build.CPU_ABI
 
     /**
      * 获取支持的第二个指令集
      * @return 支持的第二个指令集
      */
-    public static String getCPU_ABI2() {
-        return Build.CPU_ABI2;
-    }
+    val cPU_ABI2: String
+        get() = Build.CPU_ABI2
 
     /**
      * 获取支持的指令集 如: [arm64-v8a, armeabi-v7a, armeabi]
      * @return 支持的指令集
      */
-    public static String[] getABIs() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return Build.SUPPORTED_ABIS;
+    val aBIs: Array<String>
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Build.SUPPORTED_ABIS
         } else {
             if (!TextUtils.isEmpty(Build.CPU_ABI2)) {
-                return new String[]{Build.CPU_ABI, Build.CPU_ABI2};
-            }
-            return new String[]{Build.CPU_ABI};
+                arrayOf(Build.CPU_ABI, Build.CPU_ABI2)
+            } else arrayOf(Build.CPU_ABI)
         }
-    }
 
     /**
      * 获取支持的 32 位指令集
      * @return 支持的 32 位指令集
      */
-    public static String[] getSUPPORTED_32_BIT_ABIS() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return Build.SUPPORTED_32_BIT_ABIS;
-        }
-        return null;
-    }
+    val sUPPORTED_32_BIT_ABIS: Array<String>?
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Build.SUPPORTED_32_BIT_ABIS
+        } else null
 
     /**
      * 获取支持的 64 位指令集
      * @return 支持的 64 位指令集
      */
-    public static String[] getSUPPORTED_64_BIT_ABIS() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return Build.SUPPORTED_64_BIT_ABIS;
-        }
-        return null;
-    }
+    val sUPPORTED_64_BIT_ABIS: Array<String>?
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Build.SUPPORTED_64_BIT_ABIS
+        } else null
 
     /**
      * 获取设备驱动名称
      * @return 设备驱动名称
      */
-    public static String getDevice() {
-        return Build.DEVICE;
-    }
+    val device: String
+        get() = Build.DEVICE
 
     /**
      * 获取设备显示的版本包 ( 在系统设置中显示为版本号 ) 和 ID 一样
      * @return 设备显示的版本包
      */
-    public static String getDisplay() {
-        return Build.DISPLAY;
-    }
+    val display: String
+        get() = Build.DISPLAY
 
     /**
      * 获取设备的唯一标识, 由设备的多个信息拼接合成
      * @return 设备的唯一标识, 由设备的多个信息拼接合成
      */
-    public static String getFingerprint() {
-        return Build.FINGERPRINT;
-    }
+    val fingerprint: String
+        get() = Build.FINGERPRINT
 
     /**
      * 获取设备硬件名称, 一般和基板名称一样 (BOARD)
      * @return 设备硬件名称, 一般和基板名称一样 (BOARD)
      */
-    public static String getHardware() {
-        return Build.HARDWARE;
-    }
+    val hardware: String
+        get() = Build.HARDWARE
 
     /**
      * 获取设备主机地址
      * @return 设备主机地址
      */
-    public static String getHost() {
-        return Build.HOST;
-    }
+    val host: String
+        get() = Build.HOST
 
     /**
      * 获取设备版本号
      * @return 设备版本号
      */
-    public static String getID() {
-        return Build.ID;
-    }
+    val iD: String
+        get() = Build.ID
 
     /**
      * 获取设备型号 如 RedmiNote4X
      * @return 设备型号
      */
-    public static String getModel() {
-        String model = Build.MODEL;
-        if (model != null) {
-            model = model.trim().replaceAll("\\s*", "");
-        } else {
-            model = "";
+    val model: String
+        get() {
+            var model = Build.MODEL
+            model = model?.trim { it <= ' ' }?.replace("\\s*".toRegex(), "") ?: ""
+            return model
         }
-        return model;
-    }
 
     /**
      * 获取设备厂商 如 Xiaomi
      * @return 设备厂商
      */
-    public static String getManufacturer() {
-        return Build.MANUFACTURER;
-    }
+    val manufacturer: String
+        get() = Build.MANUFACTURER
 
     /**
      * 获取整个产品的名称
      * @return 整个产品的名称
      */
-    public static String getProduct() {
-        return Build.PRODUCT;
-    }
+    val product: String
+        get() = Build.PRODUCT
 
     /**
      * 获取无线电固件版本号, 通常是不可用的 显示 unknown
      * @return 无线电固件版本号
      */
-    public static String getRadio() {
-        return Build.RADIO;
-    }
+    val radio: String
+        get() = Build.RADIO
 
     /**
      * 获取设备标签, 如 release-keys 或测试的 test-keys
      * @return 设备标签
      */
-    public static String getTags() {
-        return Build.TAGS;
-    }
+    val tags: String
+        get() = Build.TAGS
 
     /**
      * 获取设备时间
      * @return 设备时间
      */
-    public static long getTime() {
-        return Build.TIME;
-    }
+    val time: Long
+        get() = Build.TIME
 
     /**
      * 获取设备版本类型 主要为 "user" 或 "eng".
      * @return 设备版本类型
      */
-    public static String getType() {
-        return Build.TYPE;
-    }
+    val type: String
+        get() = Build.TYPE
 
     /**
      * 获取设备用户名 基本上都为 android-build
      * @return 设备用户名
      */
-    public static String getUser() {
-        return Build.USER;
-    }
-
+    val user: String
+        get() = Build.USER
     // =
-
     /**
      * 获取 SDK 版本号
      * @return SDK 版本号
      */
-    public static int getSDKVersion() {
-        return Build.VERSION.SDK_INT;
-    }
+    val sDKVersion: Int
+        get() = Build.VERSION.SDK_INT
 
     /**
      * 获取系统版本号, 如 4.1.2 或 2.2 或 2.3 等
      * @return 系统版本号
      */
-    public static String getRelease() {
-        return Build.VERSION.RELEASE;
-    }
+    val release: String
+        get() = Build.VERSION.RELEASE
 
     /**
      * 获取设备当前的系统开发代号, 一般使用 REL 代替
      * @return 设备当前的系统开发代号
      */
-    public static String getCodename() {
-        return Build.VERSION.CODENAME;
-    }
+    val codename: String
+        get() = Build.VERSION.CODENAME
 
     /**
      * 获取系统源代码控制值, 一个数字或者 git hash 值
      * @return 系统源代码控制值
      */
-    public static String getIncremental() {
-        return Build.VERSION.INCREMENTAL;
-    }
+    val incremental: String
+        get() = Build.VERSION.INCREMENTAL
 
     /**
      * 获取 Android id
      * <pre>
-     *     在设备首次启动时, 系统会随机生成一个 64 位的数字, 并把这个数字以十六进制字符串的形式保存下来,
-     *     这个十六进制的字符串就是 ANDROID_ID, 当设备被 wipe 后该值会被重置
-     * </pre>
+     * 在设备首次启动时, 系统会随机生成一个 64 位的数字, 并把这个数字以十六进制字符串的形式保存下来,
+     * 这个十六进制的字符串就是 ANDROID_ID, 当设备被 wipe 后该值会被重置
+    </pre> *
      * @return Android id
      */
-    public static String getAndroidId() {
-        String androidId = null;
-        try {
-            androidId = Settings.Secure.getString(ResourceUtils.getContentResolver(), Settings.Secure.ANDROID_ID);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getAndroidId");
+    val androidId: String?
+        get() {
+            var androidId: String? = null
+            try {
+                androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getAndroidId")
+            }
+            return androidId
         }
-        return androidId;
-    }
 
     /**
      * 获取基带版本 BASEBAND-VER
      * @return 基带版本 BASEBAND-VER
      */
-    public static String getBaseband_Ver() {
-        String basebandVersion = "";
-        try {
-            Class clazz = Class.forName("android.os.SystemProperties");
-            Object invoker = clazz.newInstance();
-            Method method = clazz.getMethod("get", String.class, String.class);
-            Object result = method.invoke(invoker, "gsm.version.baseband", "no message");
-            basebandVersion = (String) result;
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getBaseband_Ver");
+    val baseband_Ver: String?
+        get() {
+            var basebandVersion = ""
+            try {
+                val clazz = Class.forName("android.os.SystemProperties")
+                val invoker = clazz.newInstance()
+                val method = clazz.getMethod("get", String::class.java, String::class.java)
+                val result = method.invoke(invoker, "gsm.version.baseband", "no message")
+                basebandVersion = result as String
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getBaseband_Ver")
+            }
+            return basebandVersion
         }
-        return basebandVersion;
-    }
 
     /**
      * 获取内核版本 CORE-VER
      * @return 内核版本 CORE-VER
      */
-    public static String getLinuxCore_Ver() {
-        String kernelVersion = "";
-        try {
-            Process process = Runtime.getRuntime().exec("cat /proc/version");
-            InputStream is = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr, 8 * 1024);
-
-            String line;
-            StringBuilder builder = new StringBuilder();
-            while ((line = br.readLine()) != null) {
-                builder.append(line);
+    val linuxCore_Ver: String
+        get() {
+            var kernelVersion = ""
+            try {
+                val process = Runtime.getRuntime().exec("cat /proc/version")
+                val `is` = process.inputStream
+                val isr = InputStreamReader(`is`)
+                val br = BufferedReader(isr, 8 * 1024)
+                var line: String
+                val builder = StringBuilder()
+                while (br.readLine().also { line = it } != null) {
+                    builder.append(line)
+                }
+                val result = builder.toString()
+                if (result !== "") {
+                    val keyword = "version "
+                    var index = result.indexOf(keyword)
+                    line = result.substring(index + keyword.length)
+                    index = line.indexOf(" ")
+                    kernelVersion = line.substring(0, index)
+                }
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getLinuxCore_Ver")
             }
-            String result = builder.toString();
-            if (result != "") {
-                String keyword = "version ";
-                int index = result.indexOf(keyword);
-                line = result.substring(index + keyword.length());
-                index = line.indexOf(" ");
-                kernelVersion = line.substring(0, index);
-            }
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getLinuxCore_Ver");
+            return kernelVersion
         }
-        return kernelVersion;
-    }
-
     // =
-
     /**
      * 判断设备是否 root
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    public static boolean isDeviceRooted() {
-        String su = "su";
-        String[] locations = {"/system/bin/", "/system/xbin/", "/sbin/", "/system/sd/xbin/",
-                "/system/bin/failsafe/", "/data/local/xbin/", "/data/local/bin/", "/data/local/"};
-        for (String location : locations) {
-            if (new File(location + su).exists()) {
-                return true;
+    val isDeviceRooted: Boolean
+        get() {
+            val su = "su"
+            val locations = arrayOf(
+                "/system/bin/", "/system/xbin/", "/sbin/", "/system/sd/xbin/",
+                "/system/bin/failsafe/", "/data/local/xbin/", "/data/local/bin/", "/data/local/"
+            )
+            for (location in locations) {
+                if (File(location + su).exists()) {
+                    return true
+                }
             }
+            return false
         }
-        return false;
-    }
 
     /**
      * 获取是否启用 ADB
-     * @return {@code true} yes, {@code false} no
+     * @return `true` yes, `false` no
      */
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public static boolean isAdbEnabled() {
-        try {
-            return Settings.Secure.getInt(ResourceUtils.getContentResolver(), Settings.Global.ADB_ENABLED, 0) > 0;
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "isAdbEnabled");
+    @get:RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    val isAdbEnabled: Boolean
+        get() {
+            try {
+                return Settings.Secure.getInt(contentResolver, Settings.Global.ADB_ENABLED, 0) > 0
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "isAdbEnabled")
+            }
+            return false
         }
-        return false;
-    }
 
     // =
-
     // Default MAC address reported to a client that does not have the android.permission.LOCAL_MAC_ADDRESS permission.
-    private static final String DEFAULT_MAC_ADDRESS = "02:00:00:00:00:00";
+    private const val DEFAULT_MAC_ADDRESS = "02:00:00:00:00:00"
 
     /**
      * 获取设备 MAC 地址
      * <pre>
-     *     没有打开 Wifi, 则获取 WLAN MAC 地址失败
-     * </pre>
+     * 没有打开 Wifi, 则获取 WLAN MAC 地址失败
+    </pre> *
      * @return 设备 MAC 地址
      */
-    @RequiresPermission(allOf = {android.Manifest.permission.INTERNET, android.Manifest.permission.ACCESS_WIFI_STATE})
-    public static String getMacAddress() {
-        String macAddress = getMacAddressByWifiInfo();
-        if (!DEFAULT_MAC_ADDRESS.equals(macAddress)) {
-            return macAddress;
-        }
-        macAddress = getMacAddressByNetworkInterface();
-        if (!DEFAULT_MAC_ADDRESS.equals(macAddress)) {
-            return macAddress;
-        }
-        macAddress = getMacAddressByInetAddress();
-        if (!DEFAULT_MAC_ADDRESS.equals(macAddress)) {
-            return macAddress;
-        }
-        macAddress = getMacAddressByFile();
-        if (!DEFAULT_MAC_ADDRESS.equals(macAddress)) {
-            return macAddress;
-        }
-        return null;
-    }
-
-    /**
-     * 获取 MAC 地址
-     * @return MAC 地址
-     */
-    @RequiresPermission(android.Manifest.permission.ACCESS_WIFI_STATE)
-    private static String getMacAddressByWifiInfo() {
-        try {
-            @SuppressLint("WifiManagerLeak")
-            WifiManager wifiManager = AppUtils.getWifiManager();
-            if (wifiManager != null) {
-                WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                if (wifiInfo != null) return wifiInfo.getMacAddress();
+    @get:RequiresPermission(allOf = [Manifest.permission.INTERNET, Manifest.permission.ACCESS_WIFI_STATE])
+    val macAddress: String?
+        get() {
+            var macAddress = macAddressByWifiInfo
+            if (DEFAULT_MAC_ADDRESS != macAddress) {
+                return macAddress
             }
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getMacAddressByWifiInfo");
+            macAddress = macAddressByNetworkInterface
+            if (DEFAULT_MAC_ADDRESS != macAddress) {
+                return macAddress
+            }
+            macAddress = macAddressByInetAddress
+            if (DEFAULT_MAC_ADDRESS != macAddress) {
+                return macAddress
+            }
+            macAddress = getMacAddressByFile()
+            return if (DEFAULT_MAC_ADDRESS != macAddress) {
+                macAddress
+            } else null
         }
-        return DEFAULT_MAC_ADDRESS;
-    }
 
     /**
      * 获取 MAC 地址
      * @return MAC 地址
      */
-    @RequiresPermission(android.Manifest.permission.INTERNET)
-    private static String getMacAddressByNetworkInterface() {
-        try {
-            Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces();
-            while (nis.hasMoreElements()) {
-                NetworkInterface ni = nis.nextElement();
-                if (ni == null || !ni.getName().equalsIgnoreCase("wlan0")) continue;
-                byte[] macBytes = ni.getHardwareAddress();
-                if (macBytes != null && macBytes.length > 0) {
-                    StringBuilder builder = new StringBuilder();
-                    for (byte b : macBytes) {
-                        builder.append(String.format("%02x:", b));
-                    }
-                    return builder.substring(0, builder.length() - 1);
+    @get:RequiresPermission(Manifest.permission.ACCESS_WIFI_STATE)
+    private val macAddressByWifiInfo: String
+        private get() {
+            try {
+                @SuppressLint("WifiManagerLeak") val wifiManager = AppUtils.wifiManager
+                if (wifiManager != null) {
+                    val wifiInfo = wifiManager.connectionInfo
+                    if (wifiInfo != null) return wifiInfo.macAddress
                 }
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getMacAddressByWifiInfo")
             }
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getMacAddressByNetworkInterface");
+            return DEFAULT_MAC_ADDRESS
         }
-        return DEFAULT_MAC_ADDRESS;
-    }
+
+    /**
+     * 获取 MAC 地址
+     * @return MAC 地址
+     */
+    @get:RequiresPermission(Manifest.permission.INTERNET)
+    private val macAddressByNetworkInterface: String
+        private get() {
+            try {
+                val nis = NetworkInterface.getNetworkInterfaces()
+                while (nis.hasMoreElements()) {
+                    val ni = nis.nextElement()
+                    if (ni == null || !ni.name.equals("wlan0", ignoreCase = true)) continue
+                    val macBytes = ni.hardwareAddress
+                    if (macBytes != null && macBytes.size > 0) {
+                        val builder = StringBuilder()
+                        for (b in macBytes) {
+                            builder.append(String.format("%02x:", b))
+                        }
+                        return builder.substring(0, builder.length - 1)
+                    }
+                }
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getMacAddressByNetworkInterface")
+            }
+            return DEFAULT_MAC_ADDRESS
+        }
 
     /**
      * 通过 InetAddress 获取 Mac 地址
      * @return Mac 地址
      */
-    private static String getMacAddressByInetAddress() {
-        try {
-            InetAddress inetAddress = getInetAddress();
-            if (inetAddress != null) {
-                NetworkInterface ni = NetworkInterface.getByInetAddress(inetAddress);
-                if (ni != null) {
-                    byte[] macBytes = ni.getHardwareAddress();
-                    if (macBytes != null && macBytes.length > 0) {
-                        StringBuilder builder = new StringBuilder();
-                        for (byte b : macBytes) {
-                            builder.append(String.format("%02x:", b));
+    private val macAddressByInetAddress: String
+        private get() {
+            try {
+                val inetAddress = inetAddress
+                if (inetAddress != null) {
+                    val ni = NetworkInterface.getByInetAddress(inetAddress)
+                    if (ni != null) {
+                        val macBytes = ni.hardwareAddress
+                        if (macBytes != null && macBytes.size > 0) {
+                            val builder = StringBuilder()
+                            for (b in macBytes) {
+                                builder.append(String.format("%02x:", b))
+                            }
+                            return builder.substring(0, builder.length - 1)
                         }
-                        return builder.substring(0, builder.length() - 1);
                     }
                 }
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getMacAddressByInetAddress")
             }
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getMacAddressByInetAddress");
-        }
-        return DEFAULT_MAC_ADDRESS;
-    }
+            return DEFAULT_MAC_ADDRESS
+        }// To prevent phone of xiaomi return "10.0.2.15"
 
     /**
      * 获取 InetAddress
-     * @return {@link InetAddress}
+     * @return [InetAddress]
      */
-    private static InetAddress getInetAddress() {
-        try {
-            Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces();
-            while (nis.hasMoreElements()) {
-                NetworkInterface ni = nis.nextElement();
-                // To prevent phone of xiaomi return "10.0.2.15"
-                if (!ni.isUp()) continue;
-                Enumeration<InetAddress> addresses = ni.getInetAddresses();
-                while (addresses.hasMoreElements()) {
-                    InetAddress inetAddress = addresses.nextElement();
-                    if (!inetAddress.isLoopbackAddress()) {
-                        String hostAddress = inetAddress.getHostAddress();
-                        if (hostAddress.indexOf(':') < 0) return inetAddress;
+    val inetAddress: InetAddress?
+         get() {
+            try {
+                val nis = NetworkInterface.getNetworkInterfaces()
+                while (nis.hasMoreElements()) {
+                    val ni = nis.nextElement()
+                    // To prevent phone of xiaomi return "10.0.2.15"
+                    if (!ni.isUp) continue
+                    val addresses = ni.inetAddresses
+                    while (addresses.hasMoreElements()) {
+                        val inetAddress = addresses.nextElement()
+                        if (!inetAddress.isLoopbackAddress) {
+                            val hostAddress = inetAddress.hostAddress
+                            if (hostAddress.indexOf(':') < 0) return inetAddress
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getInetAddress")
             }
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getInetAddress");
+            return null
         }
-        return null;
-    }
 
     /**
      * 获取 MAC 地址
      * @return MAC 地址
      */
-    private static String getMacAddressByFile() {
-        ShellUtils.CommandResult result = ShellUtils.execCmd("getprop wifi.interface", false);
-        if (result.isSuccess()) {
-            String name = result.successMsg;
+    private fun getMacAddressByFile(): String {
+        var result = ShellUtils.execCmd("getprop wifi.interface", false)
+        if (result.isSuccess) {
+            val name = result.successMsg
             if (name != null) {
-                result = ShellUtils.execCmd("cat /sys/class/net/" + name + "/address", false);
+                result = ShellUtils.execCmd("cat /sys/class/net/$name/address", false)
                 if (result.result == 0) {
-                    String address = result.successMsg;
-                    if (address != null && address.length() > 0) {
-                        return address;
+                    val address = result.successMsg
+                    if (address != null && address.length > 0) {
+                        return address
                     }
                 }
             }
         }
-        return DEFAULT_MAC_ADDRESS;
+        return DEFAULT_MAC_ADDRESS
     }
-
     // =
-
     /**
      * 关机 ( 需要 root 权限 )
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean shutdown() {
+    fun shutdown(): Boolean {
         try {
-            ShellUtils.execCmd("reboot -p", true);
-            Intent intent = new Intent("android.intent.action.ACTION_REQUEST_SHUTDOWN");
-            intent.putExtra("android.intent.extra.KEY_CONFIRM", false);
-            return AppUtils.startActivity(intent);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "shutdown");
+            ShellUtils.execCmd("reboot -p", true)
+            val intent = Intent("android.intent.action.ACTION_REQUEST_SHUTDOWN")
+            intent.putExtra("android.intent.extra.KEY_CONFIRM", false)
+            return AppUtils.startActivity(intent)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "shutdown")
         }
-        return false;
+        return false
     }
 
     /**
      * 重启设备 ( 需要 root 权限 )
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean reboot() {
+    fun reboot(): Boolean {
         try {
-            ShellUtils.execCmd("reboot", true);
-            Intent intent = new Intent(Intent.ACTION_REBOOT);
-            intent.putExtra("nowait", 1);
-            intent.putExtra("interval", 1);
-            intent.putExtra("window", 0);
-            return AppUtils.sendBroadcast(intent);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "reboot");
+            ShellUtils.execCmd("reboot", true)
+            val intent = Intent(Intent.ACTION_REBOOT)
+            intent.putExtra("nowait", 1)
+            intent.putExtra("interval", 1)
+            intent.putExtra("window", 0)
+            return AppUtils.sendBroadcast(intent)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "reboot")
         }
-        return false;
+        return false
     }
 
     /**
      * 重启设备 ( 需要 root 权限 ) - 并进行特殊的引导模式 (recovery、Fastboot)
      * @param reason 传递给内核来请求特殊的引导模式, 如 "recovery"
-     *               重启到 Fastboot 模式 bootloader
-     * @return {@code true} success, {@code false} fail
+     * 重启到 Fastboot 模式 bootloader
+     * @return `true` success, `false` fail
      */
-    public static boolean reboot(final String reason) {
+    fun reboot(reason: String?): Boolean {
         try {
-            AppUtils.getPowerManager().reboot(reason);
-            return true;
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "reboot");
+            AppUtils.powerManager.reboot(reason)
+            return true
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "reboot")
         }
-        return false;
+        return false
     }
 
     /**
      * 重启引导到 recovery ( 需要 root 权限 )
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean rebootToRecovery() {
-        ShellUtils.CommandResult result = ShellUtils.execCmd("reboot recovery", true);
-        return result.isSuccess2();
+    fun rebootToRecovery(): Boolean {
+        val result = ShellUtils.execCmd("reboot recovery", true)
+        return result.isSuccess2
     }
 
     /**
      * 重启引导到 bootloader ( 需要 root 权限 )
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean rebootToBootloader() {
-        ShellUtils.CommandResult result = ShellUtils.execCmd("reboot bootloader", true);
-        return result.isSuccess2();
+    fun rebootToBootloader(): Boolean {
+        val result = ShellUtils.execCmd("reboot bootloader", true)
+        return result.isSuccess2
     }
 }

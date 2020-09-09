@@ -1,156 +1,134 @@
-package com.example.commlib.utils;
+package com.example.commlib.utils
 
-import android.content.ContentResolver;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
-import android.content.res.ColorStateList;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.NinePatchDrawable;
-import android.net.Uri;
-import android.os.ParcelFileDescriptor;
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
-
-import androidx.annotation.AnimRes;
-import androidx.annotation.AnimatorRes;
-import androidx.annotation.AnyRes;
-import androidx.annotation.ArrayRes;
-import androidx.annotation.BoolRes;
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.DimenRes;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.IntegerRes;
-import androidx.annotation.RawRes;
-import androidx.annotation.StringRes;
-import androidx.core.content.ContextCompat;
-
-import com.blankj.ALog;
-import com.example.commlib.api.App;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import android.content.ContentResolver
+import android.content.res.*
+import android.content.res.Resources.Theme
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.NinePatchDrawable
+import android.net.Uri
+import android.os.ParcelFileDescriptor
+import android.text.TextUtils
+import android.util.DisplayMetrics
+import androidx.annotation.*
+import androidx.core.content.ContextCompat
+import com.blankj.ALog
+import com.example.commlib.api.App
+import java.io.*
+import java.util.*
 
 /**
  * detail: 资源文件工具类
  * @author Ttt
  */
-public final class ResourceUtils {
-
-    private ResourceUtils() {
-    }
-
+object ResourceUtils {
     // 日志 TAG
-    private static final String TAG = ResourceUtils.class.getSimpleName();
-
+    private val TAG = ResourceUtils::class.java.simpleName
     // ================
     // = 快捷获取方法 =
     // ================
-
     /**
      * 获取 Resources
-     * @return {@link Resources}
+     * @return [Resources]
      */
-    public static Resources getResources() {
-        try {
-            return App.Companion.getInstance().getResources();
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getResources");
+    @JvmStatic
+    val resources: Resources?
+        get() {
+            try {
+                return App.instance.resources
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getResources")
+            }
+            return null
         }
-        return null;
-    }
 
     /**
      * 获取 Resources.Theme
-     * @return {@link Resources.Theme}
+     * @return [Resources.Theme]
      */
-    public static Resources.Theme getTheme() {
-        try {
-            return App.Companion.getInstance().getTheme();
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getTheme");
+    val theme: Theme?
+        get() {
+            try {
+                return App.instance.theme
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getTheme")
+            }
+            return null
         }
-        return null;
-    }
 
     /**
      * 获取 AssetManager
-     * @return {@link AssetManager}
+     * @return [AssetManager]
      */
-    public static AssetManager getAssets() {
-        try {
-            return App.Companion.getInstance().getAssets();
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getAssets");
+    val assets: AssetManager?
+        get() {
+            try {
+                return App.instance.assets
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getAssets")
+            }
+            return null
         }
-        return null;
-    }
 
     /**
      * 获取 ContentResolver
-     * @return {@link ContentResolver}
+     * @return [ContentResolver]
      */
-    public static ContentResolver getContentResolver() {
-        try {
-            return App.Companion.getInstance().getContentResolver();
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getContentResolver");
+    @JvmStatic
+    val contentResolver: ContentResolver?
+        get() {
+            try {
+                return App.instance.contentResolver
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getContentResolver")
+            }
+            return null
         }
-        return null;
-    }
 
     /**
      * 获取 DisplayMetrics
-     * @return {@link DisplayMetrics}
+     * @return [DisplayMetrics]
      */
-    public static DisplayMetrics getDisplayMetrics() {
-        try {
-            return App.Companion.getInstance().getResources().getDisplayMetrics();
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getDisplayMetrics");
+    val displayMetrics: DisplayMetrics?
+        get() {
+            try {
+                return App.instance.resources.displayMetrics
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getDisplayMetrics")
+            }
+            return null
         }
-        return null;
-    }
 
     /**
      * 获取 Configuration
-     * @return {@link Configuration}
+     * @return [Configuration]
      */
-    public static Configuration getConfiguration() {
-        try {
-            return App.Companion.getInstance().getResources().getConfiguration();
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getConfiguration");
+    @JvmStatic
+    val configuration: Configuration?
+        get() {
+            try {
+                return App.instance.resources.configuration
+            } catch (e: Exception) {
+                ALog.eTag(TAG, e, "getConfiguration")
+            }
+            return null
         }
-        return null;
-    }
 
     /**
      * 获取 ColorStateList
-     * @param id resource identifier of a {@link ColorStateList}
-     * @return {@link ColorStateList}
+     * @param id resource identifier of a [ColorStateList]
+     * @return [ColorStateList]
      */
-    public static ColorStateList getColorStateList(@ColorRes final int id) {
+    fun getColorStateList(@ColorRes id: Int): ColorStateList? {
         try {
-            return ContextCompat.getColorStateList(App.Companion.getInstance(), id);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getColorStateList");
+            return ContextCompat.getColorStateList(App.instance, id)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getColorStateList")
         }
-        return null;
+        return null
     }
 
     /**
@@ -158,13 +136,13 @@ public final class ResourceUtils {
      * @param id R.string.id
      * @return String
      */
-    public static String getString(@StringRes final int id) {
+    fun getString(@StringRes id: Int): String? {
         try {
-            return App.Companion.getInstance().getResources().getString(id);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getString");
+            return App.instance.resources.getString(id)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getString")
         }
-        return null;
+        return null
     }
 
     /**
@@ -173,13 +151,13 @@ public final class ResourceUtils {
      * @param formatArgs 格式化参数
      * @return String
      */
-    public static String getString(@StringRes final int id, final Object... formatArgs) {
+    fun getString(@StringRes id: Int, vararg formatArgs: Any?): String? {
         try {
-            return App.Companion.getInstance().getResources().getString(id, formatArgs);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getString");
+            return App.instance.resources.getString(id, *formatArgs)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getString")
         }
-        return null;
+        return null
     }
 
     /**
@@ -187,41 +165,41 @@ public final class ResourceUtils {
      * @param colorId R.color.id
      * @return Color
      */
-    public static int getColor(@ColorRes final int colorId) {
+    fun getColor(@ColorRes colorId: Int): Int {
         try {
-            return ContextCompat.getColor(App.Companion.getInstance(), colorId);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getColor");
+            return ContextCompat.getColor(App.instance, colorId)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getColor")
         }
-        return -1;
+        return -1
     }
 
     /**
      * 获取 Drawable
      * @param drawableId R.drawable.id
-     * @return {@link Drawable}
+     * @return [Drawable]
      */
-    public static Drawable getDrawable(@DrawableRes final int drawableId) {
+    fun getDrawable(@DrawableRes drawableId: Int): Drawable? {
         try {
-            return ContextCompat.getDrawable(App.Companion.getInstance(), drawableId);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getDrawable");
+            return ContextCompat.getDrawable(App.instance, drawableId)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getDrawable")
         }
-        return null;
+        return null
     }
 
     /**
      * 获取 .9 Drawable
      * @param drawableId R.drawable.id
-     * @return .9 {@link NinePatchDrawable}
+     * @return .9 [NinePatchDrawable]
      */
-    public static NinePatchDrawable getNinePatchDrawable(@DrawableRes final int drawableId) {
+    fun getNinePatchDrawable(@DrawableRes drawableId: Int): NinePatchDrawable? {
         try {
-            return (NinePatchDrawable) getDrawable(drawableId);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getNinePatchDrawable");
+            return getDrawable(drawableId) as NinePatchDrawable?
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getNinePatchDrawable")
         }
-        return null;
+        return null
     }
 
     /**
@@ -229,13 +207,13 @@ public final class ResourceUtils {
      * @param color 颜色值
      * @return 指定颜色 Drawable
      */
-    public static ColorDrawable getColorDrawable(@ColorInt final int color) {
+    fun getColorDrawable(@ColorInt color: Int): ColorDrawable? {
         try {
-            return new ColorDrawable(color);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getColorDrawable");
+            return ColorDrawable(color)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getColorDrawable")
         }
-        return null;
+        return null
     }
 
     /**
@@ -243,42 +221,42 @@ public final class ResourceUtils {
      * @param color 十六进制颜色值
      * @return 十六进制颜色值 Drawable
      */
-    public static ColorDrawable getColorDrawable(final String color) {
+    fun getColorDrawable(color: String?): ColorDrawable? {
         try {
-            return new ColorDrawable(Color.parseColor(color));
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getColorDrawable");
+            return ColorDrawable(Color.parseColor(color))
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getColorDrawable")
         }
-        return null;
+        return null
     }
 
     /**
      * 获取 Bitmap
      * @param resId resource identifier
-     * @return {@link Bitmap}
+     * @return [Bitmap]
      */
-    public static Bitmap getBitmap(final int resId) {
+    fun getBitmap(resId: Int): Bitmap? {
         try {
-            return BitmapFactory.decodeResource(App.Companion.getInstance().getResources(), resId);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getBitmap");
+            return BitmapFactory.decodeResource(App.instance.resources, resId)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getBitmap")
         }
-        return null;
+        return null
     }
 
     /**
      * 获取 Bitmap
      * @param resId   resource identifier
-     * @param options {@link BitmapFactory.Options}
-     * @return {@link Bitmap}
+     * @param options [BitmapFactory.Options]
+     * @return [Bitmap]
      */
-    public static Bitmap getBitmap(final int resId, final BitmapFactory.Options options) {
+    fun getBitmap(resId: Int, options: BitmapFactory.Options?): Bitmap? {
         try {
-            return BitmapFactory.decodeResource(App.Companion.getInstance().getResources(), resId, options);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getBitmap");
+            return BitmapFactory.decodeResource(App.instance.resources, resId, options)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getBitmap")
         }
-        return null;
+        return null
     }
 
     /**
@@ -286,13 +264,13 @@ public final class ResourceUtils {
      * @param id resource identifier
      * @return Dimension
      */
-    public static float getDimension(@DimenRes final int id) {
+    fun getDimension(@DimenRes id: Int): Float {
         try {
-            return App.Companion.getInstance().getResources().getDimension(id);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getDimension");
+            return App.instance.resources.getDimension(id)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getDimension")
         }
-        return 0f;
+        return 0f
     }
 
     /**
@@ -300,13 +278,13 @@ public final class ResourceUtils {
      * @param id resource identifier
      * @return Boolean
      */
-    public static boolean getBoolean(@BoolRes final int id) {
+    fun getBoolean(@BoolRes id: Int): Boolean {
         try {
-            return App.Companion.getInstance().getResources().getBoolean(id);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getBoolean");
+            return App.instance.resources.getBoolean(id)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getBoolean")
         }
-        return false;
+        return false
     }
 
     /**
@@ -314,13 +292,13 @@ public final class ResourceUtils {
      * @param id resource identifier
      * @return Integer
      */
-    public static int getInteger(@IntegerRes final int id) {
+    fun getInteger(@IntegerRes id: Int): Int {
         try {
-            return App.Companion.getInstance().getResources().getInteger(id);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getInteger");
+            return App.instance.resources.getInteger(id)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getInteger")
         }
-        return -1;
+        return -1
     }
 
     /**
@@ -328,13 +306,13 @@ public final class ResourceUtils {
      * @param id resource identifier
      * @return XmlResourceParser
      */
-    public static XmlResourceParser getAnimation(@AnimatorRes @AnimRes final int id) {
+    fun getAnimation(@AnimatorRes @AnimRes id: Int): XmlResourceParser? {
         try {
-            return App.Companion.getInstance().getResources().getAnimation(id);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getAnimation");
+            return App.instance.resources.getAnimation(id)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getAnimation")
         }
-        return null;
+        return null
     }
 
     /**
@@ -342,13 +320,13 @@ public final class ResourceUtils {
      * @param id resource identifier
      * @return Integer
      */
-    public static String getResourceName(@AnyRes final int id) {
+    fun getResourceName(@AnyRes id: Int): String? {
         try {
-            return App.Companion.getInstance().getResources().getResourceName(id);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getResourceName");
+            return App.instance.resources.getResourceName(id)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getResourceName")
         }
-        return null;
+        return null
     }
 
     /**
@@ -356,13 +334,13 @@ public final class ResourceUtils {
      * @param id resource identifier
      * @return int[]
      */
-    public static int[] getIntArray(@ArrayRes final int id) {
+    fun getIntArray(@ArrayRes id: Int): IntArray? {
         try {
-            return App.Companion.getInstance().getResources().getIntArray(id);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getIntArray");
+            return App.instance.resources.getIntArray(id)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getIntArray")
         }
-        return null;
+        return null
     }
 
     /**
@@ -370,13 +348,13 @@ public final class ResourceUtils {
      * @param id resource identifier
      * @return String[]
      */
-    public static String[] getStringArray(@ArrayRes final int id) {
+    fun getStringArray(@ArrayRes id: Int): Array<String>? {
         try {
-            return App.Companion.getInstance().getResources().getStringArray(id);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getStringArray");
+            return App.instance.resources.getStringArray(id)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getStringArray")
         }
-        return null;
+        return null
     }
 
     /**
@@ -384,24 +362,22 @@ public final class ResourceUtils {
      * @param id resource identifier
      * @return CharSequence[]
      */
-    public static CharSequence[] getTextArray(@ArrayRes final int id) {
+    fun getTextArray(@ArrayRes id: Int): Array<CharSequence>? {
         try {
-            return App.Companion.getInstance().getResources().getTextArray(id);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getTextArray");
+            return App.instance.resources.getTextArray(id)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getTextArray")
         }
-        return null;
+        return null
     }
-
     // =
-
     /**
      * 获取 layout id
      * @param resName layout xml fileName
      * @return layout id
      */
-    public static int getLayoutId(final String resName) {
-        return getIdentifier(resName, "layout");
+    fun getLayoutId(resName: String): Int {
+        return getIdentifier(resName, "layout")
     }
 
     /**
@@ -409,8 +385,8 @@ public final class ResourceUtils {
      * @param resName drawable name
      * @return drawable id
      */
-    public static int getDrawableId(final String resName) {
-        return getIdentifier(resName, "drawable");
+    fun getDrawableId(resName: String): Int {
+        return getIdentifier(resName, "drawable")
     }
 
     /**
@@ -418,8 +394,8 @@ public final class ResourceUtils {
      * @param resName mipmap name
      * @return mipmap id
      */
-    public static int getMipmapId(final String resName) {
-        return getIdentifier(resName, "mipmap");
+    fun getMipmapId(resName: String): Int {
+        return getIdentifier(resName, "mipmap")
     }
 
     /**
@@ -427,8 +403,8 @@ public final class ResourceUtils {
      * @param resName menu name
      * @return menu id
      */
-    public static int getMenuId(final String resName) {
-        return getIdentifier(resName, "menu");
+    fun getMenuId(resName: String): Int {
+        return getIdentifier(resName, "menu")
     }
 
     /**
@@ -436,8 +412,8 @@ public final class ResourceUtils {
      * @param resName raw name
      * @return raw id
      */
-    public static int getRawId(final String resName) {
-        return getIdentifier(resName, "raw");
+    fun getRawId(resName: String): Int {
+        return getIdentifier(resName, "raw")
     }
 
     /**
@@ -445,8 +421,8 @@ public final class ResourceUtils {
      * @param resName anim xml fileName
      * @return anim id
      */
-    public static int getAnimId(final String resName) {
-        return getIdentifier(resName, "anim");
+    fun getAnimId(resName: String): Int {
+        return getIdentifier(resName, "anim")
     }
 
     /**
@@ -454,8 +430,8 @@ public final class ResourceUtils {
      * @param resName color name
      * @return color id
      */
-    public static int getColorId(final String resName) {
-        return getIdentifier(resName, "color");
+    fun getColorId(resName: String): Int {
+        return getIdentifier(resName, "color")
     }
 
     /**
@@ -463,8 +439,8 @@ public final class ResourceUtils {
      * @param resName dimen name
      * @return dimen id
      */
-    public static int getDimenId(final String resName) {
-        return getIdentifier(resName, "dimen");
+    fun getDimenId(resName: String): Int {
+        return getIdentifier(resName, "dimen")
     }
 
     /**
@@ -472,8 +448,8 @@ public final class ResourceUtils {
      * @param resName attr name
      * @return attr id
      */
-    public static int getAttrId(final String resName) {
-        return getIdentifier(resName, "attr");
+    fun getAttrId(resName: String): Int {
+        return getIdentifier(resName, "attr")
     }
 
     /**
@@ -481,8 +457,8 @@ public final class ResourceUtils {
      * @param resName style name
      * @return style id
      */
-    public static int getStyleId(final String resName) {
-        return getIdentifier(resName, "style");
+    fun getStyleId(resName: String): Int {
+        return getIdentifier(resName, "style")
     }
 
     /**
@@ -490,8 +466,8 @@ public final class ResourceUtils {
      * @param resName styleable name
      * @return styleable id
      */
-    public static int getStyleableId(final String resName) {
-        return getIdentifier(resName, "styleable");
+    fun getStyleableId(resName: String): Int {
+        return getIdentifier(resName, "styleable")
     }
 
     /**
@@ -499,8 +475,8 @@ public final class ResourceUtils {
      * @param resName id name
      * @return id
      */
-    public static int getId(final String resName) {
-        return getIdentifier(resName, "id");
+    fun getId(resName: String): Int {
+        return getIdentifier(resName, "id")
     }
 
     /**
@@ -508,8 +484,8 @@ public final class ResourceUtils {
      * @param resName string name
      * @return string id
      */
-    public static int getStringId(final String resName) {
-        return getIdentifier(resName, "string");
+    fun getStringId(resName: String): Int {
+        return getIdentifier(resName, "string")
     }
 
     /**
@@ -517,8 +493,8 @@ public final class ResourceUtils {
      * @param resName bool name
      * @return bool id
      */
-    public static int getBoolId(final String resName) {
-        return getIdentifier(resName, "bool");
+    fun getBoolId(resName: String): Int {
+        return getIdentifier(resName, "bool")
     }
 
     /**
@@ -526,8 +502,8 @@ public final class ResourceUtils {
      * @param resName integer name
      * @return integer id
      */
-    public static int getIntegerId(final String resName) {
-        return getIdentifier(resName, "integer");
+    fun getIntegerId(resName: String): Int {
+        return getIdentifier(resName, "integer")
     }
 
     /**
@@ -536,8 +512,8 @@ public final class ResourceUtils {
      * @param defType 资源类型
      * @return 资源 id
      */
-    public static int getIdentifier(final String resName, final String defType) {
-        return getIdentifier(resName, defType, AppUtils.getPackageName());
+    fun getIdentifier(resName: String, defType: String): Int {
+        return getIdentifier(resName, defType, AppUtils.packageName)
     }
 
     /**
@@ -547,202 +523,199 @@ public final class ResourceUtils {
      * @param packageName 应用包名
      * @return 资源 id
      */
-    public static int getIdentifier(final String resName, final String defType, final String packageName) {
+    @JvmStatic
+    fun getIdentifier(resName: String, defType: String, packageName: String): Int {
         try {
-            return App.Companion.getInstance().getResources().getIdentifier(resName, defType, packageName);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "getIdentifier - " + resName + " " + defType + ": " + packageName);
+            return App.instance.resources.getIdentifier(resName, defType, packageName)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "getIdentifier - $resName $defType: $packageName")
         }
-        return 0;
+        return 0
     }
-
     // =
-
     /**
      * 获取 AssetManager 指定资源 InputStream
      * @param fileName 文件名
-     * @return {@link InputStream}
+     * @return [InputStream]
      */
-    public static InputStream open(final String fileName) {
+    fun open(fileName: String?): InputStream? {
         try {
-            return App.Companion.getInstance().getAssets().open(fileName);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "open");
+            return App.instance.assets.open(fileName!!)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "open")
         }
-        return null;
+        return null
     }
 
     /**
      * 获取 AssetManager 指定资源 AssetFileDescriptor
      * @param fileName 文件名
-     * @return {@link AssetFileDescriptor}
+     * @return [AssetFileDescriptor]
      */
-    public static AssetFileDescriptor openFd(final String fileName) {
+    fun openFd(fileName: String?): AssetFileDescriptor? {
         try {
-            return App.Companion.getInstance().getAssets().openFd(fileName);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "openFd");
+            return App.instance.assets.openFd(fileName!!)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "openFd")
         }
-        return null;
+        return null
     }
 
     /**
      * 获取 AssetManager 指定资源 AssetFileDescriptor
      * @param fileName 文件名
-     * @return {@link AssetFileDescriptor}
+     * @return [AssetFileDescriptor]
      */
-    public static AssetFileDescriptor openNonAssetFd(final String fileName) {
+    fun openNonAssetFd(fileName: String?): AssetFileDescriptor? {
         try {
-            return App.Companion.getInstance().getAssets().openNonAssetFd(fileName);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "openNonAssetFd");
+            return App.instance.assets.openNonAssetFd(fileName!!)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "openNonAssetFd")
         }
-        return null;
+        return null
     }
 
     /**
      * 获取对应资源 InputStream
      * @param id resource identifier
-     * @return {@link InputStream}
+     * @return [InputStream]
      */
-    public static InputStream openRawResource(@RawRes final int id) {
+    fun openRawResource(@RawRes id: Int): InputStream? {
         try {
-            return App.Companion.getInstance().getResources().openRawResource(id);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "openRawResource");
+            return App.instance.resources.openRawResource(id)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "openRawResource")
         }
-        return null;
+        return null
     }
 
     /**
      * 获取对应资源 AssetFileDescriptor
      * @param id resource identifier
-     * @return {@link AssetFileDescriptor}
+     * @return [AssetFileDescriptor]
      */
-    public static AssetFileDescriptor openRawResourceFd(@RawRes final int id) {
+    fun openRawResourceFd(@RawRes id: Int): AssetFileDescriptor? {
         try {
-            return App.Companion.getInstance().getResources().openRawResourceFd(id);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "openRawResourceFd");
+            return App.instance.resources.openRawResourceFd(id)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "openRawResourceFd")
         }
-        return null;
+        return null
     }
 
     /**
      * 获取 Uri InputStream
      * <pre>
-     *     主要用于获取到分享的 FileProvider Uri 存储起来 {@link FileIOUtils#writeFileFromIS(File, InputStream)}
-     * </pre>
-     * @param uri {@link Uri} FileProvider Uri、Content Uri、File Uri
+     * 主要用于获取到分享的 FileProvider Uri 存储起来 [FileIOUtils.writeFileFromIS]
+    </pre> *
+     * @param uri [Uri] FileProvider Uri、Content Uri、File Uri
      * @return Uri InputStream
      */
-    public static InputStream openInputStream(final Uri uri) {
-        if (uri == null) return null;
+    fun openInputStream(uri: Uri?): InputStream? {
+        if (uri == null) return null
         try {
-            return ResourceUtils.getContentResolver().openInputStream(uri);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "openInputStream " + uri.toString());
+            return contentResolver!!.openInputStream(uri)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "openInputStream $uri")
         }
-        return null;
+        return null
     }
 
     /**
      * 获取 Uri OutputStream
-     * @param uri {@link Uri} FileProvider Uri、Content Uri、File Uri
+     * @param uri [Uri] FileProvider Uri、Content Uri、File Uri
      * @return Uri OutputStream
      */
-    public static OutputStream openOutputStream(final Uri uri) {
-        if (uri == null) return null;
+    fun openOutputStream(uri: Uri?): OutputStream? {
+        if (uri == null) return null
         try {
-            return ResourceUtils.getContentResolver().openOutputStream(uri);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "openOutputStream " + uri.toString());
+            return contentResolver!!.openOutputStream(uri)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "openOutputStream $uri")
         }
-        return null;
+        return null
     }
 
     /**
      * 获取 Uri OutputStream
-     * @param uri  {@link Uri} FileProvider Uri、Content Uri、File Uri
+     * @param uri  [Uri] FileProvider Uri、Content Uri、File Uri
      * @param mode 读写模式
      * @return Uri OutputStream
      */
-    public static OutputStream openOutputStream(final Uri uri, final String mode) {
-        if (uri == null) return null;
+    fun openOutputStream(uri: Uri?, mode: String): OutputStream? {
+        if (uri == null) return null
         try {
-            return ResourceUtils.getContentResolver().openOutputStream(uri, mode);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "openOutputStream mode: " + mode + ", " + uri.toString());
+            return contentResolver!!.openOutputStream(uri, mode)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "openOutputStream mode: $mode, $uri")
         }
-        return null;
+        return null
     }
 
     /**
      * 获取 Uri ParcelFileDescriptor
      * <pre>
-     *     通过 new FileInputStream(openFileDescriptor().getFileDescriptor()) 进行文件操作
-     * </pre>
-     * @param uri  {@link Uri} FileProvider Uri、Content Uri、File Uri
+     * 通过 new FileInputStream(openFileDescriptor().getFileDescriptor()) 进行文件操作
+    </pre> *
+     * @param uri  [Uri] FileProvider Uri、Content Uri、File Uri
      * @param mode 读写模式
      * @return Uri ParcelFileDescriptor
      */
-    public static ParcelFileDescriptor openFileDescriptor(final Uri uri, final String mode) {
-        if (uri == null || TextUtils.isEmpty(mode)) return null;
+    fun openFileDescriptor(uri: Uri?, mode: String): ParcelFileDescriptor? {
+        if (uri == null || TextUtils.isEmpty(mode)) return null
         try {
-            return ResourceUtils.getContentResolver().openFileDescriptor(uri, mode);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "openFileDescriptor mode: " + mode + ", " + uri.toString());
+            return contentResolver!!.openFileDescriptor(uri, mode)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "openFileDescriptor mode: $mode, $uri")
         }
-        return null;
+        return null
     }
 
     /**
      * 获取 Uri AssetFileDescriptor
      * <pre>
-     *     通过 new FileInputStream(openAssetFileDescriptor().getFileDescriptor()) 进行文件操作
-     * </pre>
-     * @param uri  {@link Uri} FileProvider Uri、Content Uri、File Uri
+     * 通过 new FileInputStream(openAssetFileDescriptor().getFileDescriptor()) 进行文件操作
+    </pre> *
+     * @param uri  [Uri] FileProvider Uri、Content Uri、File Uri
      * @param mode 读写模式
      * @return Uri AssetFileDescriptor
      */
-    public static AssetFileDescriptor openAssetFileDescriptor(final Uri uri, final String mode) {
-        if (uri == null || TextUtils.isEmpty(mode)) return null;
+    fun openAssetFileDescriptor(uri: Uri?, mode: String): AssetFileDescriptor? {
+        if (uri == null || TextUtils.isEmpty(mode)) return null
         try {
-            return ResourceUtils.getContentResolver().openAssetFileDescriptor(uri, mode);
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "openAssetFileDescriptor mode: " + mode + ", " + uri.toString());
+            return contentResolver!!.openAssetFileDescriptor(uri, mode)
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "openAssetFileDescriptor mode: $mode, $uri")
         }
-        return null;
+        return null
     }
-
     // ================
     // = 读取资源文件 =
     // ================
-
     /**
      * 获取 Assets 资源文件数据
      * <pre>
-     *     直接传入文件名、文件夹 / 文件名 等
-     *     根目录 a.txt
-     *     子目录 /www/a.html
-     * </pre>
+     * 直接传入文件名、文件夹 / 文件名 等
+     * 根目录 a.txt
+     * 子目录 /www/a.html
+    </pre> *
      * @param fileName 文件名
      * @return 文件 byte[] 数据
      */
-    public static byte[] readBytesFromAssets(final String fileName) {
-        InputStream is = null;
+    fun readBytesFromAssets(fileName: String?): ByteArray? {
+        var `is`: InputStream? = null
         try {
-            is = open(fileName);
-            int length = is.available();
-            byte[] buffer = new byte[length];
-            is.read(buffer);
-            return buffer;
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "readBytesFromAssets");
+            `is` = open(fileName)
+            val length = `is`!!.available()
+            val buffer = ByteArray(length)
+            `is`.read(buffer)
+            return buffer
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "readBytesFromAssets")
         } finally {
-            CloseUtils.closeIOQuietly(is);
+            CloseUtils.closeIOQuietly(`is`)
         }
-        return null;
+        return null
     }
 
     /**
@@ -750,36 +723,36 @@ public final class ResourceUtils {
      * @param fileName 文件名
      * @return 文件字符串内容
      */
-    public static String readStringFromAssets(final String fileName) {
+    fun readStringFromAssets(fileName: String?): String? {
         try {
-            return new String(readBytesFromAssets(fileName), "UTF-8");
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "readStringFromAssets");
+            val str=String(readBytesFromAssets(fileName)!!, Charsets.UTF_8)
+
+            return str
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "readStringFromAssets")
         }
-        return null;
+        return null
     }
-
     // =
-
     /**
      * 获取 Raw 资源文件数据
      * @param resId 资源 id
      * @return 文件 byte[] 数据
      */
-    public static byte[] readBytesFromRaw(@RawRes final int resId) {
-        InputStream is = null;
+    fun readBytesFromRaw(@RawRes resId: Int): ByteArray? {
+        var `is`: InputStream? = null
         try {
-            is = openRawResource(resId);
-            int length = is.available();
-            byte[] buffer = new byte[length];
-            is.read(buffer);
-            return buffer;
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "readBytesFromRaw");
+            `is` = openRawResource(resId)
+            val length = `is`!!.available()
+            val buffer = ByteArray(length)
+            `is`.read(buffer)
+            return buffer
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "readBytesFromRaw")
         } finally {
-            CloseUtils.closeIOQuietly(is);
+            CloseUtils.closeIOQuietly(`is`)
         }
-        return null;
+        return null
     }
 
     /**
@@ -787,138 +760,133 @@ public final class ResourceUtils {
      * @param resId 资源 id
      * @return 文件字符串内容
      */
-    public static String readStringFromRaw(@RawRes final int resId) {
+    fun readStringFromRaw(@RawRes resId: Int): String? {
         try {
-            return new String(readBytesFromRaw(resId), "UTF-8");
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "readStringFromRaw");
+            val  string=String(readBytesFromRaw(resId)!!, Charsets.UTF_8)
+            return string
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "readStringFromRaw")
         }
-        return null;
+        return null
     }
-
     // =
-
     /**
      * 获取 Assets 资源文件数据 ( 返回 List<String> 一行的全部内容属于一个索引 )
      * @param fileName 文件名
-     * @return {@link List<String>}
-     */
-    public static List<String> geFileToListFromAssets(final String fileName) {
-        InputStream is = null;
-        BufferedReader br = null;
+     * @return [<]
+    </String> */
+    fun geFileToListFromAssets(fileName: String?): List<String>? {
+        var `is`: InputStream? = null
+        var br: BufferedReader? = null
         try {
-            is = open(fileName);
-            br = new BufferedReader(new InputStreamReader(is));
-
-            List<String> lists = new ArrayList<>();
-            String line;
-            while ((line = br.readLine()) != null) {
-                lists.add(line);
+            `is` = open(fileName)
+            br = BufferedReader(InputStreamReader(`is`))
+            val lists: MutableList<String> = ArrayList()
+            var line: String
+            while (br.readLine().also { line = it } != null) {
+                lists.add(line)
             }
-            return lists;
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "geFileToListFromAssets");
+            return lists
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "geFileToListFromAssets")
         } finally {
-            CloseUtils.closeIOQuietly(is, br);
+            CloseUtils.closeIOQuietly(`is`, br)
         }
-        return null;
+        return null
     }
 
     /**
      * 获取 Raw 资源文件数据 ( 返回 List<String> 一行的全部内容属于一个索引 )
      * @param resId 资源 id
-     * @return {@link List<String>}
-     */
-    public static List<String> geFileToListFromRaw(@RawRes final int resId) {
-        InputStream is = null;
-        BufferedReader br = null;
+     * @return [<]
+    </String> */
+    fun geFileToListFromRaw(@RawRes resId: Int): List<String>? {
+        var `is`: InputStream? = null
+        var br: BufferedReader? = null
         try {
-            is = openRawResource(resId);
-            br = new BufferedReader(new InputStreamReader(is));
-
-            List<String> lists = new ArrayList<>();
-            String line;
-            while ((line = br.readLine()) != null) {
-                lists.add(line);
+            `is` = openRawResource(resId)
+            br = BufferedReader(InputStreamReader(`is`))
+            val lists: MutableList<String> = ArrayList()
+            var line: String
+            while (br.readLine().also { line = it } != null) {
+                lists.add(line)
             }
-            return lists;
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "geFileToListFromRaw");
+            return lists
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "geFileToListFromRaw")
         } finally {
-            CloseUtils.closeIOQuietly(is, br);
+            CloseUtils.closeIOQuietly(`is`, br)
         }
-        return null;
+        return null
     }
-
     // =
-
     /**
      * 获取 Assets 资源文件数据并保存到本地
      * @param fileName 文件名
      * @param file     文件保存地址
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean saveAssetsFormFile(final String fileName, final File file) {
+    fun saveAssetsFormFile(fileName: String?, file: File?): Boolean {
         try {
             // 获取 Assets 文件
-            InputStream is = open(fileName);
+            val `is` = open(fileName)
             // 存入 SDCard
-            FileOutputStream fos = new FileOutputStream(file);
+            val fos = FileOutputStream(file)
             // 设置数据缓冲
-            byte[] buffer = new byte[1024];
+            val buffer = ByteArray(1024)
             // 创建输入输出流
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            int len;
-            while ((len = is.read(buffer)) != -1) {
-                baos.write(buffer, 0, len);
+            val baos = ByteArrayOutputStream()
+            var len: Int
+            while (`is`!!.read(buffer).also { len = it } != -1) {
+                baos.write(buffer, 0, len)
             }
             // 保存数据
-            byte[] bytes = baos.toByteArray();
+            val bytes = baos.toByteArray()
             // 写入保存的文件
-            fos.write(bytes);
+            fos.write(bytes)
             // 关闭流
-            CloseUtils.closeIOQuietly(baos, is);
-            fos.flush();
-            CloseUtils.closeIOQuietly(fos);
-            return true;
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "saveAssetsFormFile");
+            CloseUtils.closeIOQuietly(baos, `is`)
+            fos.flush()
+            CloseUtils.closeIOQuietly(fos)
+            return true
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "saveAssetsFormFile")
         }
-        return false;
+        return false
     }
 
     /**
      * 获取 Raw 资源文件数据并保存到本地
      * @param resId 资源 id
      * @param file  文件保存地址
-     * @return {@code true} success, {@code false} fail
+     * @return `true` success, `false` fail
      */
-    public static boolean saveRawFormFile(@RawRes final int resId, final File file) {
+    fun saveRawFormFile(@RawRes resId: Int, file: File?): Boolean {
         try {
             // 获取 raw 文件
-            InputStream is = openRawResource(resId);
+            val `is` = openRawResource(resId)
             // 存入 SDCard
-            FileOutputStream fos = new FileOutputStream(file);
+            val fos = FileOutputStream(file)
             // 设置数据缓冲
-            byte[] buffer = new byte[1024];
+            val buffer = ByteArray(1024)
             // 创建输入输出流
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            int len;
-            while ((len = is.read(buffer)) != -1) {
-                baos.write(buffer, 0, len);
+            val baos = ByteArrayOutputStream()
+            var len: Int
+            while (`is`!!.read(buffer).also { len = it } != -1) {
+                baos.write(buffer, 0, len)
             }
             // 保存数据
-            byte[] bytes = baos.toByteArray();
+            val bytes = baos.toByteArray()
             // 写入保存的文件
-            fos.write(bytes);
+            fos.write(bytes)
             // 关闭流
-            CloseUtils.closeIOQuietly(baos, is);
-            fos.flush();
-            CloseUtils.closeIOQuietly(fos);
-            return true;
-        } catch (Exception e) {
-            ALog.eTag(TAG, e, "saveRawFormFile");
+            CloseUtils.closeIOQuietly(baos, `is`)
+            fos.flush()
+            CloseUtils.closeIOQuietly(fos)
+            return true
+        } catch (e: Exception) {
+            ALog.eTag(TAG, e, "saveRawFormFile")
         }
-        return false;
+        return false
     }
 }
