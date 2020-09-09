@@ -91,8 +91,9 @@ class MainDetailActivity constructor() : BaseActivity<ActivityMainDetailBinding?
                                 canInstallAPK(
                                     object : Listener {
                                         override fun onResult() {
-                                            DownloadAPk.getInstance()?.downApk(mContext,url, object : DownLoadListener {
+                                            DownloadAPk.instance.downApk(mContext,url, object : DownLoadListener {
                                                 override fun onProgressUpdate(progress: Int) {
+                                                   // ALog.v("progress==$progress")
                                                     mViewModel?.mBannerBean?.progressValue?.set(progress)
                                                 }
                                                 override fun finish(filePath: String?) {

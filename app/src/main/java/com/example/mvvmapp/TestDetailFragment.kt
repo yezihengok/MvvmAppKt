@@ -127,11 +127,11 @@ class TestDetailFragment constructor() : BaseFragment<ActivityMainDetailBinding,
             override fun progress(progress: Long, total: Long) {
                 progressDialog.max = total.toInt()
                 progressDialog.progress = progress.toInt()
-                val mProgress: Int = (+progress * 100 / total) as Int
+                val mProgress  = (+progress * 100 / total)
                 //进度显示2位小数：
                 // double mProgress= ArithUtils.round((progress * 100 / (double) total),2);
                 Log.v("DownloadAPk", mProgress.toString() + "%    总大小：" + total + "已下载大小：" + progress)
-                mViewModel?.mBannerBean?.progressValue?.set(mProgress)
+                mViewModel?.mBannerBean?.progressValue?.set(mProgress.toInt())
             }
 
             override fun onError(e: Throwable?) {

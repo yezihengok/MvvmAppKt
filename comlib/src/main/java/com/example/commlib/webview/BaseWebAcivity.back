@@ -23,7 +23,7 @@
 //import com.blankj.ALog;
 //import com.example.commlib.R;
 //import com.example.commlib.base.mvvm.BaseActivity;
-//import com.example.commlib.base.mvvm.BaseViewModel;
+//import com.example.commlib.base.mvvm.BaseViewModel.back;
 //import com.example.commlib.utils.BarUtils;
 //import com.example.commlib.webview.config.FullscreenHolder;
 //import com.example.commlib.webview.config.IWebPageView;
@@ -36,7 +36,7 @@
 ///**
 // * Created by yzh on 2019/12/11 16:06.
 // */
-//public abstract class BaseWebAcivity<V extends ViewDataBinding, VM extends BaseViewModel>  extends BaseActivity<V,VM> implements IWebPageView {
+//public abstract class BaseWebAcivity<V extends ViewDataBinding, VM extends BaseViewModel.back>  extends BaseActivity<V,VM> implements IWebPageView {
 //    // 加载视频相关
 //    private MyWebChromeClient mWebChromeClient;
 //    // 全屏时视频加载view

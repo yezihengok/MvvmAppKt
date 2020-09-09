@@ -178,9 +178,9 @@ class SuperTextView @JvmOverloads constructor(context: Context, attrs: Attribute
     fun setDurationByToalTime(time: Long) {
         val length:Int= if(mText==null)0 else mText?.length ?: 0
 
-        Log.i("SuperTextView", "总时长===$time")
+        Log.i("SuperTextView.back", "总时长===$time")
         mDuration = (time / length).toInt()
-        Log.d("SuperTextView", "mDuration===$mDuration")
+        Log.d("SuperTextView.back", "mDuration===$mDuration")
     }
 
     fun getDuration(): Int {
