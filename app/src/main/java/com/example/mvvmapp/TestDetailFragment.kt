@@ -106,7 +106,7 @@ class TestDetailFragment constructor() : BaseFragment<ActivityMainDetailBinding,
         progressDialog.setTitle("正在下载...")
         progressDialog.setCancelable(true)
         progressDialog.show()
-        DownLoadManager.getInstance().load(url, object : ProgressCallBack<ResponseBody?>(destFileDir, destFileName) {
+        DownLoadManager.instance.load(url, object : ProgressCallBack<ResponseBody?>(destFileDir, destFileName) {
             override fun onStart() {
                 super.onStart()
                ALog.i("onStart")

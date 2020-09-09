@@ -1,29 +1,23 @@
-package com.example.commlib.utils;
+package com.example.commlib.utils
 
-import android.text.TextUtils;
-
-import com.blankj.ALog;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import android.text.TextUtils
+import com.blankj.ALog
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
+import com.google.gson.reflect.TypeToken
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
+import java.lang.reflect.Type
+import java.util.*
 
 /**
  * Gson 工具类
  */
-public class GsonUtil {
-    private static String TAG = GsonUtil.class.getSimpleName();
-    private static Gson gson = new Gson();
+object GsonUtil {
+    private val TAG = GsonUtil::class.java.simpleName
+    private val gson = Gson()
 
     /**
      * 把一个map变成json字符串
@@ -31,12 +25,12 @@ public class GsonUtil {
      * @param map
      * @return
      */
-    public static String parseMapToJson(Map<?, ?> map) {
+    fun parseMapToJson(map: Map<*, *>?): String? {
         try {
-            return gson.toJson(map);
-        } catch (Exception e) {
+            return gson.toJson(map)
+        } catch (e: Exception) {
         }
-        return null;
+        return null
     }
 
     /**
@@ -46,14 +40,13 @@ public class GsonUtil {
      * @param cls
      * @return
      */
-    public static <T> T parseJsonToBean(String json, Class<T> cls) {
-        T t = null;
+    fun <T> parseJsonToBean(json: String?, cls: Class<T>?): T? {
+        var t: T? = null
         try {
-            t = gson.fromJson(json, cls);
-        } catch (Exception e) {
-
+            t = gson.fromJson(json, cls)
+        } catch (e: Exception) {
         }
-        return t;
+        return t
     }
 
     /**
@@ -62,30 +55,27 @@ public class GsonUtil {
      * @param json
      * @return
      */
-    public static HashMap<String, Object> parseJsonToMap(String json) {
-        Type type = new TypeToken<HashMap<String, Object>>() {
-        }.getType();
-        HashMap<String, Object> map = null;
+    fun parseJsonToMap(json: String?): HashMap<String?, Any?>? {
+        val type = object : TypeToken<HashMap<String?, Any?>?>() {}.type
+        var map: HashMap<String?, Any?>? = null
         try {
-            map = gson.fromJson(json, type);
-        } catch (Exception e) {
-            ALog.v(TAG, "转换异常" + e.getMessage());
-
+            map = gson.fromJson<HashMap<String?, Any?>>(json, type)
+        } catch (e: Exception) {
+            ALog.v(TAG, "转换异常" + e.message)
         }
-        return map;
+        return map
     }
 
     /**
      * 把json字符串变成集合
-     * params: new TypeToken<List<yourbean>>(){}.getType(),
+     * params: new TypeToken<List></List><yourbean>>(){}.getType(),
      *
      * @param json
-     * @param type new TypeToken<List<yourbean>>(){}.getType()
+     * @param type new TypeToken<List></List><yourbean>>(){}.getType()
      * @return
-     */
-    public static List<?> parseJsonToList(String json, Type type) {
-        List<?> list = gson.fromJson(json, type);
-        return list;
+    </yourbean></yourbean> */
+    fun parseJsonToList(json: String?, type: Type?): List<*> {
+        return gson.fromJson(json, type)
     }
 
     /**
@@ -94,9 +84,8 @@ public class GsonUtil {
      * @param list
      * @return
      */
-    public static String parseListToJson(List<?> list) {
-        String json = gson.toJson(list);
-        return json;
+    fun parseListToJson(list: List<*>?): String {
+        return gson.toJson(list)
     }
 
     /**
@@ -106,20 +95,18 @@ public class GsonUtil {
      * @param key
      * @return
      */
-    public static String getFieldValue(String json, String key) {
-        if (TextUtils.isEmpty(json))
-            return null;
-        if (!json.contains(key))
-            return "";
-        JSONObject jsonObject = null;
-        String value = null;
+    fun getFieldValue(json: String, key: String): String? {
+        if (TextUtils.isEmpty(json)) return null
+        if (!json.contains(key)) return ""
+        var jsonObject: JSONObject? = null
+        var value: String? = null
         try {
-            jsonObject = new JSONObject(json);
-            value = jsonObject.getString(key);
-        } catch (JSONException e) {
-            e.printStackTrace();
+            jsonObject = JSONObject(json)
+            value = jsonObject.getString(key)
+        } catch (e: JSONException) {
+            e.printStackTrace()
         }
-        return value;
+        return value
     }
 
     /**
@@ -128,18 +115,15 @@ public class GsonUtil {
      * @param uglyJSONString
      * @return
      */
-    public static String jsonFormatter(String uglyJSONString) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonParser jp = new JsonParser();
-        JsonElement je = jp.parse(uglyJSONString);
-        String prettyJsonString = gson.toJson(je);
-        return prettyJsonString;
+    fun jsonFormatter(uglyJSONString: String?): String {
+        val gson = GsonBuilder().setPrettyPrinting().create()
+        val jp = JsonParser()
+        val je = jp.parse(uglyJSONString)
+        return gson.toJson(je)
     }
 
-
-    public static Map<String, String> getJsonToMap(String json) {
-        return gson.fromJson(json, new TypeToken<Map<String, String>>() {
-        }.getType());
+    fun getJsonToMap(json: String?): Map<String, String> {
+        return gson.fromJson(json, object : TypeToken<Map<String?, String?>?>() {}.type)
     }
 
     /**
@@ -148,23 +132,22 @@ public class GsonUtil {
      * @param bean
      * @return
      */
-    public static String getBeanToJson(Object bean) {
-        Gson gson = new Gson();
-        return gson.toJson(bean);
+    fun getBeanToJson(bean: Any?): String {
+        val gson = Gson()
+        return gson.toJson(bean)
     }
 
-
     //----------------------手动解析json类---------------------------
-    public static JSONArray getJSONArray(JSONObject object, String name) {
-        if (object.isNull(name)) {
-            ALog.e("没有找到节点：" + name);
-            return null;
+    fun getJSONArray(`object`: JSONObject, name: String): JSONArray? {
+        if (`object`.isNull(name)) {
+            ALog.e("没有找到节点：$name")
+            return null
         }
-        try {
-            return object.getJSONArray(name);
-        } catch (JSONException e) {
+        return try {
+            `object`.getJSONArray(name)
+        } catch (e: JSONException) {
             //Log.e("", e.getMessage());
-            return null;
+            null
         }
     }
 
@@ -174,35 +157,32 @@ public class GsonUtil {
      * @param name
      * @return
      */
-    public static String getString(JSONObject object, String name) {
-        if(object==null){
-            return "";
+    fun getString(`object`: JSONObject?, name: String?): String {
+        if (`object` == null) {
+            return ""
         }
-        if (object.isNull(name)) {
+        return if (`object`.isNull(name)) {
             //CommUtils.logD("没有找到节点：" + name);
-            return "";
-        }
-        try {
-            return object.getString(name);
-        } catch (JSONException e) {
+            ""
+        } else try {
+            `object`.getString(name)
+        } catch (e: JSONException) {
             //Log.e("", e.getMessage());
-            return "";
+            ""
         }
     }
 
-    public static String getDoubleString(JSONObject object, String name) {
-        if (object.isNull(name)) {
+    fun getDoubleString(`object`: JSONObject, name: String?): String {
+        return if (`object`.isNull(name)) {
             //Log.e("", "没有找到节点："+name);
-            return "0";
-        }
-        try {
-            return object.getString(name);
-        } catch (JSONException e) {
+            "0"
+        } else try {
+            `object`.getString(name)
+        } catch (e: JSONException) {
             //Log.e("", e.getMessage());
-            return "0";
+            "0"
         }
     }
-
 
     /**
      * 获取json节点的数据并换行为Long型，否则返回0
@@ -210,40 +190,37 @@ public class GsonUtil {
      * @param name
      * @return
      */
-    public static double getDouble(JSONObject object, String name) {
-        if (object.isNull(name)) {
-            return 0;
-        }
-        try {
-            return object.getDouble(name);
-        } catch (JSONException e) {
-            return 0;
+    fun getDouble(`object`: JSONObject, name: String?): Double {
+        return if (`object`.isNull(name)) {
+            0.0
+        } else try {
+            `object`.getDouble(name)
+        } catch (e: JSONException) {
+            0.0
         }
     }
 
-
-    public static int getInt(JSONObject object, String name) {
-        if (object.isNull(name)) {
-            return 0;
-        }
-        try {
-            return object.getInt(name);
-        } catch (JSONException e) {
-            return 0;
+    fun getInt(`object`: JSONObject, name: String?): Int {
+        return if (`object`.isNull(name)) {
+            0
+        } else try {
+            `object`.getInt(name)
+        } catch (e: JSONException) {
+            0
         }
     }
+
     /**
-     * <获取json节点的数据并换行为int型，否则返回0>
+     * <获取json节点的数据并换行为int型></获取json节点的数据并换行为int型>，否则返回0>
      *
      */
-    public static String getIntString(JSONObject object, String name) {
-        if (object.isNull(name)) {
-            return "0";
-        }
-        try {
-            return object.getString(name);
-        } catch (JSONException e) {
-            return "0";
+    fun getIntString(`object`: JSONObject, name: String?): String {
+        return if (`object`.isNull(name)) {
+            "0"
+        } else try {
+            `object`.getString(name)
+        } catch (e: JSONException) {
+            "0"
         }
     }
 }

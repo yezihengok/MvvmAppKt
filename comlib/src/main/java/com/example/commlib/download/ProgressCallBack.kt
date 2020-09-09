@@ -1,76 +1,61 @@
-package com.example.commlib.download;
+package com.example.commlib.download
 
-import android.util.Log;
-
-import com.example.commlib.rx.RxBus;
-import com.example.commlib.rx.RxBusCode;
-import com.example.commlib.rx.RxSubscriptions;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import okhttp3.ResponseBody;
+import android.util.Log
+import com.blankj.ALog
+import com.example.commlib.download.DownLoadStateBean
+import com.example.commlib.rx.RxBus.Companion.instance
+import com.example.commlib.rx.RxBusCode
+import com.example.commlib.rx.RxSubscriptions.add
+import com.example.commlib.rx.RxSubscriptions.remove
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import okhttp3.ResponseBody
+import java.io.*
 
 
-public abstract class ProgressCallBack<T> {
-
-    private String destFileDir; // 本地文件存放路径
-    private String destFileName; // 文件名
-    private Disposable mSubscription;
-
-    public ProgressCallBack(String destFileDir, String destFileName) {
-        this.destFileDir = destFileDir;
-        this.destFileName = destFileName;
-        subscribeLoadProgress();
-    }
-
-    public abstract void onSuccess(T t);
-
-    public abstract void progress(long progress, long total);
-
-    public void onStart() {
-    }
-
-    public void onCompleted() {
-    }
-
-    public abstract void onError(Throwable e);
-
-    public void saveFile(ResponseBody body) {
-        InputStream is = null;
-        byte[] buf = new byte[2048];
-        int len;
-        FileOutputStream fos = null;
+abstract class ProgressCallBack<T>(// 本地文件存放路径
+    private val destFileDir: String, // 文件名
+    private val destFileName: String
+) {
+    private var mSubscription: Disposable? = null
+    abstract fun onSuccess(t: T)
+    abstract fun progress(progress: Long, total: Long)
+    open fun onStart() {}
+    open fun onCompleted() {}
+    abstract fun onError(e: Throwable?)
+    fun saveFile(body: ResponseBody?) {
+        if(body==null){
+            ALog.e("body==null")
+          return
+        }
+        var `is`: InputStream? = null
+        val buf = ByteArray(2048)
+        var len: Int
+        var fos: FileOutputStream? = null
         try {
-            is = body.byteStream();
-            File dir = new File(destFileDir);
+            `is` = body.byteStream()
+            val dir = File(destFileDir)
             if (!dir.exists()) {
-                dir.mkdirs();
+                dir.mkdirs()
             }
-            File file = new File(dir, destFileName);
-            fos = new FileOutputStream(file);
-            while ((len = is.read(buf)) != -1) {
-                fos.write(buf, 0, len);
+            val file = File(dir, destFileName)
+            fos = FileOutputStream(file)
+            while (`is`.read(buf).also { len = it } != -1) {
+                fos.write(buf, 0, len)
             }
-            fos.flush();
-            unsubscribe();
+            fos.flush()
+            unsubscribe()
             //onCompleted();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
         } finally {
             try {
-                if (is != null) is.close();
-                if (fos != null) fos.close();
-            } catch (IOException e) {
-                Log.e("saveFile", e.getMessage());
+                `is`?.close()
+                fos?.close()
+            } catch (e: IOException) {
+                Log.e("saveFile", e.message)
             }
         }
     }
@@ -78,23 +63,27 @@ public abstract class ProgressCallBack<T> {
     /**
      * 订阅加载的进度条
      */
-    public void subscribeLoadProgress() {
-        mSubscription = RxBus.getInstance().toObservable(RxBusCode.TYPE_2,DownLoadStateBean.class)
-                .observeOn(AndroidSchedulers.mainThread()) //回调到主线程更新UI
-                .subscribe(new Consumer<DownLoadStateBean>() {
-                    @Override
-                    public void accept(final DownLoadStateBean progressLoadBean) throws Exception {
-                        progress(progressLoadBean.getBytesLoaded(), progressLoadBean.getTotal());
-                    }
-                });
+    fun subscribeLoadProgress() {
+        mSubscription = instance.toObservable(RxBusCode.TYPE_2, DownLoadStateBean::class.java)
+            .observeOn(AndroidSchedulers.mainThread()) //回调到主线程更新UI
+            .subscribe { progressLoadBean ->
+                progress(
+                    progressLoadBean.bytesLoaded,
+                    progressLoadBean.total
+                )
+            }
         //将订阅者加入管理站
-        RxSubscriptions.INSTANCE.add(mSubscription);
+        add(mSubscription)
     }
 
     /**
      * 取消订阅，防止内存泄漏
      */
-    public void unsubscribe() {
-        RxSubscriptions.INSTANCE.remove(mSubscription);
+    fun unsubscribe() {
+        remove(mSubscription)
+    }
+
+    init {
+        subscribeLoadProgress()
     }
 }

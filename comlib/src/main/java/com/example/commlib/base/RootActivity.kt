@@ -100,7 +100,7 @@ open class RootActivity: RxAppCompatActivity() {
     //************************************** Activity跳转(兼容4.4) **************************************//
     @JvmOverloads
     fun startActivity(clz: Class<*>, bundle: Bundle? = null){
-        if (ButtonUtils.isFastDoubleClick()) {
+        if (ButtonUtils.isFastDoubleClick) {
             return
         }
         val intent = Intent(this, clz)
@@ -119,7 +119,7 @@ open class RootActivity: RxAppCompatActivity() {
      */
     @JvmOverloads
     fun startActivityAnimation(clz: Class<*>, bundle: Bundle? = null) {
-        if (ButtonUtils.isFastDoubleClick()) {
+        if (ButtonUtils.isFastDoubleClick) {
             return
         }
         if (bundle != null) {
@@ -162,7 +162,7 @@ open class RootActivity: RxAppCompatActivity() {
      */
     @JvmOverloads
     fun startActivityForResult(cls: Class<*>?, bundle: Bundle? = null, requestCode: Int) {
-        if (ButtonUtils.isFastDoubleClick()) {
+        if (ButtonUtils.isFastDoubleClick) {
             return
         }
         val intent = Intent()

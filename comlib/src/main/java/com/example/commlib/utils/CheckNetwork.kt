@@ -1,53 +1,47 @@
-package com.example.commlib.utils;
+package com.example.commlib.utils
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-
-import com.example.commlib.api.App;
+import android.content.Context
+import android.net.ConnectivityManager
+import com.example.commlib.api.App.Companion.instance
 
 /**
  * 用于判断是不是联网状态
  *
  * @author Dzy
  */
-public class CheckNetwork {
-
+object CheckNetwork {
+    /**如果context为空，就返回false，表示网络未连接 */
     /**
      * 判断网络是否连通
      */
-    public static boolean isNetworkConnected() {
-        Context context= App.Companion.getInstance();
-        try {
-            if(context!=null){
-                @SuppressWarnings("static-access")
-                ConnectivityManager cm = (ConnectivityManager) context
-                        .getSystemService(context.CONNECTIVITY_SERVICE);
-                NetworkInfo info = cm.getActiveNetworkInfo();
-                return info != null && info.isConnected();
-            }else{
-                /**如果context为空，就返回false，表示网络未连接*/
-                return false;
+    val isNetworkConnected: Boolean
+        get() {
+            val context: Context = instance
+            return try {
+                if (context != null) {
+                    val cm = context
+                        .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                    val info = cm.activeNetworkInfo
+                    info != null && info.isConnected
+                } else {
+                    /**如果context为空，就返回false，表示网络未连接 */
+                    false
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
             }
-        }catch (Exception e){
-            e.printStackTrace();
-            return false;
         }
 
-
-    }
-
-    public static boolean isWifiConnected(Context context) {
-        if (context != null) {
-            ConnectivityManager cm = (ConnectivityManager) context
-                    .getSystemService(context.CONNECTIVITY_SERVICE);
-            NetworkInfo info = cm.getActiveNetworkInfo();
-            return info != null && (info.getType() == ConnectivityManager.TYPE_WIFI);
+    fun isWifiConnected(context: Context?): Boolean {
+        return if (context != null) {
+            val cm = context
+                .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val info = cm.activeNetworkInfo
+            info != null && info.type == ConnectivityManager.TYPE_WIFI
         } else {
-            /**如果context为null就表示为未连接*/
-            return false;
+            /**如果context为null就表示为未连接 */
+            false
         }
-
     }
-
 }

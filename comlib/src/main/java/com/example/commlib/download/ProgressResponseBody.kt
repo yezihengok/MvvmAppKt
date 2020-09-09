@@ -1,63 +1,55 @@
-package com.example.commlib.download;
+package com.example.commlib.download
 
-import com.example.commlib.rx.RxBus;
-import com.example.commlib.rx.RxBusCode;
+ 
+import com.example.commlib.rx.RxBus
+import com.example.commlib.rx.RxBusCode
+import okhttp3.MediaType
+import okhttp3.ResponseBody
+import okio.*
+import java.io.IOException
 
-import java.io.IOException;
+class ProgressResponseBody @JvmOverloads constructor(var responseBody: ResponseBody?, tag: String?="") : ResponseBody() {
+ //   private var responseBody: ResponseBody?
+    private var bufferedSource: BufferedSource? = null
+    private var tag: String? = null
 
-import okhttp3.MediaType;
-import okhttp3.ResponseBody;
-import okio.Buffer;
-import okio.BufferedSource;
-import okio.ForwardingSource;
-import okio.Okio;
-import okio.Source;
+//    constructor(responseBody: ResponseBody?) {
+//        this.responseBody = responseBody
+//    }
+//
+//    constructor(responseBody: ResponseBody?, tag: String?) {
+//        this.responseBody = responseBody
+//        this.tag = tag
+//    }
 
-public class ProgressResponseBody extends ResponseBody {
-    private ResponseBody responseBody;
-
-    private BufferedSource bufferedSource;
-    private String tag;
-
-    public ProgressResponseBody(ResponseBody responseBody) {
-        this.responseBody = responseBody;
+    override fun contentType(): MediaType? {
+        return responseBody?.contentType()
     }
 
-    public ProgressResponseBody(ResponseBody responseBody, String tag) {
-        this.responseBody = responseBody;
-        this.tag = tag;
+    override fun contentLength(): Long {
+        return responseBody?.contentLength()?:0
     }
 
-    @Override
-    public MediaType contentType() {
-        return responseBody.contentType();
-    }
-
-    @Override
-    public long contentLength() {
-        return responseBody.contentLength();
-    }
-
-    @Override
-    public BufferedSource source() {
-        if (bufferedSource == null) {
-            bufferedSource = Okio.buffer(source(responseBody.source()));
+    override fun source(): BufferedSource? {
+        if (bufferedSource == null&&responseBody!=null) {
+            bufferedSource = Okio.buffer(source(responseBody!!.source()))
         }
-        return bufferedSource;
+        return bufferedSource
     }
 
-    private Source source(Source source) {
-        return new ForwardingSource(source) {
-            long bytesReaded = 0;
-
-            @Override
-            public long read(Buffer sink, long byteCount) throws IOException {
-                long bytesRead = super.read(sink, byteCount);
-                bytesReaded += bytesRead == -1 ? 0 : bytesRead;
+    private fun source(source: Source): Source {
+        return object : ForwardingSource(source) {
+            var bytesReaded: Long = 0
+            @Throws(IOException::class)
+            override fun read(sink: Buffer, byteCount: Long): Long {
+                val bytesRead = super.read(sink, byteCount)
+                bytesReaded += if (bytesRead == -1L) 0 else bytesRead
                 //使用RxBus的方式，实时发送当前已读取(上传/下载)的字节数据
-                RxBus.getInstance().post(RxBusCode.TYPE_2,new DownLoadStateBean(contentLength(), bytesReaded, tag));
-                return bytesRead;
+                RxBus.instance.post(RxBusCode.TYPE_2,
+                    DownLoadStateBean(contentLength(), bytesReaded, tag)
+                )
+                return bytesRead
             }
-        };
+        }
     }
 }

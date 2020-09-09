@@ -40,7 +40,7 @@ class HeaderInterceptor : Interceptor {
         builder.addHeader("Model", DeviceUtils.getDevice())
         builder.addHeader("Content-Type", "application/json;charset=UTF-8")
         builder.addHeader("Accept", "application/json;versions=1")
-        if (CheckNetwork.isNetworkConnected()) {
+        if (CheckNetwork.isNetworkConnected) {
             val maxAge = 60
             builder.addHeader("Cache-Control", "public, max-age=$maxAge")
         } else {
@@ -56,7 +56,7 @@ class HeaderInterceptor : Interceptor {
 
         //外面已经添加了addInterceptor 日志打印
         //  response = printRequestAndResponse(request, response, endTime - startTime);
-        if (!CheckNetwork.isNetworkConnected()) {
+        if (!CheckNetwork.isNetworkConnected) {
             ToastUtils.showShortSafe("没有网络连接~", 2500)
             ALog.e("没有网络连接~~~~~~~~")
         }
@@ -78,7 +78,7 @@ class HeaderInterceptor : Interceptor {
         time: Long
     ): Response? {
         var response = response
-        if (!CheckNetwork.isNetworkConnected()) {
+        if (!CheckNetwork.isNetworkConnected) {
             ToastUtils.showShortSafe("没有网络连接~")
         }
         var requestBody = ""

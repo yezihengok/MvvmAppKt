@@ -33,7 +33,7 @@ object ViewAdapters {
     @BindingAdapter(value = ["onBindingClick"], requireAll = false)
     fun onClicks(v: View?,listener:ClickListener?){
         v?.setOnClickListener {
-            if(!ButtonUtils.isFastDoubleClick()) {
+            if(!ButtonUtils.isFastDoubleClick) {
                 listener?.onResult(v)
             }
         }
@@ -43,7 +43,7 @@ object ViewAdapters {
     @BindingAdapter(value = ["onBindingClick"], requireAll = false)
     fun onClick(view: View?,even:SingleLiveEvent<*>?){
         view?.setOnClickListener{
-            if(!ButtonUtils.isFastDoubleClick()){
+            if(!ButtonUtils.isFastDoubleClick){
                 even?.call()
             }
         }

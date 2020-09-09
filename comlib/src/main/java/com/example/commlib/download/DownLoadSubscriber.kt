@@ -1,37 +1,23 @@
-package com.example.commlib.download;
+package com.example.commlib.download
 
-import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableObserver
 
 
-public class DownLoadSubscriber<T> extends DisposableObserver<T> {
-    private ProgressCallBack fileCallBack;
-
-    public DownLoadSubscriber(ProgressCallBack fileCallBack) {
-        this.fileCallBack = fileCallBack;
+class DownLoadSubscriber<T>(private val fileCallBack: ProgressCallBack<T>?) : DisposableObserver<T>() {
+    public override fun onStart() {
+        super.onStart()
+        fileCallBack?.onStart()
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (fileCallBack != null)
-            fileCallBack.onStart();
+    override fun onComplete() {
+        fileCallBack?.onCompleted()
     }
 
-    @Override
-    public void onComplete() {
-        if (fileCallBack != null)
-            fileCallBack.onCompleted();
+    override fun onError(e: Throwable) {
+        fileCallBack?.onError(e)
     }
 
-    @Override
-    public void onError(Throwable e) {
-        if (fileCallBack != null)
-            fileCallBack.onError(e);
-    }
-
-    @Override
-    public void onNext(T t) {
-        if (fileCallBack != null)
-            fileCallBack.onSuccess(t);
+    override fun onNext(t: T) {
+        fileCallBack?.onSuccess(t)
     }
 }
