@@ -1,0 +1,3 @@
+include ':comlib'
+include ':app'
+rootProject.name = "MvvmAppKt"

@@ -1,0 +1,72 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    defaultConfig {
+        applicationId "com.example.mvvmapp"
+        minSdkVersion 17
+        targetSdkVersion 29
+        versionCode 2
+        versionName "1.1"
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+//    dataBinding {
+//        enabled true
+//    }
+
+    //as 4.0  开启 dataBinding
+    buildFeatures{
+        dataBinding = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    greendao {
+        // 指定数据库schema版本号，迁移等操作会用到
+        schemaVersion 3
+        // 设置生成数据库文件的目录，默认是在build中，可以将生成的文件放到我们的java目录中
+        //targetGenDir 'src/main/java'  （当前版本已不建议配置，会报错）
+        // 设置生成的数据库相关文件的包名，默认为entity所在的包名
+        daoPackage 'com.primary.greendao.gen'
+    }
+
+
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.3.1'
+   // implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation project(path: ':comlib')
+
+    implementation 'org.greenrobot:greendao:3.3.0'
+
+//  抓包 方便查看接口测试 https://juejin.im/post/5ddddd2a6fb9a07161483fb2
+//    debugImplementation 'com.github.DingProg.NetworkCaptureSelf:library:v1.0.1'
+//    releaseImplementation 'com.github.DingProg.NetworkCaptureSelf:library_no_op:v1.0.1'
+
+    //滴滴的调试插件   https://github.com/didi/DoraemonKit
+    debugImplementation 'com.didichuxing.doraemonkit:doraemonkit:3.1.4'
+    releaseImplementation 'com.didichuxing.doraemonkit:doraemonkit-no-op:3.1.4'
+}
