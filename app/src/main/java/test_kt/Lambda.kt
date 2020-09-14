@@ -9,8 +9,6 @@ package com.example.mykotlintest
 fun main() {
     println("hello,kotlin")
 
-
-
     /**lambda表达式是返回函数体内最后一行表达式的值 **/
 
 //    () -> Unit//表示无参数无返回值的Lambda表达式类型
