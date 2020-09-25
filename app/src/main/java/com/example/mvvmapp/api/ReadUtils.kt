@@ -31,7 +31,18 @@ class ReadUtils {
             "enViewClassicNews"-> "普通绘本"
             else -> ""
         }
+
         tv?.visibility= if(content.isEmpty()) View.GONE else View.VISIBLE
         tv?.text = content
+    }
+
+    fun te(){
+        val test2 = listOf("a", "ab", "b", "bc")
+
+        // groupBy按照lambda表达式的条件重组数据并分组
+        println("按首字母分组 ${test2.groupBy(String::first)}")
+        println(test2.flatMap { it.toList() })
+
+
     }
 }

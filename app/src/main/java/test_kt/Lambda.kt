@@ -53,4 +53,23 @@ fun main() {
     fun sum4(a: Int, b: Int): Int {
         return a + b
     }
+
+
+
+
+   // 引用函数
+    fun cal(a: Int, b: Int, f: (c: Int, d: Int) -> Int): Int {
+        return f(a, b)+1
+    }
+
+    fun sumA(a: Int, b: Int): Int {
+        return a + b
+    }
+
+    val result = cal(2, 3, ::sumA)
+    println("result = $result")
+    // result = 6
+
+
+
 }

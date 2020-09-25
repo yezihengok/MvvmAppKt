@@ -8,7 +8,7 @@ import com.example.mykotlintest.bean.*
  * @CreateDate: 2019/9/23 15:50
  */
 fun main(){
-    val site = User() // Kotlin 中没有 new 关键字
+     // Kotlin 中没有 new 关键字
     val sites = User2("AA")
 
     //调用嵌套类方法

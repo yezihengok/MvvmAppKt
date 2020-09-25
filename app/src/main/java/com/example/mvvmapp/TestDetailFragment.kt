@@ -2,7 +2,9 @@ package com.example.mvvmapp
 
 import android.annotation.SuppressLint
 import android.app.ProgressDialog
+import android.content.res.Resources
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +33,8 @@ import java.io.File
  * Author yzh Date 2019/12/9 13:57
  */
 class TestDetailFragment constructor() : BaseFragment<ActivityMainDetailBinding, MainDetialViewModel>() {
+
+
     private var mTitleLayoutBinding: TitleLayoutBinding? = null
 
     override fun getLayoutId(inflater: LayoutInflater, container: ViewGroup?): Int {
@@ -38,7 +42,7 @@ class TestDetailFragment constructor() : BaseFragment<ActivityMainDetailBinding,
     }
 
     public override fun initViewObservable() {
-        mViewModel?.downLoadEvent?.observe(this,observer = Observer {url: String? -> downloadApk(url)  })
+        mViewModel?.downLoadEvent?.observe(owner = this,observer = Observer {url: String? -> downloadApk(url)  })
 
         mViewModel?.downLoadEvent?.observe(this,observer = Observer { mActivity.showDialog() })
 
