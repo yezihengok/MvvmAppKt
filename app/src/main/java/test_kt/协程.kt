@@ -1,7 +1,10 @@
 package test_kt
 
+import android.util.Log
+import android.util.SparseIntArray
 import com.blankj.ALog
 import kotlinx.coroutines.*
+import androidx.core.util.containsKey as containsKey
 
 
 //TODO======Kotlin关于可以为空的判断======
@@ -43,6 +46,9 @@ fun main(args: Array<String>) {
     println(site.name)
     println(site.url)
 
+    var readParagraphArray = SparseIntArray()
+    readParagraphArray.put(1,1)
+    readParagraphArray.put(3,3)
 
 
 //todo Kotlin 协程
@@ -86,6 +92,7 @@ fun main(args: Array<String>) {
 
    // 挂起的是协程，也就是launch包裹的代码片段，也就是说，这个线程跟这个协程从此脱离了，不是线程暂停了。
     suspend fun saveImageToDisk(data:String) {
+       //协程体
         withContext(Dispatchers.IO) {
             // save()
         }
@@ -96,9 +103,11 @@ fun main(args: Array<String>) {
        // userImage.setImageBitmap(image)
     }
 
+
 /*    Dispatchers.Main：Android中的主线程，可以直接操作UI
     Dispatchers.IO：针对磁盘和网络IO进行了优化，适合IO密集型的任务，比如：读写文件，操作数据库以及网络请求
     Dispatchers.Default：适合CPU密集型的任务，比如解析JSON文件，排序一个较大的list
+
     注意BaseActivity要继承 CoroutineScope by MainScope()，launch才能被识别*/
 
 //    所谓的挂起，其实本质上还是切换了一个线程
@@ -109,9 +118,28 @@ fun main(args: Array<String>) {
 
 
 
+    // async跟launch的用法基本一样，区别在于：async的返回值是Deferred，将最后一个封装成了该对象。async可以支持并发，此时一般都跟await一起使用
 
+    GlobalScope.launch {
+        //async是不阻塞线程的,也就是说getResult1和getResult2是同时进行的，所以获取到result的时间是4s，而不是7s。
+        val result=GlobalScope.async {
+            getToken()
+        }
+        val result1=GlobalScope.async { getUser() }
 
-
-
+        val content =result.await()+result1.await()
+        Log.e("TAG","content = $content")
+    }
 
 }
+
+    suspend fun getToken():String{
+        delay(2000)
+        return "0123asfssdf"
+    }
+    suspend fun getUser():String{
+        delay(3000)
+        return "aaa"
+    }
+
+

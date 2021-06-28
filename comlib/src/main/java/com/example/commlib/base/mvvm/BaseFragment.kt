@@ -99,7 +99,7 @@ import java.lang.reflect.Type
         if (view == null) {
             return
         }
-        mBinding = DataBindingUtil.bind<V>(view)
+        mBinding = DataBindingUtil.bind(view)
         mViewModel = initViewModel()
         if (mViewModel == null) {
             val modelClass: Class<*>

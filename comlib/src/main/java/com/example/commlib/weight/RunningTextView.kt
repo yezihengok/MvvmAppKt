@@ -62,9 +62,9 @@ class RunningTextView  @JvmOverloads constructor(context: Context, attrs: Attrib
                 nowNumber += msg.obj.toString().toDouble() // 跳跃arg1那么多的数字间隔
                 //              Log.v("nowNumber增加之后的值", nowNumber + "");
                 if (nowNumber < content) {
-                    val msg2: Message = Companion.handler!!.obtainMessage()
+                    val msg2: Message = Companion.handler.obtainMessage()
                     msg2.obj = msg.obj
-                    Companion.handler!!.sendMessage(msg2) // 继续发送通知改变UI
+                    Companion.handler.sendMessage(msg2) // 继续发送通知改变UI
                 } else {
                     this@RunningTextView.text = formater!!.format(content)
                         .toString() // 最后显示的数字，动画停止

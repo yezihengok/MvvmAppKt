@@ -21,7 +21,6 @@ abstract class CommObserver<T>(val context:Context, private val isShowDialog:Boo
     }
 
     private fun createLoading() {
-        TODO("Not yet implemented")
     }
     private fun dismiss() {
         dialog?.dismiss()
