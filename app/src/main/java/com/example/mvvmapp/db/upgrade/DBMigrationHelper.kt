@@ -36,7 +36,7 @@ class DBMigrationHelper {
         if (db==null){
             return
         }
-        //生成临时表，复制表数据
+        //生成临时表，复制表数据、然后    修改临时表名等。
         generateTempTables(db, *daoClasses as Array<out Class<*>>)
         DaoMaster.dropAllTables(db, true)
         DaoMaster.createAllTables(db, false)
